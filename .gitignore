@@ -45,3 +45,16 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+.Rproj.user
+
+# =========================
+# Data Files
+# =========================
+*.csv
+!defined_regions.csv
+!models_to_remove.csv
+
+# =========================
+# HTML Files Created By Rmd
+# =========================
+*.html
