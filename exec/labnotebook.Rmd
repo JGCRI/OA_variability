@@ -60,7 +60,7 @@ output:
 # Setting up the environment, the BASE_NAME dir should be set to the package level. Other scripts/
 # commands will depend on the package being the BASE_NAME for other directories. 
 # BASE_NAME <- getwd()
-BASE_NAME <- "C:/Users/dorh012/Documents/GitHub/ocean_pH/oceanpH" 
+BASE_NAME <- "C:/Users/dorh012/Documents/GitHub/OA_variability/OA_variability" 
 DO_DIR <- paste0(BASE_NAME, "/exec/processing/")
 
 # load project package
