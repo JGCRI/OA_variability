@@ -1,0 +1,11 @@
+# Default folders to ignore 
+^.*\.Rproj$
+^\.Rproj\.user$
+
+# Ignore for now
+^.*results/
+^.*building/
+
+# Ignore the html file from the lab notebook
+^.*\.html$
+labnotebook.Rmd

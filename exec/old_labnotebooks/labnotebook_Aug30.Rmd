@@ -1,0 +1,403 @@
+---
+title: "Ocean pH"
+author: "K. Dorheim"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: 
+ html_document:
+    toc: TRUE
+    toc_float:
+      collapsed: true
+      toc_depth : 3
+---
+<!--- UNCOMMENT TO GEN PNGs
+```{r opts, echo = FALSE}
+knitr::opts_chunk$set(fig.path = "images/")
+```
+--->
+
+****
+
+
+# House Keeping Notes
+****
+
+#### New Stuff 
+* [CESM CO3 figs] and [CESM tos figs]
+
+#### To Do List 
+* Basin averages (Arcitic, Indian, Pacific, Atlantic, NH SH) - see pages 20 or notes from Aug 30 may be send a map to CH for approval before doing it 
+* Detrend the stuff by model/normalize talk to CL
+* Do models all together and also facet by models
+* WhAAT IS WRONG WITH THE GIT IGNORE???
+
+* Diagnosis peak 
+* Future and past phase shift 
+* Break up into Marine Ecological Units ?
+
+<!---
+# Ideas 
+* For the Marine Ecological Units use binary masks for the different regions as the weights for the mean 
+--->
+
+<!-- 
+# Notes to Self 
+* CC N86108 
+* Email from Corrine on 8/09/2017 
+* First project meeting on 08/09/2017 see notebook 1 pg 92 for notes 
+
+# The Done List 
+* The first thing Corinne had be do was look into averaging pH over different ocean depths but then it turned out that only the annual ocean data has the ocean depth data so get to skip this step -- see the L1_cmip5_depth.R code
+* Figure out how to write as a package... 
+-->
+
+```{r markdown environment set up, echo = FALSE, message = FALSE, warning = FALSE}
+# -----------------------------------------------------------------------------------------------   
+# Setting up the environment, the BASE_NAME dir should be set to the package level. Other scripts/
+# commands will depend on the package being the BASE_NAME for other directories. 
+# BASE_NAME <- getwd()
+BASE_NAME <- "C:/Users/dorh012/Documents/GitHub/ocean_pH/oceanpH" 
+DO_DIR <- paste0(BASE_NAME, "/exec/code/")
+
+# load project package
+devtools::load_all(BASE_NAME)
+
+# Additional required libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(gridExtra)
+```
+
+
+# Methodology 
+****
+
+Only the annual data sets for pH, check the other variables has depth information so did not average depth for surface values.
+
+#### L1
+1. CDO - Concatenate cmip netcdfs and convert to absolute time 
+2. CDO - Get the field weighted mean via cdo 
+3. R - Plot monthly weighted mean in 
+
+<br>
+
+
+# 1. pH
+***
+
+### Files Processed
+****
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+source(paste0(DO_DIR,"/L1/visualize/ph_fldmean_output_info.R"))
+```
+
+#### Monthly pH netcdfs 
+Number of files with depth information.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$depth
+```
+
+Number summary of the CMIP5 files found on pic vs. the netcdfs processed by the cdo commands.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$table_counts
+```
+
+<br>
+
+Summary of the CMIP5 files processed by the cdo commands.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$files_processed$ex_en_table
+```
+<br>
+
+Unprocessed CMIP5 files 
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$unprocessed_files
+```
+<br>
+<br>
+
+
+### Exploratory Figures
+```{r Generate the exploratory figures for all variables, echo = FALSE, message = FALSE, warning = FALSE}
+source(paste0(DO_DIR,"/L1/visualize/vis_exploratory_fldmean_all.R"))
+```
+
+Important Note: None of this figures include data from the *MRI-ESM1* model, pH is unrealistic. 
+
+### 1. a. Time Series Trends
+```{r 1. a. Time Series Trends, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+df         <- fig$global_average_ph_r1i1p1_rcp85$plots$time_series$data
+start_year <- min(df$year)
+end_year   <- max(df$year)
+
+fig$global_average_ph_r1i1p1_rcp85$plots$time_series + coord_cartesian(ylim = c(7,8.3)) + 
+  labs(y = "pH", title =paste0("pH Trend \nTime Starts at ",start_year, "\nEnds at ", end_year)) -> p1
+
+fig$global_average_ph_r1i1p1_historical$plots$time_series + coord_cartesian(ylim = c(7,8.3)) + 
+  labs(y = "pH", title =paste0("pH Trend \nTime Starts at ",start_year, "\nEnds at ", end_year)) -> p2
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 1. b. Mean Monthly pH by Model
+```{r 1. b. Mean Monthly, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+fig$global_average_ph_r1i1p1_rcp85$plots$mean_monthly + coord_cartesian(ylim = c(7.5, 8)) + 
+  labs(y = "pH", title =paste0("")) -> p1
+
+fig$global_average_ph_r1i1p1_historical$plots$mean_monthly +
+  labs(y = "pH", title = paste0("")) +
+  coord_cartesian(ylim = c(7.5, 8.25)) -> p2
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 1. c. Mean Monthly 
+```{r 1. c. Mean Monthly, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+fig$global_average_ph_r1i1p1_rcp85$plots$boxplot$monthly + 
+  labs(y = "pH", title ="") -> p1
+
+fig$global_average_ph_r1i1p1_historical$plots$boxplot$monthly +
+  labs(y = "pH", title = "") +
+  coord_cartesian(ylim = c(7.5, 8.25)) -> p2
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+
+## CESM pH figs
+
+### 1. d. CESM pH time series
+```{r 1. d. CESM pH time series, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_ph_r1i1p1_historical$plots$time_series -> p1 
+CESM_figs$global_average_ph_r1i1p1_rcp85$plots$time_series -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 1. e. CESM pH monthly time series
+```{r 1. e. CESM pH monthly time series, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_ph_r1i1p1_historical$plots$mean_monthly -> p1 
+CESM_figs$global_average_ph_r1i1p1_rcp85$plots$mean_monthly -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 1. f. CESM pH boxplot
+```{r 1. f. CESM pH boxplot, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_ph_r1i1p1_historical$plots$boxplot$monthly -> p1 
+CESM_figs$global_average_ph_r1i1p1_rcp85$plots$boxplot$monthly -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+<br>
+<br>
+
+# 2. CO3
+***
+
+### Files Processed
+****
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+source(paste0(DO_DIR,"/L1/visualize/co3_fldmean_output_info.R"))
+```
+
+#### Monthly CO3 netcdfs
+Number of files with depth information.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$depth
+```
+
+Number summary of the CMIP5 files found on pic vs. the netcdfs processed by the cdo commands.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$table_counts
+```
+<br>
+
+
+Summary of the CMIP5 files processed by the cdo commands.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$files_processed$ex_en_table
+```
+<br>
+
+Unprocessed CMIP5 files 
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$unprocessed_files
+```
+<br>
+<br>
+
+### Exploratory Figures
+
+### 2. a. Time Series Trends
+```{r 2. a. Time Series Trends, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+df         <- fig$global_average_co3_r1i1p1_rcp85$plots$time_series$data
+start_year <- min(df$year)
+end_year   <- max(df$year)
+
+fig$global_average_co3_r1i1p1_rcp85$plots$time_series +
+  labs(title =paste0("CO3 Trend \nTime Starts at ",start_year, "\nEnds at ", end_year)) -> p1
+
+fig$global_average_co3_r1i1p1_historical$plots$time_series +
+  labs(title =paste0("CO3 Trend \nTime Starts at ",start_year, "\nEnds at ", end_year)) -> p2
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 2. b. Mean Monthly CO3 by Model
+```{r 2. b. Mean Monthly, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+fig$global_average_co3_r1i1p1_rcp85$plots$mean_monthly + 
+  labs(title =paste0("")) -> p1
+
+fig$global_average_co3_r1i1p1_historical$plots$mean_monthly +
+  labs(title = paste0("")) -> p2
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 2. c. Mean Monthly 
+```{r 2. c. Mean Monthly, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+fig$global_average_co3_r1i1p1_rcp85$plots$boxplot$monthly + 
+  labs(title ="") -> p1
+
+fig$global_average_co3_r1i1p1_historical$plots$boxplot$monthly +
+  labs(title = "") -> p2
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+## CESM CO3 figs
+
+### 2. d. CESM CO3 time series
+```{r 2. d. CESM pH time series, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_co3_r1i1p1_historical$plots$time_series -> p1 
+CESM_figs$global_average_co3_r1i1p1_rcp85$plots$time_series -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 2. e. CESM CO3 monthly time series
+```{r 2. e. CESM pH monthly time series, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_co3_r1i1p1_historical$plots$mean_monthly -> p1 
+CESM_figs$global_average_co3_r1i1p1_rcp85$plots$mean_monthly -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 2. f. CESM CO3 boxplot
+```{r 2. f. CESM pH boxplot, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_co3_r1i1p1_historical$plots$boxplot$monthly -> p1 
+CESM_figs$global_average_co3_r1i1p1_rcp85$plots$boxplot$monthly -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+
+<br>
+<br>
+
+# 3. tos
+***
+
+### Files Processed
+****
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+source(paste0(DO_DIR,"/L1/visualize/tos_fldmean_output_info.R"))
+```
+
+#### Monthly tos netcdfs
+Number of files with depth information.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$depth
+```
+
+Number summary of the CMIP5 files found on pic vs. the netcdfs processed by the cdo commands.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$table_counts
+```
+<br>
+
+
+Summary of the CMIP5 files processed by the cdo commands.
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$files_processed$ex_en_table
+```
+<br>
+
+Unprocessed CMIP5 files 
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+out$unprocessed_files
+```
+<br>
+<br>
+
+### Exploratory Figures
+
+### 3. a. Time Series Trends
+```{r 3. a. Time Series Trends, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+df         <- fig$global_average_tos_r1i1p1_rcp85$plots$time_series$data
+start_year <- min(df$year)
+end_year   <- max(df$year)
+
+fig$global_average_tos_r1i1p1_rcp85$plots$time_series +
+  labs(title = paste0("tos Trend \nTime Starts at ",start_year, "\nEnds at ", end_year)) -> p1
+
+fig$global_average_tos_r1i1p1_historical$plots$time_series +
+  labs(title =paste0("tos Trend \nTime Starts at ",start_year, "\nEnds at ", end_year)) -> p2
+
+p1; 
+p2; 
+```
+
+### 3. b. Mean Monthly tos by Model
+```{r 3. b. Mean Monthly, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+fig$global_average_tos_r1i1p1_rcp85$plots$mean_monthly + 
+  labs(title = paste0("")) -> p1
+
+fig$global_average_tos_r1i1p1_historical$plots$mean_monthly +
+  labs(title = paste0("")) -> p2
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 3. c. Mean Monthly 
+```{r 3. c. Mean Monthly, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+fig$global_average_tos_r1i1p1_rcp85$plots$boxplot$monthly + 
+  labs(title ="") -> p1
+
+fig$global_average_tos_r1i1p1_historical$plots$boxplot$monthly +
+  labs(title = "") -> p2
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+## CESM tos figs
+
+### 3. d. CESM tos time series
+```{r 3. d. CESM pH time series, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_tos_r1i1p1_historical$plots$time_series -> p1 
+CESM_figs$global_average_tos_r1i1p1_rcp85$plots$time_series -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 3. e. CESM tos monthly time series
+```{r 3. e. CESM pH monthly time series, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_tos_r1i1p1_historical$plots$mean_monthly -> p1 
+CESM_figs$global_average_tos_r1i1p1_rcp85$plots$mean_monthly -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### 3. f. CESM tos boxplot
+```{r 3. f. CESM pH boxplot, echo = FALSE, message = FALSE, warning = FALSE, fig.width=10}
+CESM_figs$global_average_tos_r1i1p1_historical$plots$boxplot$monthly -> p1 
+CESM_figs$global_average_tos_r1i1p1_rcp85$plots$boxplot$monthly -> p2 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+
+The End
