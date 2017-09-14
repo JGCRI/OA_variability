@@ -60,3 +60,8 @@ Temporary Items
 *.html
 
 *.html
+
+# =========================
+# Directories to ignore
+# =========================
+building/
