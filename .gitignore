@@ -1,13 +1,10 @@
 oceanpH_0.1.0.tar.gz
 
-^.*\.Rpro\j$
-^\.Rproj\.user\$
-^\.Rproj.user\$
 
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
+**.Rproj.user/
+**.Rhistory/
+**.RData/
+**.Ruserdata/
 
 # Windows image file caches
 Thumbs.db
