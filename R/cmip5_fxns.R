@@ -157,7 +157,7 @@ cmip.file_info <- function(file_path){
   # Determine how to parse out the cmip 5 information base on
   # domain. aka if the netcdf contains time series or just
   # meta data.
-  meta_data <- unique(grepl("areacella_fx|sftlf_fx", df$filename))
+  meta_data <- unique(grepl("areacella_fx|sftlf_fx|areacello_fx", df$filename))
 
   if(meta_data == TRUE){
     # The data frames do not contain any time information.
