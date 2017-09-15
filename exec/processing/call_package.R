@@ -14,7 +14,7 @@ library(roxygen2)
 library(dplyr)
 
 # Set the working directory to the package directory.
-# PCKG_DIR <- "/pic/projects/GCAM/Dorheim/oceanpH/"
+PCKG_DIR <- "/pic/projects/GCAM/Dorheim/OA_variability"
 setwd(paste0(PCKG_DIR))
 
 # Build and load the package.
