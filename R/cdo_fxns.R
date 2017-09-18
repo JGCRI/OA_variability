@@ -1,16 +1,17 @@
 # ------------------------------------------------------------------------------
 # Purpose: This script contains all of the cdo family of functions that use the
-# cdo in some capatcity, whether it is is to analyze or process the netcdfs.
+# cdo in some capacity, whether it is is to analyze or process the netcdfs.
 # The functions defined in this script include the following: cdo.concatenate()
-# and cdo.processor().
+# cdo.processor(), internal.sellonlat_cdo(), internal.sellonlat(), and
+# cdo.sellonlat()
 #
 # Created by: Dorheim, Kalyn
-# Created on: Augut 10 2017
+# Created on: August 10 2017
 # Modified:   xxx
 #
-# Notes: Sucessful run on pic 8/23/17
+# Notes: Remove the hard coded defaults related to pic?
 # ------------------------------------------------------------------------------
-# 1. cdo.concatenate()
+# 1. cdo.concatenate function
 # ------------------------------------------------------------------------------
 #' Concatenate netcdfs and convert to absolute time
 #'
@@ -27,7 +28,13 @@ cdo.concatenate <- function(df, cdo_path, ofile){
   # Checks
   # ------------
   # Columns names
-  check.column(df = df, df_name = "files to concatenate", required_columns = c("path"))
+  check.column(df = df, df_name = "files to concatenate", required_columns = c("path", "model"))
+
+  # Check to make sure concatenating only one file
+  model <- unique(df$model)
+  if(length( model ) > 1){
+    stop("Problem with cdo.concatenate call -- about concatenate multiple models together")
+  }
 
   # This function depends on CDO (https://code.zmaw.de/projects/cdo) being installed.
   # Check to make sure that it is installed at the location defined as the parameter.
@@ -41,7 +48,7 @@ cdo.concatenate <- function(df, cdo_path, ofile){
 
   # Concatenate all files together into a single large temporary file we have to do this because files may contain
   # partial years, on the command line: cdo -a copy f1 f2 f3... temporary file (Russell's code)
-  message("Concatenating files and converting to absolute time...")
+  message("Concatenating ",  model," files and converting to absolute time.\n")
   system2(cdo_path, args = c("-a", "copy", ncdf_files, ofile), stdout = TRUE, stderr = TRUE)
 
 } # end of cdo.concatenate
@@ -78,7 +85,7 @@ cdo.processor <- function(df, cdo_path = "/share/apps/netcdf/4.3.2/gcc/4.4.7/bin
 
   # CMIP 5 info
   # ------------
-  # Collect the CMIP5 run information ie, modle name, experiment, ensemble ect and
+  # Collect the CMIP5 run information ie, model name, experiment, ensemble ect and
   # store as a data frame.
   m   <- df$model %>%  unique
   en  <- df$ensemble %>% unique
@@ -86,11 +93,11 @@ cdo.processor <- function(df, cdo_path = "/share/apps/netcdf/4.3.2/gcc/4.4.7/bin
   var <- df$variable %>% unique
   cmip_info <- data.frame(model = m, ensemble = en, experiment = ex, variable = var)
 
-  # Because the files read into this function will be concactenated together we want
+  # Because the files read into this function will be concatenated together we want
   # to make sure that it only contains netcdfs for one CMIP5 model/ensemble/experiment.
-  # Check that it is a unqiue combination here.
+  # Check that it is a unique combination here.
   if(dim(cmip_info)[1] > 1){
-    stop("Error in cdo.fldmean, attempting to concatenate mulitple CMIP5 model/ensemble/experiments togethere")
+    stop("Error in cdo.fldmean, attempting to concatenate multiple CMIP5 model/ensemble/experiments together")
   } else if (dim(cmip_info)[1] < 1){
     stop("Error in cdo.fldmean, could not identify any CMIP5 netdfs to concatenate")
   }
@@ -152,6 +159,228 @@ cdo.processor <- function(df, cdo_path = "/share/apps/netcdf/4.3.2/gcc/4.4.7/bin
 
 } # cdo.processor
 
+# ------------------------------------------------------------------------------
+# 3. internal.sellonlat_cdo function
+# ------------------------------------------------------------------------------
+#' Applies a cdo operator to a defined geographical region
+#'
+#' \code{internal.sellonlat_cdo} is function that is used internally in the cdo.sellonlat
+#' function.
+#'
+#' @param basin_df a data frame of the geographic boundaries of the defined region
+#' @return a data frame of the processed netcdf data and CMIP5 file information for a single region
+#' @keywords internal
+
+# Successful run on pic 9/18
+
+internal.sellonlat_cdo <- function(basin_df){
+
+  # Save the basin information to be used in the sellonlatbox operator.
+  basin_name  <- basin_df["basin"]
+  west_bound  <- basin_df["lon1"]
+  east_bound  <- basin_df["lon2"]
+  south_bound <- basin_df["lat1"]
+  north_bound <- basin_df["lat2"]
+
+  # Format the basin information for use in the cdo command.
+  lat_arguments <- paste0("-sellonlatbox", ",", west_bound, ",", east_bound, ",", south_bound, ",",north_bound, sep =",")
+
+  # Use the selected cdo command to process the data netcdf using the weights from the area netcdf for a specific
+  # geographic area.
+  system2(internal_cdo_path, args = c(cdo_operator, paste0("-setgridarea,",area_weights), lat_arguments, concatenated, ofile),
+          stdout = TRUE, stderr = TRUE )
+
+  # Extract the processed variable from the output netcdf
+  nc_out  <- ncdf4::nc_open(ofile)
+  var_out <- ncdf4::ncvar_get(nc_out, v)
+  var_uni <- ncdf4::ncvar_get(nc_out, v)["units"]
+  tim_out <- ncdf4::ncvar_get(nc_out, "time")
+
+  # Create and format a data frame for output.
+  cbind(time = tim_out, value = var_out) %>%
+    as.data.frame %>%
+    dplyr::mutate(variable = paste0(v), units = paste0(var_uni), basin = paste0(basin_name), model = paste0(mo),
+                  ensemble = paste0(en), experiment = paste0(ex), method = paste0(cdo_operator))
+
+} # end of the internal.sellonlat_cdo function
+
+# ------------------------------------------------------------------------------
+# 4. internal.sellonlat function
+# ------------------------------------------------------------------------------
+#' Internal function that applies a cdo operator to all of the defined geographical regions
+#'
+#' \code{internal.sellonlat} is function that is used internally in the cdo.sellonlat function
+#'
+#' @param internal_df a data frame created in the cdo.sellonlat function
+#' @return a data frame of the processed netcdf data for a single variable/model in all of the regions
+#' @keywords internal
+
+# Successful run on pic 9/18
+
+internal.sellonlat <- function(internal_df){
+
+  # First prepare the internal.sellonlat_cdo dependencies
+  #
+  # Determine the netcdf to use as the area weights in the cdo commands.
+  area_weights <<- unique(internal_df$area_path)
+
+  # Collect cmip information to add to the output in internal.sellonlat_cdo
+  v   <<- unique(internal_df$variable)
+  mo  <<- unique(internal_df$model)
+  en  <<- unique(internal_df$ensemble)
+  ex  <<- unique(internal_df$experiment)
+
+  # Check the to make sure the internal.sellonlat_cdo requirements are met
+  #
+  # KALYN - might be able to remove these checks after you finalize the the big function
+  #
+  # Check to make sure that it is only one model and that there is only one
+  # file being used to generate the weights.
+  if(length(mo) > 1){
+    stop("Observations from multiple models is being fed into the internal.sellonlat_cdo function")
+  }
+  if(length(area_weights) > 1){
+    stop("Multiple netcdfs identified for use as area weights")
+  }
+
+  # Execute cdo commands
+  #
+  # First concatenate data observations
+  internal_df %>%
+    rename(path = data_path) ->
+    df
+  cdo.concatenate(df, cdo_path = internal_cdo_path, ofile = concatenated)
+
+  # So I know that this does not look like it makes a lot of
+  # sense not v clear but v fast... need to comment to make sure
+  # it is clear what we are doing here...
+  message("Processing ", mo, " by basin.\n")
+  bind_rows(apply(defined_basins, 1, internal.sellonlat_cdo))
+
+}
+
+# ------------------------------------------------------------------------------
+# 5. cdo.sellonlat function
+# ------------------------------------------------------------------------------
+#' The R functional form of the cdo operator sellonlat
+#'
+#' \code{cdo.sellonlat} is function that applies a cdo operator over a defined
+#' geographical regions.
+#'
+#' @param area_input a data frame containing cmip info and the path to the cell area netcdfs
+#' @param data_input a data frame containing cmip info and the path to the data netcdfs
+#' @param defined_basins a data frame containing the lat/lon boundaries of an ocean basin
+#' @param intermediate_output default set to BASE_NAME, it is the defined location where to save any intermediate output
+#' @param cdo_path the path to the cdo to use
+#' @param temp_dir the path to the location where to save the intermediate netcdfs from the cdo
+#' @return a data frame of the all the processed netcdf data in all of the regions
+#' @keywords internal
+
+# Successful run on pic 9/18
+
+cdo.sellonlat <- function(area_input, data_input, defined_basins, cdo_operator = "fldmean", intermediate_output = BASE_NAME, cdo_path = "/share/apps/netcdf/4.3.2/gcc/4.4.7/bin/cdo", temp_dir = "/pic/scratch/dorh012/"){
+
+  # Define global variables used by the internal functions.
+  internal_cdo_path <<- cdo_path
+  cdo_operator      <<- cdo_operator
+
+
+  # Checks
+  #
+  # Columns names
+  req_cols <- c("path", "model", "experiment", "ensemble")
+  check.column(df = area_input, df_name = "area input data frame", required_columns = req_cols)
+  check.column(df = data_input, df_name = "data input data frame", required_columns = req_cols)
+
+  # This function depends on CDO (https://code.zmaw.de/projects/cdo) being installed.
+  # Check to make sure that it is installed at the location defined as the parameter.
+  #
+  stopifnot(file.exists(paste0(internal_cdo_path)))
+
+  # Check to make sure that the cdo operator chosen exists if not, then fatal
+  # error will occur
+  #
+  operator_test <- system2(internal_cdo_path , args = c("-h ", cdo_operator))
+  if(tryCatch(operator_test == 1)){
+    stop("cdo_operator was not executable by cdo.")
+  }
+
+  # Check the intermediate directories.
+  #
+  if(tryCatch(file.exists(paste0(intermediate_output))) == FALSE){
+    intermediate_output <- getwd()
+    message(paste0("intermediate_output files saved at ", intermediate_output))
+  }
+
+  if(!file.exists(paste0(temp_dir))){
+    stop("temp_dir, location for saving intermediate netcdfs does not exists.")
+  }
+
+
+  # Modify Input Data Frames
+  #
+  # Select only the required information from the input data frames and rename the path
+  # columns to prepare to match area, data, and fraction paths together by model. In the
+  # following steps this match will be used to generate the weights for the defined cdo
+  # command.
+
+  area_df <- dplyr::select(area_input, area_path = path, model)
+  data_df <- dplyr::select(data_input, data_path = path, model, variable, ensemble, experiment)
+
+
+  # Match Data Frames
+  #
+  # Match the area and data input files by model name so that the correct
+  # area netcdf if used as the area weights.
+  data_df %>%
+    dplyr::left_join(area_df, by = "model") ->
+    matched_paths
+
+  # Determine which of the data files are missing either area or fraction input
+  # save for output
+  matched_paths %>%
+    filter(is.na(data_path), is.na(area_path)) ->
+    missing_netcdfs
+
+  if(nrow(missing_netcdfs) < 1){
+    missing_netcdfs <- "None identified."
+  }
+
+  # Save the missing netcdfs
+  write.csv(missing_netcdfs, paste0(intermediate_output,"missing_netcdfs.csv"), row.names = FALSE)
+
+  # Select the data netcdf files to process that contain all the data file
+  # and also the files needed to generate weights.
+  matched_paths %>%
+    na.omit ->
+    to_process
+
+  # Save the cmip file files to be processed
+  write.csv(to_process, paste0(intermediate_output,"tobeprocessed.csv"), row.names = FALSE)
+
+
+  # Make ncdfs to store intermediate outputs in
+  #
+  # After we passed the tests & checks and also the formating steps now make the
+  # intermediate netcdf files. Define as a global variable inside the function
+  concatenated <<- paste0(temp_dir,"temp1")
+  ofile        <<- paste0(temp_dir,"temp2")
+
+
+  # Use the internal functions to execute the sellonlat cdo operator.
+  to_process %>%
+    group_by(ensemble, experiment, model, variable) %>%
+    do(out = internal.sellonlat(.)) ->
+    output_list
+
+  # Return
+  return(bind_rows(output_list$out))
+
+  # Clean Up
+  file.remove(ofile)
+  file.remove(concatenated)
+
+}
 
 # ----
 # End
