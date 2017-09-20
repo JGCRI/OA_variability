@@ -283,7 +283,7 @@ cdo.sellonlat <- function(area_input, data_input, defined_basins, cdo_operator =
   # Define global variables used by the internal functions.
   internal_cdo_path <<- cdo_path
   cdo_operator      <<- cdo_operator
-
+  defined_basins    <<- defined_basins
 
   # Checks
   #

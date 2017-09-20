@@ -72,6 +72,9 @@ cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin",
 # Concatenate the dataframe containing data netcdf information.
 data_df <- bind_rows(ph_df,  nonph_df)
 
+# Get the area data frames 
+area_df <- cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin", variable = "areacello", domain = "fx") %>% cmip.file_info
+
 # ------------------------------------------------------------------------------
 # 4. Execute CDO
 # ------------------------------------------------------------------------------
