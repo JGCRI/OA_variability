@@ -176,19 +176,42 @@ cdo.processor <- function(df, cdo_path = "/share/apps/netcdf/4.3.2/gcc/4.4.7/bin
 internal.sellonlat_cdo <- function(basin_df){
 
   # Save the basin information to be used in the sellonlatbox operator.
-  basin_name  <- basin_df["basin"]
-  west_bound  <- basin_df["lon1"]
-  east_bound  <- basin_df["lon2"]
-  south_bound <- basin_df["lat1"]
-  north_bound <- basin_df["lat2"]
+  basin_name  <- basin_df["basin"]; message(basin_name)
+  south_bound <- as.numeric(basin_df["lat1"])
+  north_bound <- as.numeric(basin_df["lat2"])
+
+  # Determine if you need convert the lon coordinates aka
+  # is goes from 0 to 360 instead of -180 to 180
+  ncdf4::nc_open(area_weights) %>%
+    ncdf4::ncvar_get(., "lon") %>%
+    max ->
+    lon_max
+
+  # If the maximum longitude of the system is greater than 180 then
+  # convert the negative lon coordinates.
+  if(lon_max > 180){
+    new_lon1 <- ifelse(as.numeric(basin_df["lon1"]) < 1, 180 + (360 + as.numeric(basin_df["lon1"])), as.numeric(basin_df["lon1"]))
+    new_lon2 <- ifelse(as.numeric(basin_df["lon2"]) < 1, 180 + (360 + as.numeric(basin_df["lon2"])), as.numeric(basin_df["lon2"]))
+    new_lon  <- c(new_lon1, new_lon2)
+
+    west_bound <- min(new_lon)
+    east_bound <- max(new_lon)
+
+  } else {
+    west_bound  <- as.numeric(basin_df["lon1"])
+    east_bound  <- as.numeric(basin_df["lon2"])
+  }
+
 
   # Format the basin information for use in the cdo command.
-  lat_arguments <- paste0("-sellonlatbox", ",", west_bound, ",", east_bound, ",", south_bound, ",",north_bound, sep =",")
+  lat_arguments <- paste0("sellonlatbox,",west_bound,",",east_bound,",",south_bound,",",north_bound)
+
+  # Select basin area weights
+  system2(internal_cdo_path, args = c(lat_arguments, area_weights, basin_weights), stdout = TRUE, stderr = TRUE )
 
   # Use the selected cdo command to process the data netcdf using the weights from the area netcdf for a specific
   # geographic area.
-  system2(internal_cdo_path, args = c(cdo_operator, paste0("-setgridarea,",area_weights), lat_arguments, concatenated, ofile),
-          stdout = TRUE, stderr = TRUE )
+  system2(internal_cdo_path, args = c(cdo_operator, paste0("-setgridarea,",basin_weights), paste0("-",lat_arguments), concatenated, ofile), stdout = TRUE, stderr = TRUE )
 
   # Extract the processed variable from the output netcdf
   nc_out  <- ncdf4::nc_open(ofile)
@@ -274,7 +297,6 @@ internal.sellonlat <- function(internal_df){
 #' @param cdo_path the path to the cdo to use
 #' @param temp_dir the path to the location where to save the intermediate netcdfs from the cdo
 #' @return a data frame of the all the processed netcdf data in all of the regions
-#' @keywords internal
 
 # Successful run on pic 9/18
 
@@ -339,11 +361,11 @@ cdo.sellonlat <- function(area_input, data_input, defined_basins, cdo_operator =
   # Determine which of the data files are missing either area or fraction input
   # save for output
   matched_paths %>%
-    filter(is.na(data_path), is.na(area_path)) ->
+    filter(is.na(data_path) | is.na(area_path)) ->
     missing_netcdfs
 
-  if(nrow(missing_netcdfs) < 1){
-    missing_netcdfs <- "None identified."
+  if(nrow(missing_netcdfs) == 0){
+ #   missing_netcdfs <- "None identified."
   }
 
   # Save the missing netcdfs
@@ -352,7 +374,7 @@ cdo.sellonlat <- function(area_input, data_input, defined_basins, cdo_operator =
   # Select the data netcdf files to process that contain all the data file
   # and also the files needed to generate weights.
   matched_paths %>%
-    na.omit ->
+    filter(!is.na(data_path), !is.na(area_path)) ->
     to_process
 
   # Save the cmip file files to be processed
@@ -363,8 +385,9 @@ cdo.sellonlat <- function(area_input, data_input, defined_basins, cdo_operator =
   #
   # After we passed the tests & checks and also the formating steps now make the
   # intermediate netcdf files. Define as a global variable inside the function
-  concatenated <<- paste0(temp_dir,"temp1")
-  ofile        <<- paste0(temp_dir,"temp2")
+  concatenated  <<- paste0(temp_dir,"temp1")
+  ofile         <<- paste0(temp_dir,"temp2")
+  basin_weights <<- paste0(temp_dir, "temp3")
 
 
   # Use the internal functions to execute the sellonlat cdo operator.

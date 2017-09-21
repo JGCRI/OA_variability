@@ -24,7 +24,7 @@ results.csv <- "L1_basin_mean_all.csv"
 script_name <- "L1_basin_mean_all.R"
 
 # Define the output directory.
-OUTPUT_DIR <- paste0(BASE_NAME, "/exec/output/L1/")
+OUTPUT_DIR <- paste0(BASE_NAME, "/exec/processing/L1/output/")
 
 # ------------------------------------------------------------------------------
 # 1. Environment Set Up
@@ -40,8 +40,8 @@ basins <- read.csv2(paste0(BASE_NAME,"/exec/processing/L0/defined_basins.csv"), 
 # ------------------------------------------------------------------------------
 # Find all of the cell area for the oceans. These netcdfs will be used as area
 # weights in the cdo that calculates the basin statistics.
-cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin/oceanfrac", variable = "areacello", domain = "fx") %>%
-  # Get the cmip 5 file informaiton.
+# Get the area data frames
+cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin", variable = "areacello", domain = "fx") %>%
   cmip.file_info ->
   area_df
 
@@ -72,13 +72,10 @@ cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin",
 # Concatenate the dataframe containing data netcdf information.
 data_df <- bind_rows(ph_df,  nonph_df)
 
-# Get the area data frames 
-area_df <- cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin", variable = "areacello", domain = "fx") %>% cmip.file_info
-
 # ------------------------------------------------------------------------------
 # 4. Execute CDO
 # ------------------------------------------------------------------------------
-output <- cdo.sellonlat(cdo_operator = "-fldmean", area_input = area_df,
+output <- cdo.sellonlat(cdo_operator = "fldmean", area_input = area_df,
                         data_input = data_df, defined_basins = basins, intermediate_output = OUTPUT_DIR)
 
 # Separate time into year and month.

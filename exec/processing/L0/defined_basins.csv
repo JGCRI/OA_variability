@@ -5,5 +5,6 @@ southernH,-90,0,-180,180
 northernH,0,90,-180,180
 indian,-60,30,20,146
 atlantic,-60,55,-68,20
-pacific,-60,55,146,-68
+pacific1,-60,55,146,180
+pacfic2,-60,55,-68,-180
 southern,-90,-55,-180,180
