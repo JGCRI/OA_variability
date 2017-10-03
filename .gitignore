@@ -1,45 +1,33 @@
 oceanpH_0.1.0.tar.gz
-
-
 **.Rproj.user/
 **.Rhistory/
 **.RData/
 **.Ruserdata/
 *.Rhistory
-
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
-
 # Folder config file
 Desktop.ini
-
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
-
 # Windows Installer files
 *.cab
 *.msi
 *.msm
 *.msp
-
 # Windows shortcuts
 *.lnk
-
 # =========================
 # Operating System Files
 # =========================
-
 # OSX
 # =========================
-
 .DS_Store
 .AppleDouble
 .LSOverride
-
 # Thumbnails
 ._*
-
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
@@ -47,7 +35,6 @@ $RECYCLE.BIN/
 .TemporaryItems
 .Trashes
 .VolumeIcon.icns
-
 # Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
@@ -55,25 +42,19 @@ Network Trash Folder
 Temporary Items
 .apdisk
 .Rproj.user
-
 # =========================
 # Data Files
 # =========================
 *.csv
 !defined_regions.csv
 !models_to_remove.csv
-
 # =========================
 # HTML Files Created By Rmd
 # =========================
 *.html
-
 *.html
-
 # =========================
 # Directories to ignore
 # =========================
 building/
-
-
-
+.RData
