@@ -21,7 +21,7 @@ OUTPUT_DIR <- paste0(BASE_NAME, "/inst/extdata/raw-data/")
 source(paste0(BASE_NAME,"/exec/processing/call_package.R"))
 
 # Import the defined basins
-basins <- read.csv2(paste0(BASE_NAME,"inst/extdata/assumptions/defined_basins.csv"), sep = ",")
+basins <- read.csv2(paste0(BASE_NAME,"/inst/extdata/assumptions/defined_basins.csv"), sep = ",")
 
 # ------------------------------------------------------------------------------
 # spco2
