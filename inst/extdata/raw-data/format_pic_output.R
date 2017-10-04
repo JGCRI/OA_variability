@@ -72,10 +72,11 @@ data$basin <- factor(data$basin, levels = defined_basins$basin, ordered = TRUE)
 # ------------------------------------------------------------------------------
 # Save as RData object.
 # ------------------------------------------------------------------------------
+path <- system.file("data", package = "oceanpH", mustWork = TRUE)
 
 out = list(data = data, defined_bains = defined_basins)
 
-save(out, file = "data/basin-mean.RData")
+save(out, file = paste0(path, "/basin-mean.RData"))
 
 # ----
 # End
