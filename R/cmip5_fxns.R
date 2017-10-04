@@ -10,7 +10,7 @@
 #
 # Notes: Sucessful run on pic 8/23/17
 # ------------------------------------------------------------------------------
-# 1. cmip.find_me()
+# cmip.find_me()
 # ------------------------------------------------------------------------------
 #' Find CMIP5 netcdfs of interest
 #'
@@ -29,6 +29,7 @@
 #' @param time default is set to search for numeric dates, may specify as a single or multiple search requirement(s)
 #' @importFrom dplyr %>%
 #' @return a list of paths for CMIP5 netcdf files
+#' @keywords pic
 
 # Example - will work on pic
 # find_me(path = "/pic/projects/GCAM/CMIP5-CLynch/PH_extra", variable = "ph", domain = "Omon", experiment = "rcp85", ensemble = "r1i1p1" )
@@ -78,7 +79,7 @@ cmip.find_me <- function(path, variable = "[a-zA-Z0-9-]+", domain = "[a-zA-Z0-9-
 
 # Check for depth function
 # ------------------------------------------------------------------------------
-# 2. cmip.check_depth()
+# cmip.check_depth()
 # ------------------------------------------------------------------------------
 #' Check to see if the CMIP5 netcdf file has information about the depth or not.
 #'
@@ -88,6 +89,7 @@ cmip.find_me <- function(path, variable = "[a-zA-Z0-9-]+", domain = "[a-zA-Z0-9-
 #' @param ncdf_paths the path to a single or vector of paths to cmip5 files
 #' @importFrom dplyr %>%
 #' @return a data frame containing the netcdf file path and the Y/N indicator of depth existence
+#' @keywords pic
 
 # Example - list_ncdf %>% check_dpeth -> out (nice data frame format and v. quick)
 
@@ -132,7 +134,7 @@ cmip.check_depth <- function(ncdf_paths){
 
 
 # ------------------------------------------------------------------------------
-# 3. cmip.file_info()
+# cmip.file_info()
 # ------------------------------------------------------------------------------
 #' Parse out cmip file information from the cmip netcdf file name
 #'
@@ -143,7 +145,7 @@ cmip.check_depth <- function(ncdf_paths){
 #' @param file_path a vector containing the path to cmip5 files to process
 #' @importFrom dplyr %>%
 #' @return a data frame file name and relevant cmip5 file information
-#' @keywords internal
+#' @keywords pic
 
 cmip.file_info <- function(file_path){
 
@@ -179,5 +181,41 @@ cmip.file_info <- function(file_path){
   } # end of the if meta data
 } # end of cmip_file_info
 
-# ---
+
+
+# ------------------------------------------------------------------------------
+# cmip.meta()
+# ------------------------------------------------------------------------------
+#' Save the meta information for a sinlge cmip observation
+#'
+#' \code{cmip.meta} for a data frame of cmip observations for a single model,
+#' ensemble, experiment, variable, and basin save the meta information in a
+#' data frame
+#'
+#' @param df the data frame to parse the meta information from
+#' @importFrom dplyr %>%
+#' @return a data frame with all of the meta information
+#' @keywords internal
+
+cmip.meta <- function(df){
+
+  # First check for the required columns
+  columns <- c("model", "ensemble", "units", "experiment", "variable")
+  check.column(df, "input for cmip.meta function", required_columns = columns)
+
+  # Ungroup the df to prevent grouping varibales to be added to the data frame.
+  df <- dplyr::ungroup(df)
+
+  # Define which columns to drop and which ones to save.
+  drop_these <- c("year", "month", "time", "value", "month_name")
+  save    <- names(df)[which(!names(df) %in% drop_these)]
+
+  # Extract the desired columns to actually save and the distinct rows.
+  cmip_df <- dplyr::distinct(df[names(df)%in% save])
+
+  # Return the cmip df
+  return(cmip_df)
+
+} # end of the cmip.meta function
+# ----
 # End
