@@ -30,7 +30,8 @@ basins <- read.csv2(paste0(BASE_NAME,"/inst/extdata/assumptions/defined_basins.c
 cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin",
              variable = "co3", domain = "Omon", experiment = c("rcp85", "historical"), ensemble = "r1i1p1") %>%
   cmip.file_info %>%
-  mutate(variable = "co3") ->
+  mutate(variable = "co3") %>%
+  filter(!grepl("GFDL", model)) ->
   co3_df
 
 output <- cdo.sellonlat(cdo_operator = "fldmean",
