@@ -12,9 +12,8 @@
 
 # The L1 folder contains scripts that process the cmip5 cdos. Most of 
 # these were written for pic but can be used wherever a cdo and 
-# cmip5 netcdfs are available. 
+# cmip5 netcdfs are available. If you would like to run them on pic 
+# you will need to submit a batch query. 
 
-# This folder also contains a visualized folder this folder is contains scripts 
-# that can be used in the lab note book to examine results from L1 (the cdo 
-# processing output). These scripts only look at output they DO NOT manipulate 
-# the data in any way. 
+# Script output must be processed before use in the oceanpH package. You can 
+# do this on your local using the scripts in the inst/extdata/raw-data directory.
