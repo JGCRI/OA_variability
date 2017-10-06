@@ -5,7 +5,9 @@
 # Ignore for now
 ^.*results/
 ^.*building/
+^.*raw-data/
 
 # Ignore the html file from the lab notebook
 ^.*\.html$
 labnotebook.Rmd
+
