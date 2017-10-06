@@ -15,7 +15,7 @@
 BASE_NAME <- "/pic/projects/GCAM/Dorheim/OA_variability"
 
 # Define the output directory.
-OUTPUT_DIR <- paste0(BASE_NAME, "/inst/extdata/raw-data/")
+OUTPUT_DIR <- paste0(BASE_NAME, "/raw-data/")
 
 # Call the pacakge
 source(paste0(BASE_NAME,"/exec/processing/call_package.R"))
@@ -36,6 +36,9 @@ cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin",
 
 output <- cdo.sellonlat(cdo_operator = "fldmean",
                         data_input = co3_df, defined_basins = basins, intermediate_output = OUTPUT_DIR)
+
+save(output, file = paste0(OUTPUT_DIR, "L1_CO3_basin_mean.RData"))
+
 
 # Separate time into year and month.
 output %>%

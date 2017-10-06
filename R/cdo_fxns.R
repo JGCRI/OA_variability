@@ -289,7 +289,8 @@ internal.sellonlat <- function(internal_df){
 
 # Successful run on pic 9/18
 
-cdo.sellonlat <- function(data_input, defined_basins, cdo_operator = "fldmean", intermediate_output = BASE_NAME, cdo_path = "/share/apps/netcdf/4.3.2/gcc/4.4.7/bin/cdo", temp_dir = "/pic/scratch/dorh012/"){
+cdo.sellonlat <- function(data_input, defined_basins, cdo_operator = "fldmean", intermediate_output = BASE_NAME,
+                          cdo_path = "/share/apps/netcdf/4.3.2/gcc/4.4.7/bin/cdo", temp_dir = "/pic/scratch/dorh012/"){
 
   # Define global variables used by the internal functions.
   internal_cdo_path <<- cdo_path
