@@ -6,6 +6,8 @@
 ^.*results/
 ^.*building/
 ^.*raw-data/
+^.*exec/
+^.*outputs/
 
 # Ignore the html file from the lab notebook
 ^.*\.html$
