@@ -2,7 +2,7 @@
 # Purpose: This script contains the vis family of functions. All of these
 # functions are related to plotting/graphing cmip5 data in some way. This script
 # contains the following functions: vis.is_outlier(), vis.exploratory(),
-# vis.compare_id(), vis.add_fig_name() & vis.time_series
+# vis.compare_id(), vis.add_fig_name() & vis.time_series() & plot.time_series()
 #
 # Created by: Dorheim, Kalyn
 # Created on: August 24 2017
@@ -10,7 +10,7 @@
 #
 # Notes: vis.time_series need a better way to lable the time axis.
 # ------------------------------------------------------------------------------
-# 1. vis.is_outlier()
+# vis.is_outlier()
 # ------------------------------------------------------------------------------
 #' Identify outliers
 #'
@@ -28,7 +28,7 @@ vis.is_outlier <- function(x){
 
 
 # ------------------------------------------------------------------------------
-# 2. vis.exploratory()
+# vis.exploratory()
 # ------------------------------------------------------------------------------
 #' Make exploratory graphs
 #'
@@ -48,7 +48,7 @@ vis.exploratory <- function(input_df){
   # -------
   # Check the data frame for the required columns
   req_cols <- c("time", "units", "value", "model",  "experiment", "variable",
-                "ensemble", "month", "year", "method_used")
+                "ensemble", "month", "year", "method")
   check.column(input_df, "to_plot", req_cols)
 
   df <- input_df
@@ -65,7 +65,7 @@ vis.exploratory <- function(input_df){
     en     <- unique(df$ensemble)
     var    <- unique(df$variable)
     units  <- unique(df$units)
-    method <- unique(df$method_used)
+    method <- unique(df$method)
 
 
     # Set Up
@@ -245,7 +245,7 @@ vis.exploratory <- function(input_df){
   # Apply the internal graphing function to the data frame by method,
   # variable, ensemble, and experiment.
   df %>%
-    group_by(method_used, variable, ensemble, experiment) %>%
+    group_by(method, variable, ensemble, experiment) %>%
     do(fig = internal.func(.)) ->
     out_list
 
@@ -253,7 +253,7 @@ vis.exploratory <- function(input_df){
   # Format Output
   # ---------------
   # Generate the names from the output
-  names_df <- tidyr::unite(data = out_list, name, method_used, variable, ensemble, experiment, sep = "_")
+  names_df <- tidyr::unite(data = out_list, name, method, variable, ensemble, experiment, sep = "_")
   names <- names_df$name
 
   # Create the empty list to return
@@ -277,7 +277,7 @@ vis.exploratory <- function(input_df){
 
 
 # -------------------------------------------------------------------------------------------
-# 3. vis.compare_id()
+# vis.compare_id()
 # -------------------------------------------------------------------------------------------
 #' Compare differnt data frames by the "id" variable
 #'
@@ -346,7 +346,7 @@ vis.compare_id <- function(df){
 } #end of vis.compare_id
 
 # -------------------------------------------------------------------------------------------
-# 4. vis.add_fig_name()
+# vis.add_fig_name()
 # -------------------------------------------------------------------------------------------
 #' Add names to figures stored in a list
 #'
@@ -361,12 +361,13 @@ vis.add_fig_name <- function(fig_list){
 
 } # end of vis.add_fig_name
 
+
 # -------------------------------------------------------------------------------------------
-# 5. vis.time_series
+# internal.time_series
 # -------------------------------------------------------------------------------------------
 #' Make a figure of a concatenated time series
 #'
-#' \code{vis.time_series} This function adds names to figures that are stored in a list
+#' \code{internal.time_series} This function adds names to figures that are stored in a list
 #'
 #' @param df aa data frame with information to plot
 #' @return A figure of a timeseries
@@ -374,13 +375,13 @@ vis.add_fig_name <- function(fig_list){
 
 # To do i need to figure out a better way to label the x axis
 
-vis.time_series <- function(input_df){
+internal.time_series <- function(input_df){
 
   # Checks
   #
   # Check the data frame for the required columns
   req_cols <- c("time", "units", "value", "model",  "experiment", "variable",
-                "ensemble", "month", "year", "method_used")
+                "ensemble", "month", "year", "method", "basin")
   check.column(input_df, "to_plot", req_cols)
 
   df <- input_df
@@ -398,7 +399,8 @@ vis.time_series <- function(input_df){
   var     <- unique(df$variable)
   units   <- unique(df$units)
   en      <- unique(df$ensemble)
-  method  <- unique(df$method_used)
+  method  <- unique(df$method)
+  bas     <- unique(df$basin)
 
   # 1. Time Series
   #
@@ -409,14 +411,59 @@ vis.time_series <- function(input_df){
     ggplot(aes(x = time, y = value, group = model, color = model)) +
     geom_line(size = 1.2) +
     my_settings +
-  #  scale_x_discrete(breaks = df$year[seq(1, length(df$year), 20)], labels = substr(df$year, 1, 4)[seq(1, length(df$year), 20)]) +
-    labs(y = paste0(var," ", units), title = "Time Series", caption = paste0(en,"\n",method)) ->
-    out_list[["time_series"]]
+    labs(y = paste0(var," ", units), title = paste0(bas,"\nTime Series"), caption = paste0(en,"\n",method)) ->
+    out_list
 
   return(out_list)
 
 
 } # end of the vis.time_series
 
-# ----
+
+# ------------------------------------------------------------------------------
+# plot.time_series
+# ------------------------------------------------------------------------------
+#' Genreate time series plots for the fld weighted means directly from pic
+#'
+#' \code{plot.time_series} for the internal basin mean dat aobject
+#'
+#' @param write_pdf a logical statement to write output as a pdf or not
+#' @param data the data plot to use to make the figures
+#' @param write_pdf a logical statement for writing the pdf or not
+#' @param file_name is the name of the file created
+#' @import dplyr
+#' @import ggplot2
+#' @import tidyr
+#' @return a data frame with all of the meta information
+#' @keywords internal
+
+plot.time_series <- function(data, write_pdf = FALSE, file_name){
+
+  # Make the experiment concatenated time series plot
+  data %>%
+    dplyr::group_by(variable, basin) %>%
+    dplyr::do(fig = internal.time_series(.)) %>%
+    dplyr::arrange(basin, variable) %>%
+    tidyr::unite(name, basin, variable, remove = FALSE) %>%
+    dplyr::mutate(fig = setNames(nm = name, fig)) %>%
+    dplyr::select(-name) ->
+    time_series
+
+  if(write_pdf) {
+
+    path <- system.file("outputs", package = "oceanpH")
+    pdf(paste0(path, "/", file_name, ".pdf"), onefile = TRUE)
+
+    invisible(lapply(time_series$fig, print))
+
+    dev.off()
+
+    message("Writing ", paste0(path,"/",file_name,".pdf"))
+  } # end of the write pdf if statement
+
+  return(time_series)
+}
+
+
+
 # End
