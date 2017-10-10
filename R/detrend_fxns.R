@@ -8,11 +8,11 @@
 #
 # Notes: Started with linear de-trending but will need to add polynomial methods...
 # ------------------------------------------------------------------------------
-# internal.detrend
+# internal.detrend_linear
 # ------------------------------------------------------------------------------
 #' For a single input detrend a time series based on the slope
 #'
-#' \code{internal.detrend} for a single model observation detrend the time series
+#' \code{internal.detrend_linear} for a single model observation detrend the time series
 #' by the mean from a linear fit.
 #'
 #' @param df data frame to detrend
@@ -59,7 +59,7 @@ detrend.linear <- function(df){
   # Detrend the data
   df %>%
     group_by(ensemble, experiment, model, variable, basin) %>%
-    do(value = internal.detrend(., return_type = "data")) %>%
+    do(value = internal.detrend_linear(., return_type = "data")) %>%
     tidyr::unnest() ->
     data
 

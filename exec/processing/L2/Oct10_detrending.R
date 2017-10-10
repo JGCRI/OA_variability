@@ -8,8 +8,6 @@
 #
 # This sciprt will is not intedned for being reused...
 # ------------------------------------------------------------------------------
-
-
 getwd()
 # It should be the location of the package on the dev branch
 
