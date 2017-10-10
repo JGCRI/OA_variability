@@ -13,4 +13,5 @@ inmcm4,missing co3 &/or ph data
 MIROC-ESM,missing co3 &/or ph data
 NorESM1-M,missing co3 &/or ph data
 NorESM1-ME,bad ph (less than 6)
-IPSL-CM5A-MR,bad ph (inconsistent between experiments)
+BNU-ESM,only spco2
+IPSL-CM5B-LR,dicontinuous ph
