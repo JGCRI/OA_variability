@@ -59,3 +59,6 @@ Temporary Items
 # =========================
 building/
 .RData
+# Ignore the data folder for right now
+data/
+
