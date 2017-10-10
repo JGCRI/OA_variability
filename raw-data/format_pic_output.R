@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Purpose: The purpose of this script is to convert the output from pic into an
-# RData objects for speed in visualizing and detrending. This script must be
-# soruced from the top level of the pacakge direcotry of the devlopmental branch
+# RData objects for speed in visualizing and de-trending. This script must be
+# sourced from the top level of the package directory of the developmental branch
 # due to the way that devtools::save works.
 #
 # Created by: Dorheim, Kalyn
@@ -19,7 +19,7 @@ library(dplyr); library(tidyr); library(ggplot2)
 # Determine the base name path to search
 path <- paste0(getwd(), "/OA_variability/raw-data/")
 
-# Find all of the csv files within the inst/extdata direcotry
+# Find all of the csv files within the inst/extdata directory
 csv_list <- tibble::tibble(file = list.files(path = path, pattern = ".csv", full.names = TRUE, recursive = FALSE))
 
 # Select the files to import into R NOTE! this section is subject to change....
@@ -50,7 +50,7 @@ data %>%
 # data frame. The models to be removed were identified in the exploratory analysis.
 path <- paste0(getwd(), "/OA_variability/raw-data/assumptions/")
 
-# Find all of the csv files within the inst/extdata direcotry
+# Find all of the csv files within the inst/extdata directory
 csv_list <- tibble::tibble(file = list.files(path = path, pattern = ".csv", full.names = TRUE, recursive = TRUE))
 
 to_remove_path <- dplyr::filter(csv_list, grepl("models_to_remove", file))
@@ -70,7 +70,7 @@ month_name_df <- data.frame(month = 1:12,
 data <- dplyr::left_join(data, month_name_df, by = "month")
 
 # Add factor level information for the month names, this will plot the month names in
-# the calander order.
+# the calender order.
 data$month_name <- factor(data$month_name, levels = month_name_df$month_name, ordered = TRUE)
 basin_mean <- data
 
@@ -80,7 +80,7 @@ defined_basins <- read.csv(defined_basins_path$file, stringsAsFactors = FALSE)
 
 # Add factor level information for the basins, this will help with the plotting.
 # This statement is set up to order the basins by what ever order they were
-# entered in the defined_basins.csv. Can mannually change the facotr order here
+# entered in the defined_basins.csv. Can manually change the factor order here
 # if so desired.
 data$basin <- factor(data$basin, levels = defined_basins$basin, ordered = TRUE)
 
@@ -88,7 +88,7 @@ data$basin <- factor(data$basin, levels = defined_basins$basin, ordered = TRUE)
 # Save as RData object.
 # ------------------------------------------------------------------------------
 
-devtools::use_data(basin_mean, defined_basins, pkg = "OA_variability", internal = FALSE, overwrite = TRUE)
+devtools::use_data(basin_mean, defined_basins, pkg = "OA_variability", internal = TRUE, overwrite = TRUE)
 
 
 # ----
