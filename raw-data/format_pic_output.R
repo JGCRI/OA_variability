@@ -34,6 +34,16 @@ for(i in 1:length(to_process_df$file)){
 } # end of the import for loop
 
 # ------------------------------------------------------------------------------
+# Convert Units
+# ------------------------------------------------------------------------------
+# Convert temperature data from K to C and assign ph blank units (for graphs).
+data %>%
+  dplyr::mutate(value = ifelse(variable == "tos", value - 273.17, value)) %>%
+  dplyr::mutate(units = ifelse(variable == "tos", "C", units)) %>%
+  dplyr::mutate(units = ifelse(variable == "ph", "", units)) ->
+  data
+
+# ------------------------------------------------------------------------------
 # Remove the unwanted models.
 # ------------------------------------------------------------------------------
 # Import the "to models to remove" from the csv and remove these models from the
