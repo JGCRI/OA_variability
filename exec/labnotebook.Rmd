@@ -7,7 +7,7 @@ output:
     toc: TRUE
     toc_float:
       collapsed: true
-      toc_depth : 3
+      toc_depth : 4
 
    
 ---
@@ -28,13 +28,69 @@ None of the variables in question have depth information.
 
 <br>
 
-```{r, echo = FALSE, message = FALSE, cache.lazy=TRUE}
-library(dplyr)
-BASE_NAME <- "C:/Users/dorh012/Documents/GitHub/OA_variability"
+#### L2
+1. R - detrend the basin means using a 3rd degre polynomial (see GitHub issue # 11 for decision)
 
-test <- get(load(paste0(BASE_NAME, "/data/fake_fig.RData")))
+<br>
 
-test
+
+```{r laod detrending cesm1 figures, echo = FALSE, warning = FALSE}
+path <- "C:/Users/dorh012/Documents/GitHub/OA_variability/data/figs"
+detrending_figs <- get(load(paste0(path, "/detrend_cesm1.rda")))
+```
+
+# CESM1-BGC Detrended data
+****
+
+## By Variable
+
+<br>
+
+### 1. a. Historical pH
+
+```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
+detrending_figs$historical$ph
+```
+
+<br>
+
+### 1. b. RCP 8.5 pH
+
+
+```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
+detrending_figs$rcp85$ph
+```
+
+<br>
+
+### 1. c. Historical spCO2
+
+```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
+detrending_figs$historical$spco2
+```
+
+<br>
+
+### 1. d. RCP 8.5 spCO2
+
+```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
+detrending_figs$rcp85$spco2
+```
+
+<br>
+
+### 1. e. Historical tos
+
+```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
+detrending_figs$historical$tos
+```
+
+<br>
+
+### 1. f. RCP 8.5 tos
+
+```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
+detrending_figs$rcp85$tos
 ```
 
 

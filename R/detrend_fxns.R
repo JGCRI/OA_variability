@@ -6,74 +6,70 @@
 # Created on: October 10 2017
 # Modified:   xxx
 #
-# Notes: Started with linear de-trending but will need to add polynomial methods...
+# Notes: Based off results from teh polynomial_detrending_comparison.R and disussion
+# on 10/11 (slack) we decieded to go with the thrid degree polynomial detrending.
 # ------------------------------------------------------------------------------
-# internal.detrend_linear
+# internal.detrend
 # ------------------------------------------------------------------------------
-#' For a single input detrend a time series based on the slope
+#' 3rd degree polynomial detrending for a single observation
 #'
-#' \code{internal.detrend_linear} for a single model observation detrend the time series
-#' by the mean from a linear fit.
+#' \code{internal.detrend} for a single model observation detrend the time series
+#' by the 3rd degree polynomail
 #'
-#' @param df data frame to detrend
-#' @param return_type return the slope or the data
+#' @param df data frame containing a single cmip observation
 #' @importFrom dplyr %>%
-#' @return a data frame containing the slope or detrended data
-#' @keywords internal
+#' @return a data frame contiaing the raw values and detrended values
+#' @noRd
 
-internal.detrend_linear <- function(df, return_type){
+internal.detrend_poly <- function(df){
 
-  # Find slope using a simple linear regression.
-  fit  <- lm(df$value ~ df$time)
-  pred <- sapply(df$time, FUN = function(time){fit$coefficients[1] + time * fit$coefficients[2]})
-  pred <- as.vector(pred)
+  # Start by checking to make sure you are only detrending for a single model,
+  # basin, experiment, ensemble member.
+  en <- unique(df$ensemble);   mo <- unique(df$model)
+  ex <- unique(df$experiment); ba <- unique(df$basin)
+  va <- unique(df$variable)
 
-  df$value <- df$value - pred
-
-  if(grepl(pattern = "[s|s]lope", x = return_type)){
-    return(pred)
-  } else {
-    return(df)
+  if(length(c(en, mo, ex, ba, va)) > 5){
+    stop("too many cmip observations read into the internal detrend ploy funciton")
   }
 
-} # end of the internal detrend function
+  # The third degree polynomail fit
+  fit  <- lm(df$value ~ poly(df$time, 3))
+  pred <- predict(fit, data.frame(x = df$time))
+
+  # Detrend
+  #
+  # Now detrend the raw value by all of the fits.
+  dplyr::mutate(df, value = value - pred)
+
+} # end of the interal.detrend_poly
 
 # ------------------------------------------------------------------------------
-# detrend.linear
+# detrend
 # ------------------------------------------------------------------------------
-#' Linear regression detrending
+#' 3rd degree polynomail
 #'
-#' \code{detrend} for a single model observation detrend the time series
-#' by the mean from a linear fit.
+#' \code{detrend} Detrend time series data using different the 3rd degree
+#' polynomial
 #'
-#' @param df data frame containing the different observations to detrend.
+#' @param data a data frame containing the time sereis to detrend
 #' @importFrom dplyr %>%
-#' @return a data frame containing a list of all the detrended observations and slopes
+#' @return a data frame contiaing the detrended values
+#' @export
 
-detrend.linear <- function(df){
+detrend <- function(data){
 
-  # Check the columns
-  check.column(df, "df for detrend function", required_columns = c("value", "model", "experiment", "ensemble", "basin",
-                                                                   "variable", "time"))
+  # For all of the possible different model, ensemble, experiment, basin, combinations
+  # detrend the basin means using different poly nomial degrees.
+  data %>%
+    dplyr::group_by(ensemble, experiment, variable, basin, model) %>%
+    dplyr::do(out = internal.detrend_poly(.)) %>%
+    tidyr::unnest() %>%
+    dplyr::select(ensemble, experiment, variable, basin, model, time, units,
+           method, year, month, month_name, value)
 
-  # Detrend the data
-  df %>%
-    group_by(ensemble, experiment, model, variable, basin) %>%
-    do(value = internal.detrend_linear(., return_type = "data")) %>%
-    tidyr::unnest() ->
-    data
+}# end of the detrend.poly_compare function
 
-  # Save the slope
-  df %>%
-    group_by(ensemble, experiment, model, variable, basin) %>%
-    do(value = internal.detrend_linear(., return_type = "slope")) %>%
-    tidyr::unnest() ->
-    slope
-
-  # Return the output
-  return(list(slope = slope, data = data))
-
-} # end of detrend
 
 # ----
 # End
