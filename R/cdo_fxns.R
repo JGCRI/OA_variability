@@ -193,16 +193,18 @@ internal.sellonlat_cdo <- function(basin_df){
   # Use a try catch statement to extract the variable. Incase something
   # went wrong, then add to the unprocessed data frame.
   var_out <- tryCatch(expr = ncdf4::ncvar_get(nc_out, v),
-                      error=function(e) NULL)
+                     error=function(e) NULL)
   if(!is.null(var_out)){
     var_uni <- ncdf4::ncatt_get(nc_out, v)["units"]
     tim_out <- ncdf4::ncvar_get(nc_out, "time")
 
     # Create and format a data frame for output.
-    cbind(time = tim_out, value = var_out) %>%
-      as.data.frame %>%
+    tibble::tibble(time = tim_out, value = var_out) %>%
+     #as.data.frame %>%
       dplyr::mutate(variable = paste0(v), units = paste0(var_uni), basin = paste0(basin_name), model = paste0(mo),
-                    ensemble = paste0(en), experiment = paste0(ex), method = paste0(cdo_operator))
+                    ensemble = paste0(en), experiment = paste0(ex), method = paste0(cdo_operator)) ->
+      out
+
 
   } else {
 
@@ -210,7 +212,15 @@ internal.sellonlat_cdo <- function(basin_df){
              ensemble = paste0(en), experiment = paste0(ex), problem = "variable in nc output")
 
     unprocessed <<- rbind(unprocessed, row)
+
+    tibble::tibble(time = c(-999, -999), value = c(-999,-999)) %>%
+      dplyr::mutate(variable = paste0(v), units = paste0(var_uni), basin = paste0(basin_name), model = paste0(mo),
+                    ensemble = paste0(en), experiment = paste0(ex), method = paste0(cdo_operator)) ->
+      out
+
   }
+
+  return(out)
 
 } # end of the internal.sellonlat_cdo function
 
@@ -254,17 +264,23 @@ internal.sellonlat <- function(internal_df){
   # Execute cdo commands
   #
   # First concatenate data observations
-  internal_df %>%
-    rename(path = data_path) ->
-    df
-  message(df)
-  cdo.concatenate(df, cdo_path = internal_cdo_path, ofile = concatenated)
+  df <- internal_df
+  message(internal_df)
+  cdo.concatenate(internal_df, cdo_path = internal_cdo_path, ofile = concatenated)
 
   # So I know that this does not look like it makes a lot of
   # sense not v clear but v fast... need to comment to make sure
   # it is clear what we are doing here...
   message("Processing ", mo," ", ex, " ", v, " by basin.\n")
-  bind_rows(apply(defined_basins, 1, internal.sellonlat_cdo))
+
+  # Do the sellonat cdo for all of the basins and format from a list into
+  # a data frame.
+  out_list <- apply(defined_basins, 1, internal.sellonlat_cdo)
+  out <- dplyr::bind_rows(purrr::flatten(out_list))
+
+  save(out, file = paste0(temp_dir, "basin_mean.RData"))
+
+  return(out)
 
   # Clean Up
   file.remove(ofile)
@@ -278,7 +294,8 @@ internal.sellonlat <- function(internal_df){
 #' The R functional form of the cdo operator sellonlat
 #'
 #' \code{cdo.sellonlat} is function that applies a cdo operator over a defined
-#' geographical regions.
+#' geographical regions. Becasue of some issue with the version of dplyr on pic
+#' this function returns a nested list and some minor post processing is required bleh.
 #'
 #' @param data_input a data frame containing cmip info and the path to the data netcdfs
 #' @param defined_basins a data frame containing the lat/lon boundaries of an ocean basin
@@ -338,7 +355,7 @@ cdo.sellonlat <- function(data_input, defined_basins, cdo_operator = "fldmean", 
   # following steps this match will be used to generate the weights for the defined cdo
   # command.
 
-  to_process <- dplyr::select(data_input, data_path = path, model, variable, ensemble, experiment)
+  to_process <- dplyr::select(data_input, path, model, variable, ensemble, experiment)
 
   # Save the cmip file files to be processed
   write.csv(to_process, paste0(intermediate_output,"tobeprocessed.csv"), row.names = FALSE)
@@ -351,11 +368,9 @@ cdo.sellonlat <- function(data_input, defined_basins, cdo_operator = "fldmean", 
     output_list
 
   # Return
-  return(bind_rows(output_list$out))
+  return(output_list)
 
   # Clean Up
-  # file.remove(ofile)
-  # file.remove(concatenated)
 
   # Print the unprocessed files
   write.csv(unprocessed, paste0(intermediate_output,"unporcessed.csv"))
