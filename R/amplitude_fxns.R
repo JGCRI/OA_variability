@@ -47,7 +47,8 @@ single.amplitude <- function(df){
   # calculate the monthly mean, amplitude (range), and standard deviation.
   df %>%
     dplyr::filter(year >= start_year, year <= end_year) %>%
-    dplyr::group_by(month, month_name) %>%
+    dplyr::mutate(start_year = min(year), end_year = max(year)) %>%
+    dplyr::group_by(month, month_name, start_year, end_year) %>%
     dplyr::summarise(min = min(value), max = max(value),
                      range = max(value) - min(value),
                      mean = mean(value),
@@ -76,13 +77,8 @@ get.amplitude_values <- function(df, file = "data/basin_amplitude.RData"){
 
   df %>%
     group_by(method, units, ensemble, experiment, variable, basin, model) %>%
-    do(dataframe = single.amplitude(.)) ->
-    out
+    do(dataframe = single.amplitude(.))
 
-  message("Saving output at ", file)
-  save(out, file = file)
-
-  return(out)
 } # end of the get.amplitude_values function
 
 
@@ -145,6 +141,3 @@ vis.amplitude <- function(input){
 # ----
 # End
 
-# How to execute stuff
-# basin_data <- get(load(system.file("data", "basin_mean.rda", package = "oceanpH", mustWork = TRUE)))
-# get.amplitude_values(basin_data)
