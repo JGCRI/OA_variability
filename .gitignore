@@ -61,4 +61,4 @@ building/
 .RData
 # Ignore the data folder for right now
 data/
-
+exec/processing/figure_scripts/old
