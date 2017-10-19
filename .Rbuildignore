@@ -1,4 +1,4 @@
-# Default folders to ignore 
+# Default folders to ignore
 ^.*\.Rproj$
 ^\.Rproj\.user$
 
@@ -8,6 +8,7 @@
 ^.*raw-data/
 ^.*exec/
 ^.*outputs/
+builging/
 
 # Ignore the html file from the lab notebook
 ^.*\.html$
