@@ -25,6 +25,11 @@
 
 
 check.column <- function(df, df_name, required_columns){
+
+  if(!is.data.frame(df)){
+    stop("Data frame input required for ", paste0(df_name))
+  }
+
   missing <- !required_columns %in% colnames(df)
 
   if(any(missing)){
