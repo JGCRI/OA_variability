@@ -12,15 +12,18 @@ output:
    
 ---
 
-# House Keeping Notes
-****
+# New Stuff
+
+See [2. Monthly Mean ] and [3. Monthly Range] for monthly mean and range by basin for the CESM1-BGC model. 
+
+
 
 # Methodology 
 ****
 
 None of the variables in question have depth information. 
 
-#### L1
+#### L1: Process CMIP5 Netcdfs
 1. CDO - Concatenate cmip netcdfs and convert to absolute time 
 2. CDO - Get the field weighted mean via cdo 
 3. R - Remove model with unrealistic or missing pH/CO3 observations 
@@ -28,70 +31,119 @@ None of the variables in question have depth information.
 
 <br>
 
-#### L2
+#### L2: Detrend
 1. R - detrend the basin means using a 3rd degre polynomial (see GitHub issue # 11 for decision)
 
+#### L3: Amplitude
+1. R - Monthly mean, sd, and range over 30 year periods.
+
 <br>
 
 
-```{r laod detrending cesm1 figures, echo = FALSE, warning = FALSE}
+```{r laod cesm1 figures, echo = FALSE, warning = FALSE}
+library(ggplot2)
 path <- "C:/Users/dorh012/Documents/GitHub/OA_variability/data/figs"
-detrending_figs <- get(load(paste0(path, "/detrend_cesm1.rda")))
+CESM1 <- get(load(paste0(path, "/FIGS.CESM1.rda")))
 ```
 
-# CESM1-BGC Detrended data
+# CESM1-BGC
 ****
 
-## By Variable
+## 1. Time Series Comparison
+****
 
-<br>
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
 
-### 1. a. Historical pH
 
-```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
-detrending_figs$historical$ph
+### 1.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=9}
+CESM1$time_series$raw$fig$Global_ph + labs(subtitle = "Before Detrending", caption = "")
+CESM1$time_series$detrended$fig$Global_ph + labs(subtitle = "After Detrending", caption = "")
+```
+
+### 1.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=9}
+CESM1$time_series$raw$fig$Global_spco2 + labs(subtitle = "Before Detrending", caption = "")
+CESM1$time_series$detrended$fig$Global_spco2 + labs(subtitle = "After Detrending", caption = "")
+```
+
+### 1.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=9}
+CESM1$time_series$raw$fig$Global_tos + labs(subtitle = "Before Detrending", caption = "")
+CESM1$time_series$detrended$fig$Global_tos + labs(subtitle = "After Detrending", caption = "")
+```
+
+### 1.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=9}
+CESM1$time_series$raw$fig$Global_co3 + labs(subtitle = "Before Detrending", caption = "")
+CESM1$time_series$detrended$fig$Global_co3 + labs(subtitle = "After Detrending", caption = "")
 ```
 
 <br>
 
-### 1. b. RCP 8.5 pH
+## 2. Monthly Mean 
+****
 
+Monthly Means over 30 year periods.
 
-```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
-detrending_figs$rcp85$ph
+### 2.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$mean_monthly$ph + theme(text = element_text(size = 17))
 ```
 
-<br>
+### 2.b. spco2
 
-### 1. c. Historical spCO2
-
-```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
-detrending_figs$historical$spco2
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$mean_monthly$spco2 + theme(text = element_text(size = 17))
 ```
 
-<br>
+### 2.c. tos
 
-### 1. d. RCP 8.5 spCO2
-
-```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
-detrending_figs$rcp85$spco2
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$mean_monthly$tos + theme(text = element_text(size = 17))
 ```
 
-<br>
+### 2.c. co3
 
-### 1. e. Historical tos
-
-```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
-detrending_figs$historical$tos
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$mean_monthly$co3 + theme(text = element_text(size = 17))
 ```
 
-<br>
 
-### 1. f. RCP 8.5 tos
+## 3. Monthly Range 
+****
 
-```{r, echo = FALSE, warning = FALSE, fig.width = 9, fig.height = 7}
-detrending_figs$rcp85$tos
+The range in each month over a 30 year period.
+
+### 3.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$monthly_range$ph + theme(text = element_text(size = 17))
 ```
+
+### 3.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$monthly_range$spco2 + theme(text = element_text(size = 17))
+```
+
+### 3.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$monthly_range$tos + theme(text = element_text(size = 17))
+```
+
+### 3.c. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$monthly_range$co3 + theme(text = element_text(size = 17))
+```
+
 
 
 The End

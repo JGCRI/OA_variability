@@ -411,7 +411,8 @@ internal.time_series <- function(input_df){
     ggplot(aes(x = time, y = value, group = model, color = model)) +
     geom_line(size = 1.2) +
     my_settings +
-    labs(y = paste0(var," ", units), title = paste0(bas,"\nTime Series"), caption = paste0(en,"\n",method)) ->
+    labs(y = paste0(var," ", units), title = paste0(bas,"\nTime Series"),
+         caption = paste0("Historical and future experiments plotted together for aesthetic purposes only")) ->
     out_list
 
   return(out_list)
@@ -441,7 +442,7 @@ plot.time_series <- function(data, write_pdf = FALSE, file_name){
 
   # Make the experiment concatenated time series plot
   data %>%
-    dplyr::group_by(variable, basin) %>%
+    dplyr::group_by(variable, basin, experiment) %>%
     dplyr::do(fig = internal.time_series(.)) %>%
     dplyr::arrange(basin, variable) %>%
     tidyr::unite(name, basin, variable, remove = FALSE) %>%
