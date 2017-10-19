@@ -1,12 +1,12 @@
 # ------------------------------------------------------------------------------
 # Purpose: This script useses the oceanpH package functions to get the weighted
-# mean for spCO2
+# mean for ph.
 #
 # Created by: Dorheim, Kalyn
 # Created on: September 18, 2017
 # Modified:   xxx
 #
-# Notes: This script will need to be executed on pic with a batch query and will
+# Notes: This script will need to be executed on pic with an sbatch and will
 # take about an hour to run.
 # ------------------------------------------------------------------------------
 # Environment
@@ -15,7 +15,7 @@
 BASE_NAME <- "/pic/projects/GCAM/Dorheim/OA_variability"
 
 # Define the output directory.
-OUTPUT_DIR <- paste0(BASE_NAME, "/inst/extdata/raw-data/")
+OUTPUT_DIR <- paste0(BASE_NAME, "/raw-data/")
 
 # Call the pacakge
 source(paste0(BASE_NAME,"/exec/processing/call_package.R"))
@@ -24,23 +24,26 @@ source(paste0(BASE_NAME,"/exec/processing/call_package.R"))
 basins <- read.csv2(paste0(BASE_NAME,"/inst/extdata/assumptions/defined_basins.csv"), sep = ",")
 
 # ------------------------------------------------------------------------------
-# spco2
+# PH
 # ------------------------------------------------------------------------------
-# spco2 netcdfs
+# Find the netcdfs to process
 cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin",
-             variable = "spco2", domain = "Omon", experiment = c("rcp85", "historical"), ensemble = "r1i1p1") %>%
+             variable = "ph", domain = "Omon", experiment = c("rcp85", "historical"), ensemble = "r1i1p1") %>%
   cmip.file_info %>%
-  mutate(variable = "spco2") ->
-  spco2_df
+  mutate(variable = "ph") ->
+  df
 
-output <- cdo.sellonlat(cdo_operator = "fldmean",
-                        data_input = spco2_df, defined_basins = basins, intermediate_output = OUTPUT_DIR)
 
-# Separate time into year and month.
-output %>%
-  mutate(year = substr(time, 1, 4), month = substr(time, 5, 6)) %>%
-  # Subset for years less than 2100 as Corinne requested.
-  filter(year <= 2100) ->
-  final_output
+# Use cdo operator to process the netcdfs, format and save
+output <- cdo.sellonlat(cdo_operator = "fldmean", data_input = df, defined_basins = basins)
 
-write.csv(final_output, paste0(OUTPUT_DIR,"L1_basin_fldmean_spco2.csv"), row.names = FALSE)
+final_output <- mutate(output, year = substr(time, 1, 4), month = substr(time, 5, 6))
+
+write.csv(final_output, paste0(OUTPUT_DIR,"L1_basin_fldmean_ph.csv"), row.names = FALSE)
+
+
+# ----
+# End
+message("Complete no errors")
+
+
