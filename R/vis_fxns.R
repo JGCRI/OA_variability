@@ -409,7 +409,6 @@ internal.time_series <- function(input_df){
     labs(y = paste0(var," ", units), title = "Time Series",
          caption = paste0("Historical and future experiments plotted together for aesthetic purposes only"))
 
-
 } # end of the vis.time_series
 
 

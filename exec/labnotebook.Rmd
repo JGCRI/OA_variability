@@ -39,6 +39,7 @@ None of the variables in question have depth information.
 Monthly Mean - monthly mean over a 30 year period. 
 Amplitude - annual range
 
+
 <br>
 
 
@@ -49,11 +50,14 @@ CESM1 <- get(load(paste0(path, "/FIGS.CESM1.rda")))
 ```
 
 
+
+
 # CESM1-BGC
 ****
 
 ## 1. Time Series Comparison
 ****
+
 
 This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
 
@@ -86,7 +90,6 @@ CESM1$time_series$raw$co3 + labs(subtitle = "Before Detrending", caption = "") +
 CESM1$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
 ```
 
-<br>
 
 ## 2. Monthly Mean 
 ****
@@ -144,10 +147,10 @@ CESM1$time_series$amplitude$tos + theme(text = element_text(size = 18))
 ### 3.d. co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$amplitude$tos + theme(text = element_text(size = 18))
+CESM1$time_series$amplitude$co3 + theme(text = element_text(size = 18))
 ```
 
-<br>
+
 
 ## 4. Seasonal Amplitude Distirbution
 ****
@@ -224,6 +227,7 @@ IPSL$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "
 
 <br>
 
+
 ## 6. Monthly Mean 
 ****
 
@@ -283,7 +287,6 @@ IPSL$time_series$amplitude$tos + theme(text = element_text(size = 18))
 IPSL$time_series$amplitude$tos + theme(text = element_text(size = 18))
 ```
 
-<br>
 
 ## 8. Seasonal Amplitude Distirbution
 ****
@@ -360,7 +363,16 @@ ALL$time_series$raw$co3 + labs(subtitle = "Before Detrending", caption = "") + t
 ALL$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
 ```
 
-<br>
+### 2.c. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$mean_monthly$co3 + theme(text = element_text(size = 17))
+```
+
+
+## 3. Monthly Range 
+****
+
 
 ## 10. Seasonal Amplitude Time Series
 ****
@@ -391,7 +403,12 @@ ALL$time_series$amplitude$tos + theme(text = element_text(size = 18))
 ALL$time_series$amplitude$tos + theme(text = element_text(size = 18))
 ```
 
-<br>
+### 3.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
+CESM1$monthly_range$spco2 + theme(text = element_text(size = 17))
+```
+
 
 ## 11. Seasonal Amplitude Distirbution
 ****
