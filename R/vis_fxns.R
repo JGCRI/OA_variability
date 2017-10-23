@@ -400,22 +400,14 @@ internal.time_series <- function(input_df){
   units   <- unique(df$units)
   en      <- unique(df$ensemble)
   method  <- unique(df$method)
-  bas     <- unique(df$basin)
-
-  # 1. Time Series
-  #
-  # For each ensemble and experiment combination make a spaghetti
-  # plot of the model's value with some trend line.
 
   df %>%
     ggplot(aes(x = time, y = value, group = model, color = model)) +
     geom_line(size = 1.2) +
     my_settings +
-    labs(y = paste0(var," ", units), title = paste0(bas,"\nTime Series"),
-         caption = paste0("Historical and future experiments plotted together for aesthetic purposes only")) ->
-    out_list
-
-  return(out_list)
+    facet_wrap(facets = "basin", ncol = 3, scales = "free") +
+    labs(y = paste0(var," ", units), title = "Time Series",
+         caption = paste0("Historical and future experiments plotted together for aesthetic purposes only"))
 
 
 } # end of the vis.time_series
@@ -438,32 +430,79 @@ internal.time_series <- function(input_df){
 #' @return a data frame with all of the meta information
 #' @keywords internal
 
-plot.time_series <- function(data, write_pdf = FALSE, file_name){
+plot.time_series <- function(data){
 
-  # Make the experiment concatenated time series plot
-  data %>%
-    dplyr::group_by(variable, basin, experiment) %>%
-    dplyr::do(fig = internal.time_series(.)) %>%
-    dplyr::arrange(basin, variable) %>%
-    tidyr::unite(name, basin, variable, remove = FALSE) %>%
-    dplyr::mutate(fig = setNames(nm = name, fig)) %>%
-    dplyr::select(-name) ->
-    time_series
+  out = list()
+  var_list <- unique(data$variable)
 
-  if(write_pdf) {
+  for(i in 1:length(var_list)){
 
-    path <- system.file("outputs", package = "oceanpH")
-    pdf(paste0(path, "/", file_name, ".pdf"), onefile = TRUE)
+    to_plot   <- dplyr::filter(data, variable == var_list[i])
+    variable  <- unique(to_plot$variable)
 
-    invisible(lapply(time_series$fig, print))
+    out[[paste0(variable)]] <- internal.time_series(to_plot)
 
-    dev.off()
+  }
 
-    message("Writing ", paste0(path,"/",file_name,".pdf"))
-  } # end of the write pdf if statement
-
-  return(time_series)
+  return(out)
 }
+
+# ------------------------------------------------------------------------------
+# vis.amplitude()
+# ------------------------------------------------------------------------------
+#' Line plots for a monthly amplitude data frame
+#'
+#' \code{vis.amplitude} for a single monthly amplitude data frame create a monthly
+#' line plot
+#'
+#' @param input a single cmip observation amplitude data frame
+#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @return a list of figures of all of the monthly value types
+vis.amplitude <- function(input){
+  to_plot <- tidyr::unnest(input)
+  info    <- cmip.meta(to_plot)
+
+  type_list <- info$value_type
+
+  info %>%
+    dplyr::select(-value_type) %>%
+    dplyr::distinct() ->
+    info
+
+  if(nrow(info) > 1) {
+    stop("too many cmip observations")
+  }
+
+  out = list()
+
+  # Use a for loop to generate a plot for each of the
+  # value types.
+  for(i in 1:length(type_list)){
+
+    type <- type_list[i]
+
+    to_plot %>%
+      dplyr::filter(value_type == type) %>%
+      dplyr::mutate(value = as.numeric(value)) %>%
+      ggplot(aes(x = month, y = value, color = model)) +
+      geom_line(size = 1.2) +
+      theme(text = element_text(size = 13)) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      theme(legend.position = "none") +
+      scale_x_discrete(limits = month_name_df$month, labels = month_name_df$month_name) +
+      labs(y = paste0(type, " ", info$variable, " ", info$units),
+           x = "Month",
+           title = paste0("Monthly ", type, "\n",
+                          info$basin, " ", info$model, " ", info$experiment, " ", info$ensemble)) ->
+      out[[paste0("Monthly_",type)]]
+
+  } # end of the value type for loop
+
+  return(out)
+
+} # end of the vis.amplitude function
+
 
 
 
