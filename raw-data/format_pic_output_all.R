@@ -13,14 +13,19 @@
 # ------------------------------------------------------------------------------
 library(dplyr); library(tidyr); library(ggplot2)
 
+
 # ------------------------------------------------------------------------------
 # Load and concatenate the csv files created on pic.
 # ------------------------------------------------------------------------------
 # Find all of the csv files within the inst/extdata directory
 path <- getwd()
-tibble::tibble(file = list.files(path = path, pattern = ".csv", full.names = TRUE, recursive = TRUE)) %>%
+
+csv_list <- tibble::tibble(file = list.files(path = path, pattern = ".csv", full.names = TRUE, recursive = TRUE))
+
+csv_list %>%
   filter(grepl("raw-data", file)) %>%
-  filter(grepl("L1", file)) ->
+  filter(grepl("L1", file)) %>%
+  filter(!grepl("CESM1", file)) ->
   to_process_df
 
 # Open all of the csv files in the to process list.
@@ -28,6 +33,7 @@ data <- data.frame()
 for(i in 1:length(to_process_df$file)){
   data <- rbind(data, read.csv(to_process_df$file[i], stringsAsFactors = FALSE))
 } # end of the import for loop
+
 
 # ------------------------------------------------------------------------------
 # Convert Units
@@ -39,15 +45,31 @@ data %>%
   dplyr::mutate(units = ifelse(variable == "ph", "", units)) ->
   data_units
 
+
 # ------------------------------------------------------------------------------
 # Filter Out Models
 # ------------------------------------------------------------------------------
 # Import the "to models to remove" from the csv and remove these models from the
 # data frame. The models to be removed were identified in the exploratory analysis.
 
-remove <- list.files(path, pattern = "models_to_remove.csv", recursive = TRUE, full.names = TRUE)
+remove    <- list.files(path, pattern = "models_to_remove.csv", recursive = TRUE, full.names = TRUE)
 to_remove <- read.csv(remove, stringsAsFactors = FALSE)
-filtered_data <- dplyr::filter(data_units, !model %in% to_remove$model)
+
+# Filter for "bad" models and dumby data.
+data_units %>%
+  filter(!model %in% to_remove$model) %>%
+  filter(value != -999) %>%
+  filter(year <= 2100) ->
+  filtered_data
+
+# The observations that were removed during the filtering process.
+data_units %>%
+  filter(!model %in% to_remove$model) %>%
+  filter(value != -999) ->
+  removed_data
+
+# Save the removed data just in case you are curious.
+devtools::use_data(removed_data, overwrite = TRUE)
 
 
 # ------------------------------------------------------------------------------
@@ -74,13 +96,14 @@ basin_order <- c("Global", "North Hemi", "South Hemi", "Atlantic", "NH Atlantic"
 
 data_month$basin <- factor(data_month $basin, levels = basin_order, ordered = TRUE)
 
-basin_mean <- data_month
+ALL_trended_basin_mean <- data_month
+
 
 # ------------------------------------------------------------------------------
 # Save as RData object.
 # ------------------------------------------------------------------------------
 
-devtools::use_data(basin_mean, defined_basins, overwrite = TRUE)
+devtools::use_data(ALL_trended_basin_mean, defined_basins, overwrite = TRUE)
 
 # ----
 # End
