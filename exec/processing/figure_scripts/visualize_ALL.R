@@ -27,38 +27,29 @@ stats.year_labels <- function(data){
 
 
 # ------------------------------------------------------------------------------
-# Load Data Sets
+# Get Data Sets
 # ------------------------------------------------------------------------------
 # Find the path to the basin mean .rda file created by scripts from the raw-data subdir
-data_paths <- list.files(path = "data", pattern = "CESM1_", full.names = TRUE)
+data_paths <- list.files(path = "data", pattern = "ALL_", full.names = TRUE)
 
 
-# Load the data frames to plot and make sure the only model included is CESM1-BGC
-#
 # Get the raw, trended or undtrended data from
-raw <- data_paths[which(grepl(pattern = "CESM1_trended_", x = data_paths) == TRUE)]
-  get(load(raw)) %>%
-    filter(grepl(x = model, pattern = "CESM1-BGC")) ->
-    raw_data
+raw <- data_paths[which(grepl(pattern = "ALL_trended_", x = data_paths) == TRUE)]
+raw_data <- get(load(raw))
 
-# Get the detrended .rda object for the CESM1 model
-detrended <- data_paths[which(grepl(pattern = "CESM1_detrened", x = data_paths) == TRUE)]
-  get(load(detrended)) %>%
-    filter(grepl(x = model, pattern = "CESM1-BGC")) ->
-    detrened_data
+# Get the detrended .rda object for the all models
+detrended <- data_paths[which(grepl(pattern = "ALL_detrened_", x = data_paths) == TRUE)]
+detrended_data <- get(load(detrended))
 
-# Get the summary stats .rda object for the CESM1 model
-stats <- data_paths[which(grepl(pattern = "summary_stats", x = data_paths) == TRUE)]
-  get(load(stats)) %>%
-    filter(grepl(x = model, pattern = "CESM1-BGC")) %>%
-    tidyr::unnest() ->
-    stats_data
+# Get the summary statistics .rda object for all models
+summary_path <- data_paths[which(grepl(pattern = "summary", x = data_paths) == TRUE)]
+get(load(summary_path)) %>%
+  tidyr::unnest() ->
+  summary_data
 
-# Get the amplitude .rda object for the CESM1 model
+# Get the amplitude values .rda object for all models
 amp_path <- data_paths[which(grepl(pattern = "amplitude", x = data_paths) == TRUE)]
-  get(load(amp_path)) %>%
-    filter(grepl(x = model, pattern = "CESM1-BGC")) ->
-    ampltidue_data
+amplitude_data <- get(load(amp_path))
 
 
 
@@ -69,13 +60,13 @@ amp_path <- data_paths[which(grepl(pattern = "amplitude", x = data_paths) == TRU
 # ------------------------------------------------------------------------------
 # Raw and detrended data
 raw <- plot.time_series(raw_data)
-detrended <- plot.time_series(detrened_data)
+detrended_figs <- plot.time_series(detrended_data)
 
 
 # ------------------------------------------------------------------------------
 # Monthly Means
 # ------------------------------------------------------------------------------
-data <- tidyr::spread(stats_data, value_type, value)
+data <- tidyr::spread(summary_data, value_type, value)
 mean_monthly = list()
 
 var_list <- unique(data$variable)
@@ -86,13 +77,16 @@ for(i in 1:length(var_list)){
   variable  <- unique(to_plot$variable)
 
   to_plot %>%
+    group_by(month, month_name, experiment, ensemble, basin, units) %>%
+    rename(value = mean) %>%
+    summarise(mean = mean(value), sd = sd(value)) %>%
     ggplot(aes(x = month, y = mean, color = experiment)) +
     geom_line(size = 1.2) +
     geom_ribbon(aes(ymin = mean - 2*sd, ymax = mean + 2*sd, x = month, group = experiment, linetype=NA), alpha = 0.25) +
     facet_wrap(facets = "basin", ncol = 3, scale = "free") +
     theme(text = element_text(size = 13)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(title = "CESM1-BGC mean monthly with 2 sigma band",
+    labs(title = "All-Models mean monthly with 2 sigma band",
          y = paste0("Mean Detrended ", variable),
          caption = paste0(yr_labels[1,], "\n", yr_labels[2,])) +
     scale_x_discrete(limits = to_plot$month, labels = to_plot$month_name) ->
@@ -102,26 +96,26 @@ for(i in 1:length(var_list)){
 
 
 # ------------------------------------------------------------------------------
-# CESM Amplitude Time Series
+# Amplitude Time Series
 # ------------------------------------------------------------------------------
 amplitude = list()
-var_list  <- unique(ampltidue_data$variable)
+var_list  <- unique(amplitude_data$variable)
 
 
 for(i in 1:length(var_list)){
 
-  to_plot   <- dplyr::filter(ampltidue_data, variable == var_list[i])
+  to_plot   <- dplyr::filter(amplitude_data, variable == var_list[i])
   variable  <- unique(to_plot$variable)
 
   to_plot %>%
-    ggplot(aes(x = year, y = amplitude, color = experiment)) +
+    ggplot(aes(x = year, y = amplitude, color = model)) +
     geom_line(size = 1.2) +
     facet_wrap(facets = "basin", ncol = 3, scales = "free" ) +
     theme(text = element_text(size = 13)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(x = "Year",
          y = "Seasonal Amplitude",
-         title = paste0("CESM1-BGC ", variable, " Amplitude Time Series")) ->
+         title = paste0("All Models ", variable, " Amplitude Time Series")) ->
     amplitude[[paste0(variable)]]
 
 } # end of plotting for loop
@@ -131,12 +125,12 @@ for(i in 1:length(var_list)){
 # CESM Amplitude Distribution
 # ------------------------------------------------------------------------------
 amplitude_distribution = list()
-var_list  <- unique(ampltidue_data$variable)
+var_list  <- unique(amplitude_data$variable)
 
 
 for(i in 1:length(var_list)){
 
-  to_plot   <- dplyr::filter(ampltidue_data, variable == var_list[i])
+  to_plot   <- dplyr::filter(amplitude_data, variable == var_list[i])
   variable  <- unique(to_plot$variable)
 
   to_plot %>%
@@ -148,21 +142,20 @@ for(i in 1:length(var_list)){
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(x = "Seasonal Amplitude",
          y = "Density",
-         title = paste0("CESM1-BGC ", variable, " Amplitude Distrubution Plot")) ->
+         title = paste0("All models ", variable, " Amplitude Distrubution Plots")) ->
     amplitude_distribution[[paste0(variable)]]
 
 } # end of plotting for loop
 
-
 # ------------------------------------------------------------------------------
-# Save CESM Plots
+# Save Plots
 # ------------------------------------------------------------------------------
 # Combine the time series plots into a list
-time_series = list(detrended = detrended, raw = raw, amplitude = amplitude)
+time_series = list(detrended = detrended_figs, raw = raw, amplitude = amplitude)
 
 # Save all of the figures in a single list
-FIGS.CESM1 = list(time_series = time_series, mean_monthly = mean_monthly,
+FIGS.ALL = list(time_series = time_series, mean_monthly = mean_monthly,
                   distribution = amplitude_distribution)
-save(FIGS.CESM1, file = "data/figs/FIGS.CESM1.rda")
+save(FIGS.ALL, file = "data/figs/FIGS.ALL.rda")
 # ----
 # End
