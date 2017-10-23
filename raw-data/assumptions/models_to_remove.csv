@@ -15,3 +15,4 @@ NorESM1-M,missing co3 &/or ph data
 NorESM1-ME,bad ph (less than 6)
 BNU-ESM,only spco2
 IPSL-CM5B-LR,dicontinuous ph
+IPSL-CM5A-LR,dicontinuous ph
