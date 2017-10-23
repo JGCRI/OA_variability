@@ -14,8 +14,9 @@ output:
 
 # New Stuff
 
-See [2. Monthly Mean ] and [3. Monthly Range] for monthly mean and range by basin for the CESM1-BGC model. 
+New figures include the seasonal amplitude time series and seasonal amplitude distribution for CESM1-BGC. Last time we spoke there was some interest expressed in the IPSL model so I have included the same plots for CESM1-BGC but for IPSL. However IPSL did not do spco2 runs so there are no figures for that. 
 
+I also included time series and amplitude figures of all of the models, however these figures are fairly cluttered and hard to interpret.
 
 
 # Methodology 
@@ -34,8 +35,9 @@ None of the variables in question have depth information.
 #### L2: Detrend
 1. R - detrend the basin means using a 3rd degre polynomial (see GitHub issue # 11 for decision)
 
-#### L3: Amplitude
-1. R - Monthly mean, sd, and range over 30 year periods.
+#### L3: Analyze Detrended Data
+Monthly Mean - monthly mean over a 30 year period. 
+Amplitude - annual range
 
 <br>
 
@@ -45,6 +47,7 @@ library(ggplot2)
 path <- "C:/Users/dorh012/Documents/GitHub/OA_variability/data/figs"
 CESM1 <- get(load(paste0(path, "/FIGS.CESM1.rda")))
 ```
+
 
 # CESM1-BGC
 ****
@@ -57,30 +60,30 @@ This section currently only displays the historical & future rcp time series for
 
 ### 1.a. pH
 
-```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=9}
-CESM1$time_series$raw$fig$Global_ph + labs(subtitle = "Before Detrending", caption = "")
-CESM1$time_series$detrended$fig$Global_ph + labs(subtitle = "After Detrending", caption = "")
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$time_series$raw$ph + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+CESM1$time_series$detrended$ph + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
 ```
 
 ### 1.b. spco2
 
-```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=9}
-CESM1$time_series$raw$fig$Global_spco2 + labs(subtitle = "Before Detrending", caption = "")
-CESM1$time_series$detrended$fig$Global_spco2 + labs(subtitle = "After Detrending", caption = "")
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$time_series$raw$spco2 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+CESM1$time_series$detrended$spco2 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
 ```
 
 ### 1.c. tos
 
-```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=9}
-CESM1$time_series$raw$fig$Global_tos + labs(subtitle = "Before Detrending", caption = "")
-CESM1$time_series$detrended$fig$Global_tos + labs(subtitle = "After Detrending", caption = "")
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$time_series$raw$tos + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+CESM1$time_series$detrended$tos + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
 ```
 
 ### 1.d. co3
 
-```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=9}
-CESM1$time_series$raw$fig$Global_co3 + labs(subtitle = "Before Detrending", caption = "")
-CESM1$time_series$detrended$fig$Global_co3 + labs(subtitle = "After Detrending", caption = "")
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$time_series$raw$co3 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+CESM1$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
 ```
 
 <br>
@@ -92,58 +95,337 @@ Monthly Means over 30 year periods.
 
 ### 2.a. pH
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-CESM1$mean_monthly$ph + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$mean_monthly$ph + theme(text = element_text(size = 18))
 ```
 
 ### 2.b. spco2
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-CESM1$mean_monthly$spco2 + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$mean_monthly$spco2 + theme(text = element_text(size = 18))
 ```
 
 ### 2.c. tos
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-CESM1$mean_monthly$tos + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$mean_monthly$tos + theme(text = element_text(size = 18))
 ```
 
-### 2.c. co3
+### 2.d. co3
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-CESM1$mean_monthly$co3 + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$mean_monthly$co3 + theme(text = element_text(size = 18))
 ```
 
 
-## 3. Monthly Range 
+## 3. Seasonal Amplitude Time Series
 ****
 
-The range in each month over a 30 year period.
+The time series of annual seasonal amplitude for each variable / basin. 
 
 ### 3.a. pH
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-CESM1$monthly_range$ph + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$time_series$amplitude$ph + theme(text = element_text(size = 18))
 ```
 
 ### 3.b. spco2
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-CESM1$monthly_range$spco2 + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$time_series$amplitude$spco2 + theme(text = element_text(size = 18))
 ```
 
 ### 3.c. tos
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-CESM1$monthly_range$tos + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$time_series$amplitude$tos + theme(text = element_text(size = 18))
 ```
 
-### 3.c. co3
+### 3.d. co3
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-CESM1$monthly_range$co3 + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$time_series$amplitude$tos + theme(text = element_text(size = 18))
+```
+
+<br>
+
+## 4. Seasonal Amplitude Distirbution
+****
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+### 4.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$distribution$ph + theme(text = element_text(size = 18))
+```
+
+### 4.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$distribution$spco2 + theme(text = element_text(size = 18))
+```
+
+### 4.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$distribution$tos + theme(text = element_text(size = 18))
+```
+
+### 4.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+CESM1$distribution$co3 + theme(text = element_text(size = 18))
+```
+
+ 
+```{r laod IPSL figures, echo = FALSE, warning = FALSE}
+remove(CESM1)
+path <- "C:/Users/dorh012/Documents/GitHub/OA_variability/data/figs"
+IPSL <- get(load(paste0(path, "/FIGS.IPSL.rda")))
+```
+
+
+# IPSL
+****
+
+## 5. Time Series Comparison
+****
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
+
+### 5.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$time_series$raw$ph + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+IPSL$time_series$detrended$ph + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+```
+
+### 5.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print("No spco2 for IPSL")
+```
+
+### 5.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$time_series$raw$tos + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+IPSL$time_series$detrended$tos + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+```
+
+### 5.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$time_series$raw$co3 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+IPSL$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+```
+
+<br>
+
+## 6. Monthly Mean 
+****
+
+Monthly Means over 30 year periods.
+
+### 6.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$mean_monthly$ph + theme(text = element_text(size = 18))
+```
+
+### 6.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print("No spco2 for IPSL")
+```
+
+### 6.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$mean_monthly$tos + theme(text = element_text(size = 18))
+```
+
+### 6.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$mean_monthly$co3 + theme(text = element_text(size = 18))
+```
+
+
+## 7. Seasonal Amplitude Time Series
+****
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+### 7.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$time_series$amplitude$ph + theme(text = element_text(size = 18))
+```
+
+### 7.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print("No spco2 for IPSL")
+```
+
+### 7.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$time_series$amplitude$tos + theme(text = element_text(size = 18))
+```
+
+### 7.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$time_series$amplitude$tos + theme(text = element_text(size = 18))
+```
+
+<br>
+
+## 8. Seasonal Amplitude Distirbution
+****
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+### 8.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$distribution$ph + theme(text = element_text(size = 18))
+```
+
+### 8.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print("No spco2 for IPSL")
+```
+
+### 8.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$distribution$tos + theme(text = element_text(size = 18))
+```
+
+### 8.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+IPSL$distribution$co3 + theme(text = element_text(size = 18))
+```
+
+
+ 
+```{r laod all figures, echo = FALSE, warning = FALSE}
+remove(IPSL)
+path <- "C:/Users/dorh012/Documents/GitHub/OA_variability/data/figs"
+ALL <- get(load(paste0(path, "/FIGS.ALL.rda")))
+```
+
+
+# All Models
+****
+
+## 9. Time Series Comparison
+****
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
+
+### 9.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$time_series$raw$ph + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+ALL$time_series$detrended$ph + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+```
+
+### 9.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$time_series$raw$spco2 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+ALL$time_series$detrended$spco2 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+```
+
+### 9.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$time_series$raw$tos + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+ALL$time_series$detrended$tos + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+```
+
+### 9.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$time_series$raw$co3 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
+ALL$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+```
+
+<br>
+
+## 10. Seasonal Amplitude Time Series
+****
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+### 10.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$time_series$amplitude$ph + theme(text = element_text(size = 18))
+```
+
+### 10.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$time_series$amplitude$spco2 + theme(text = element_text(size = 18))
+```
+
+### 10.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$time_series$amplitude$tos + theme(text = element_text(size = 18))
+```
+
+### 10.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$time_series$amplitude$tos + theme(text = element_text(size = 18))
+```
+
+<br>
+
+## 11. Seasonal Amplitude Distirbution
+****
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+### 11.a. pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$distribution$ph + theme(text = element_text(size = 18))
+```
+
+### 11.b. spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$distribution$spco2 + theme(text = element_text(size = 18))
+```
+
+### 11.c. tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$distribution$tos + theme(text = element_text(size = 18))
+```
+
+### 11.d. co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+ALL$distribution$co3 + theme(text = element_text(size = 18))
 ```
 
 
 
 The End
+
+
+ 
+ 
