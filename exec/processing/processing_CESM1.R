@@ -20,8 +20,13 @@ CESM1_detrened_basin_mean <- detrend(trended_basin_mean)
 devtools::use_data(CESM1_detrened_basin_mean, overwrite = TRUE)
 
 # Get 30 year amplitude values for each / experiment / variable / model / basin and save.
-CESM1_amplitude_values <- get.amplitude_values(CESM1_detrened_basin_mean)
-devtools::use_data(CESM1_amplitude_values, overwrite = TRUE)
+CESM1_summary_stats <- get.summary_stats(CESM1_detrened_basin_mean)
+devtools::use_data(CESM1_summary_stats, overwrite = TRUE)
+
+
+# Get annual amplitude
+CESM1_amplitude <- get.amplitude(CESM1_detrened_basin_mean)
+devtools::use_data(CESM1_amplitude, overwrite = TRUE)
 
 # ----
 # End
