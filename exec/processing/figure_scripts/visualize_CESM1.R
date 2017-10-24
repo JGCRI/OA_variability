@@ -140,9 +140,10 @@ for(i in 1:length(var_list)){
   variable  <- unique(to_plot$variable)
 
   to_plot %>%
-    ggplot(aes(amplitude, fill = experiment)) +
+    ggplot(aes(x = amplitude, fill = experiment)) +
    # geom_histogram(bins = 40, alpha=.5, position="identity") +
     geom_density(alpha=.5) +
+   # stat_density() +
     facet_wrap(facets = "basin", ncol = 3, scales = "free") +
     theme(text = element_text(size = 13)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
