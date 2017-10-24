@@ -8,7 +8,7 @@
 #
 # Notes: This script contains the following: check.column()
 # ------------------------------------------------------------------------------
-# 1. check.column()
+# check.column()
 # ------------------------------------------------------------------------------
 #' Check input dataframes for the required columns
 #'
