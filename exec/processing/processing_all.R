@@ -21,7 +21,7 @@ ALL_detrened_basin_mean <- detrend(ALL_trended_basin_mean)
 devtools::use_data(ALL_detrened_basin_mean, overwrite = TRUE)
 
 # Get 30 year summary statistics for each / experiment / variable / model / basin and save.
-ALL_summary_stats <- get.summary_stats(ALL_trended_basin_mean)
+ALL_summary_stats <- get.summary_stats(ALL_detrened_basin_mean)
 devtools::use_data(ALL_summary_stats, overwrite = TRUE)
 
 # get seasonal amplitude values for each / experiment / variable / model / basin and save.
