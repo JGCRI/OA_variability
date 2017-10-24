@@ -49,6 +49,7 @@ Temporary Items
 !defined_regions.csv
 !models_to_remove.csv
 *.pdf
+*.png
 # =========================
 # HTML Files Created By Rmd
 # =========================
