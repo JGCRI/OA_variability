@@ -59,6 +59,9 @@ Temporary Items
 # Directories to ignore
 # =========================
 building/
+figs/
+old/
+man/
 .RData
 # Ignore the data folder for right now
 data/
