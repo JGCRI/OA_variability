@@ -29,36 +29,30 @@ stats.year_labels <- function(data){
 # ------------------------------------------------------------------------------
 # Load Data Sets
 # ------------------------------------------------------------------------------
-# Find the path to the basin mean .rda file created by scripts from the raw-data subdir
-data_paths <- list.files(path = "data", pattern = "CESM1_", full.names = TRUE)
-
-
 # Load the data frames to plot and make sure the only model included is CESM1-BGC
-#
 # Get the raw, trended or undtrended data from
-raw <- data_paths[which(grepl(pattern = "CESM1_trended_", x = data_paths) == TRUE)]
-  get(load(raw)) %>%
+raw_path <- list.files("data", "basin_mean", full.names = TRUE)
+  get(load(raw_path)) %>%
     filter(grepl(x = model, pattern = "CESM1-BGC")) ->
     raw_data
 
 # Get the detrended .rda object for the CESM1 model
-detrended <- data_paths[which(grepl(pattern = "CESM1_detrened", x = data_paths) == TRUE)]
-  get(load(detrended)) %>%
+detrended_path <- list.files("data", "detrended", full.names = TRUE)
+  get(load(detrended_path)) %>%
     filter(grepl(x = model, pattern = "CESM1-BGC")) ->
     detrened_data
 
 # Get the summary stats .rda object for the CESM1 model
-stats <- data_paths[which(grepl(pattern = "summary_stats", x = data_paths) == TRUE)]
-  get(load(stats)) %>%
-    filter(grepl(x = model, pattern = "CESM1-BGC")) %>%
-    tidyr::unnest() ->
+stats_path <- list.files("data", "summary_stats", full.names = TRUE)
+  get(load(stats_path)) %>%
+    filter(grepl(x = model, pattern = "CESM1-BGC")) ->
     stats_data
 
 # Get the amplitude .rda object for the CESM1 model
-amp_path <- data_paths[which(grepl(pattern = "amplitude", x = data_paths) == TRUE)]
+amp_path <- list.files("data", "amplitude", full.names = TRUE)
   get(load(amp_path)) %>%
     filter(grepl(x = model, pattern = "CESM1-BGC")) ->
-    ampltidue_data
+    amplitude_data
 
 
 
@@ -131,19 +125,17 @@ for(i in 1:length(var_list)){
 # CESM Amplitude Distribution
 # ------------------------------------------------------------------------------
 amplitude_distribution = list()
-var_list  <- unique(ampltidue_data$variable)
+var_list  <- unique(amplitude_data$variable)
 
 
 for(i in 1:length(var_list)){
 
-  to_plot   <- dplyr::filter(ampltidue_data, variable == var_list[i])
+  to_plot   <- dplyr::filter(amplitude_data , variable == var_list[i])
   variable  <- unique(to_plot$variable)
 
   to_plot %>%
     ggplot(aes(x = amplitude, fill = experiment)) +
-   # geom_histogram(bins = 40, alpha=.5, position="identity") +
-    geom_density(alpha=.5) +
-   # stat_density() +
+    geom_density(alpha=.5, na.rm = TRUE) +
     facet_wrap(facets = "basin", ncol = 3, scales = "free") +
     theme(text = element_text(size = 13)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -164,6 +156,6 @@ time_series = list(detrended = detrended, raw = raw, amplitude = amplitude)
 # Save all of the figures in a single list
 FIGS.CESM1 = list(time_series = time_series, mean_monthly = mean_monthly,
                   distribution = amplitude_distribution)
-save(FIGS.CESM1, file = "data/figs/FIGS.CESM1.rda")
+save(FIGS.CESM1, file = "figs/markdownFIGS_CESM1.rda")
 # ----
 # End

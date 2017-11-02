@@ -30,31 +30,26 @@ stats.year_labels <- function(data){
 # ------------------------------------------------------------------------------
 # Get Data Sets
 # ------------------------------------------------------------------------------
-# Find the path to the basin mean .rda file created by scripts from the raw-data subdir
-data_paths <- list.files(path = "data", pattern = "ALL_", full.names = TRUE)
-
-
 # Get the raw, trended or undtrended data from
-raw <- data_paths[which(grepl(pattern = "ALL_trended_", x = data_paths) == TRUE)]
-get(load(raw)) %>%
+raw_path <- list.files("data", "basin_mean", full.names = TRUE)
+get(load(raw_path)) %>%
   filter(grepl(x = model, pattern = "IPSL")) ->
   raw_data
 
 # Get the detrended .rda object for the all models
-detrended <- data_paths[which(grepl(pattern = "ALL_detrened_", x = data_paths) == TRUE)]
-get(load(detrended)) %>%
+detrended_path <- list.files("data", "detrended_data", full.names = TRUE)
+get(load(detrended_path)) %>%
   filter(grepl(x = model, pattern = "IPSL")) ->
   detrended_data
 
 # Get the summary statistics .rda object for all models
-summary_path <- data_paths[which(grepl(pattern = "summary", x = data_paths) == TRUE)]
+summary_path <- list.files("data", "summary_stats", full.names = TRUE)
 get(load(summary_path)) %>%
-  tidyr::unnest() %>%
   filter(grepl(x = model, pattern = "IPSL")) ->
   summary_data
 
 # Get the amplitude values .rda object for all models
-amp_path <- data_paths[which(grepl(pattern = "amplitude", x = data_paths) == TRUE)]
+amp_path <- list.files("data", "amplitude", full.names = TRUE)
 get(load(amp_path)) %>%
   filter(grepl(x = model, pattern = "IPSL-CM5A-MR")) ->
   amplitude_data
@@ -161,7 +156,7 @@ time_series = list(detrended = detrended_figs, raw = raw, amplitude = amplitude)
 # Save all of the figures in a single list
 FIGS.IPSL = list(time_series = time_series, mean_monthly = mean_monthly,
                   distribution = amplitude_distribution)
-save(FIGS.IPSL, file = "data/figs/FIGS.IPSL.rda")
+save(FIGS.IPSL, file = "figs/markdownFIGS_IPSL.rda")
 
 # -----
 # End
