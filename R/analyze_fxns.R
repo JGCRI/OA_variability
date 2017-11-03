@@ -104,6 +104,45 @@ get.amplitude <- function(df){
 
 
 
+# ------------------------------------------------------------------------------
+# get.K_S
+# ------------------------------------------------------------------------------
+#' Get kurtosis and skewness
+#'
+#' \code{get.K_S} Kurtosis and skewness of model / ensemble / experiment / basin year amplitudes
+#'
+#' @param df annual seasonal amplitude
+#' @importFrom dplyr %>%
+#' @return a list of delta and raw kurtosis and skewness data frames
+
+get.K_S <- function(data){
+
+  # For each ensemble / experiment / variable / basin / model distribution of annual
+  # seasonal amplitude measure the kurtosis and skewness.
+  data %>%
+    dplyr::group_by(ensemble, experiment, variable, units, basin, model) %>%
+    dplyr::summarise(K = e1071::kurtosis(amplitude), S = e1071::skewness(amplitude)) %>%
+    dplyr::ungroup() %>%
+    # Format the data frame so that it is in the long format.
+    tidyr::gather(stat_variable, value, K, S) ->
+    raw
+
+  # Find delta K and S for difference between the future and historical period K and S.
+  raw %>%
+    tidyr::spread(experiment, value) %>%
+    na.omit %>%
+    dplyr::mutate(delta = rcp85 - historical) %>%
+    dplyr::mutate(stat_variable = paste0("delta  ", stat_variable)) %>%
+    dplyr::select(ensemble, variable, units, basin, model, stat_variable, delta) ->
+    delta
+
+  # Format outputs into lists and return
+  out = list(K_S = raw, delta_K_S = delta)
+  return(out)
+
+} # end of get.K_S function
+
+
 # ----
 # End
 
