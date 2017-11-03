@@ -23,15 +23,17 @@
 
 internal.detrend_poly <- function(df){
 
-  # Start by checking to make sure you are only detrending for a single model,
-  # basin, experiment, ensemble member.
-  en <- unique(df$ensemble);   mo <- unique(df$model)
-  ex <- unique(df$experiment); ba <- unique(df$basin)
-  va <- unique(df$variable)
-
-  if(length(c(en, mo, ex, ba, va)) > 5){
-    stop("too many cmip observations read into the internal detrend ploy funciton")
-  }
+  # The check was to make sure the detrending was happening correctly during the
+  # devlopment period but it not needed now, may delet at a latter time?
+  # # Start by checking to make sure you are only detrending for a single model,
+  # # basin, experiment, ensemble member.
+  # en <- unique(df$ensemble);   mo <- unique(df$model)
+  # ex <- unique(df$experiment); ba <- unique(df$basin)
+  # va <- unique(df$variable)
+  #
+  # if(length(c(en, mo, ex, ba, va)) > 5){
+  #   stop("too many cmip observations read into the internal detrend ploy funciton")
+  # }
 
   # The third degree polynomail fit
   fit  <- lm(df$value ~ poly(df$time, 3))
