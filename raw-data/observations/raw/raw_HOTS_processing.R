@@ -8,6 +8,7 @@
 #
 # Notes: HOTS data was obtained from http://hahana.soest.hawaii.edu/hot/products/HOT_surface_CO2.txt
 # and the read me file with units information can be found at http://hahana.soest.hawaii.edu/hot/products/HOT_surface_CO2_readme.pdf
+# Lat and Lon 22° 45'N, 158° 00'W can be found at http://hahana.soest.hawaii.edu/hot/hot_jgofs.html
 # ------------------------------------------------------------------------------
 # Environment
 # ------------------------------------------------------------------------------

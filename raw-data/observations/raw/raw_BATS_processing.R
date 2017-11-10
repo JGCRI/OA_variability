@@ -114,7 +114,24 @@ data %>%
 # Add month name factor information
 final_formated_data$month_name <- factor(final_formated_data$month_name, levels = month_df$month_name, ordered = TRUE)
 
+# ------------------------------------------------------------------------------
+# Lat and Lon
+# ------------------------------------------------------------------------------
+# Figure out lon/lat boundaries. The lat & long min % max values.
+unformatted_data[, 1:4] %>%
+  mutate(Lat = as.numeric(Lat), Long = as.numeric(Long)) %>%
+  filter(!Lat %in% c(-9.99, -999)) %>%
+  filter(!Long %in% c(-9.99, -999)) %>%
+  select(Lat, Long) %>%
+  distinct() ->
+  unique_coord
 
+lat1 <- min(unique_coord$Lat)
+lat2 <- max(unformatted_data$Lat)
+lon1 <- min(unique_coord$Long)
+lon2 <- max(unique_coord$Long)
+
+bounds <- tibble(lat1, lat2, lon1, lon2)
 # ------------------------------------------------------------------------------
 # Save
 # ------------------------------------------------------------------------------

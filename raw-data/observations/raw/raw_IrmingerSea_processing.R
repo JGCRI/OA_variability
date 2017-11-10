@@ -6,6 +6,8 @@
 # Created on: November 9
 #
 # Notes: Data was downloaded from https://www.nodc.noaa.gov/archive/arc0093/0149098/1.1/data/0-data/
+# Location of sampling can be found in https://www.earth-syst-sci-data.net/2/99/2010/essd-2-99-2010.pdf
+# Coverage: 64◦ N–68◦ N; 28◦ W–12◦ W
 # ------------------------------------------------------------------------------
 # Environment --- required portions defined in sourcing script are commented out
 # ------------------------------------------------------------------------------
@@ -78,6 +80,7 @@ unformatted_year %>%
   mutate(value = as.numeric(value)) %>%
   summarise(value = mean(value)) %>%
   filter(variable == "spco2") %>%
+  filter(!value %in% c(-999, -99)) %>%
   ungroup ->
   surface_data_year
 

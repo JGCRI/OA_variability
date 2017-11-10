@@ -84,6 +84,7 @@ data_units <- mutate(data, units = if_else(variable == "spco2", "uatm", "NA"))
 spco2_con_factor <- 1e-6 * 101325
 
 data_units %>%
+  filter(! value %in% c(-99, -999)) %>%
   mutate(value = if_else(variable == "spco2", value * spco2_con_factor, value)) %>%
   mutate(units = if_else(variable == "spco2", "Pa", units)) ->
   data_converted

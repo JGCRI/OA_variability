@@ -6,8 +6,9 @@
 # Created on: November 3 2017
 # Modified:   xxx
 #
-# Trying to decide if I should modify the data frame so that it is compatible
-# with the functions used in the driver or if I should change the functions....
+# Notes: meta data and lat/lon location can be found in the header of the data
+# at ftp://ftp.ncdc.noaa.gov/pub/data/paleo/coral/east_pacific/palmyra2011.txt
+# Core location: Palmyra: 5°53'N, 162°5'W, 9m depth
 # ------------------------------------------------------------------------------
 # Environment -- some of the required environment may be defined in sourcing script
 # ------------------------------------------------------------------------------
