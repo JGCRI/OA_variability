@@ -11,8 +11,8 @@
 # Notes: vis.time_series need a better way to lable the time axis.
 
 # Define my fav figure settings
-MY_SETTINGS <- ggplot2::theme(text = element_text(size = 13)) +
-  ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1))
+MY_SETTINGS <- ggplot2::theme(text = ggplot2::element_text(size = 13)) +
+  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
 
 # -------------------------------------------------------------------------------------------
 # vis.is_outlier()
