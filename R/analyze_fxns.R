@@ -87,14 +87,38 @@ get.summary_stats <- function(df){
 #' Get annual seasonal amplitude
 #'
 #' \code{get.amplitude} seasonal amplitude for each model / ensemble / experiment / basin year
+#' this function only calculates the inter annual seasonal amplitude for years with 12 month
+#' observations to prevent underestimation of the seasonal amplitude
 #'
 #' @param df monthly data frame of weighted cmip averages
-#' @importFrom dplyr %>%
+#' @param dir the directory locatin where to write the amplitude out to
+#' @import dplyr
 #' @return a data frame of the annual amplitude, max and min values
 
-get.amplitude <- function(df){
+get.amplitude <- function(df, dir){
 
+  # 12 month observation screening
   df %>%
+    dplyr::select(ensemble, experiment, model, variable, year, month) %>%
+    group_by(ensemble, experiment, model, variable, year) %>%
+    # Count the distinct number of months in each model / variable / year and subset
+    # for model / variable / years with less than 12 observations
+    summarise(count = n_distinct(month)) %>%
+    filter(count < 12) %>%
+    mutate(remove = TRUE) ->
+    incomplete_years
+
+  # Save the incomplete years
+  save(incomplete_years, file = paste0(dir, "/incomplete_years.rda"))
+
+  # Remove the incomplete years from the data to be processed
+  df %>%
+    left_join(incomplete_years, by = c("ensemble", "experiment", "model", "variable", "year")) %>%
+    filter(is.na(remove)) %>%
+    select(-count, -remove)->
+    to_process
+
+  to_process %>%
     group_by(method, units, ensemble, experiment, variable, basin, model, year) %>%
     summarise(amplitude = max(value) - min(value), min = min(value), max = max(value))
 
