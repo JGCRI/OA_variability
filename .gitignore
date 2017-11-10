@@ -48,6 +48,7 @@ Temporary Items
 *.csv
 !defined_regions.csv
 !models_to_remove.csv
+!observation_boundaries.csv
 *.pdf
 *.png
 raw-data/observations/formated/*.rda
