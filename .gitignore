@@ -50,6 +50,7 @@ Temporary Items
 !models_to_remove.csv
 *.pdf
 *.png
+raw-data/observations/formated/*.rda
 # =========================
 # HTML Files Created By Rmd
 # =========================
