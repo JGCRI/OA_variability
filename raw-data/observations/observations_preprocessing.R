@@ -5,7 +5,8 @@
 # Created by: Dorheim, Kalyn
 # Created on: November 10
 #
-# Notes:
+# Notes: Will need to change the INPUT_DIR inorder to process the cmip comparison
+# in the Concatenate with cmip comparison data section
 # ------------------------------------------------------------------------------
 # Environment
 # ------------------------------------------------------------------------------
@@ -16,7 +17,7 @@ devtools::load_all()
 
 # Define the input and output directories
 INPUT_DIR  <- "raw-data/observations/raw"
-OUTPUT_DIR <- "raw-data/observations/formated"
+OUTPUT_DIR <- "raw-data/observations/formatted"
 
 
 # ------------------------------------------------------------------------------
@@ -44,9 +45,13 @@ lapply(processing_scripts, source)
 # Format Obs Data 2
 # ------------------------------------------------------------------------------
 # Concatenate the observation data sets together and save in the data dir. The
-# .rda object should be able to be processed using the driver()
+# .rda object should be able to be processed using the driver(), make sure you
+# don't accidently pick up the cmip.rda when you are doing this step or the removed
+# observations in this step.
 
-obs_rda <- list.files("raw-data/observations/formated", ".rda", full.names = TRUE)
+obs_rda <- list.files("raw-data/observations/formatted", ".rda", full.names = TRUE)
+obs_rda <- obs_rda[which(!grepl("cmip", obs_rda) == TRUE)]
+obs_rda <- obs_rda[which(!grepl("removed_data", obs_rda) == TRUE)]
 
 # Create an empty data frame to save the obs data in
 out <- data.frame()
@@ -75,11 +80,31 @@ out$method <- "obs"
 
 if(problem){stop("NAs identified in the concatenated data frame")}
 
+# ------------------------------------------------------------------------------
+# Concatenate with cmip comparison data
+# ------------------------------------------------------------------------------
+# Find the R sciprt that processes the cmip csv output for compaison with the
+# the observation data
+path       <- list.files("raw-data/observations/cmip", ".R", full.names = TRUE)
+INPUT_DIR  <- "raw-data/observations/cmip"
+OUTPUT_DIR <- "raw-data/observations/formatted"
+
+# Source the cmip processing code
+source(path)
+
+# Load the cmip output
+path <- list.files("raw-data/observations/formatted", "cmip_obs_basin_mean.rda", full.names = TRUE)
+cmip_data <- get(load(path))
+
+# Combine the obs and cmip data
+out <- bind_rows(cmip_data, out)
+
 
 # ------------------------------------------------------------------------------
 # Save
 # ------------------------------------------------------------------------------
-save(out, file = "data/observations/observation_mean.rda")
+save(out, file = "data/observations/obs_cmip_comparison_mean.rda")
+
 
 # ----
 # End
