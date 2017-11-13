@@ -51,7 +51,7 @@ Temporary Items
 !observation_boundaries.csv
 *.pdf
 *.png
-raw-data/observations/formated/*.rda
+raw-data/observations/formatted/*.rda
 # =========================
 # HTML Files Created By Rmd
 # =========================
