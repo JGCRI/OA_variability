@@ -20,7 +20,7 @@ OUT_DIR <- "data/cmip"
 # Load and concatenate the csv files created on pic.
 # ------------------------------------------------------------------------------
 # Find all of the csv files within the inst/extdata directory
-csv_list <- tibble::tibble(file = list.files("raw-data", pattern = ".csv", full.names = TRUE, recursive = TRUE))
+csv_list <- tibble::tibble(file = list.files("raw-data/cmip", pattern = ".csv", full.names = TRUE))
 
 csv_list %>%
   filter(grepl("raw-data", file)) %>%
@@ -98,13 +98,20 @@ basin_order <- c("Global", "North Hemi", "South Hemi", "Atlantic", "NH Atlantic"
 
 data_month$basin <- factor(data_month $basin, levels = basin_order, ordered = TRUE)
 
-basin_mean <- data_month
+
+# ------------------------------------------------------------------------------
+# Format date and time
+# ------------------------------------------------------------------------------
+data_month %>%
+  mutate(date = paste0(substr(time, 5, 6), "-01-", substr(time, 1,4))) %>%
+  mutate(date = as.Date(date, "%m-%d-%Y")) ->
+  data
 
 
 # ------------------------------------------------------------------------------
 # Save as RData object.
 # ------------------------------------------------------------------------------
-save(basin_mean, file = paste0(OUT_DIR, "/basin_mean.rda"))
+save(data, file = paste0(OUT_DIR, "/basin_mean.rda"))
 save(defined_basins, file = paste0(OUT_DIR, "/defined_basins.rda"))
 
 

@@ -6,7 +6,7 @@
 # Created on: November 10
 #
 # Notes: Will need to change the INPUT_DIR inorder to process the cmip comparison
-# in the Concatenate with cmip comparison data section
+# in the CMIP observation basins
 # ------------------------------------------------------------------------------
 # Environment
 # ------------------------------------------------------------------------------
@@ -78,10 +78,19 @@ problem <- any(is.na(out))
 # Add final column for cmip function compatibility
 out$method <- "obs"
 
+
+# Create the date column for time series plots
+out %>%
+  mutate(date = paste0(substr(time, 5, 6), "-01-", substr(time, 1,4))) %>%
+  mutate(date = as.Date(date, "%m-%d-%Y")) ->
+  out
+
+
 if(problem){stop("NAs identified in the concatenated data frame")}
 
+
 # ------------------------------------------------------------------------------
-# Concatenate with cmip comparison data
+# CMIP observation basins
 # ------------------------------------------------------------------------------
 # Find the R sciprt that processes the cmip csv output for compaison with the
 # the observation data
@@ -96,14 +105,65 @@ source(path)
 path <- list.files("raw-data/observations/formatted", "cmip_obs_basin_mean.rda", full.names = TRUE)
 cmip_data <- get(load(path))
 
+# Since we are only interested in the cmip data that we can compare with the observation data sets
+# we will need to subset the cmip basin mean data frame.
+#
+# First start by creating a data frame from the observations data frame that contains information
+# to filter the cmip data by. (This DF will be joined with the cmip_data and then used to subset for
+# observations of interest)
+out %>%
+  select(model, basin, variable, year) %>%
+  group_by(model, basin, variable) %>%
+  summarise(min_year = min(year), max_year = max(year)) %>%
+  ungroup %>%
+  select(basin, variable, min_year, max_year) ->
+  subset_by
+
+# Subset the df for the basin / variable / time observations that are also in the
+# observations data sets.
+cmip_data %>%
+  left_join(subset_by, by = c("variable", "basin")) %>%
+  # First remove the NAs
+  na.omit %>%
+  # Subset by the years within the observation time sereris
+  mutate(KEEP = if_else(min_year <= year & year <= max_year , TRUE, FALSE)) %>%
+  filter(KEEP == TRUE) %>%
+  select(time, value, variable, units, basin, model, ensemble, experiment, method,
+         year, month, month_name) ->
+  filtered_cmip_df
+
+
+# ------------------------------------------------------------------------------
+# Concatenate with cmip comparison data
+# ------------------------------------------------------------------------------
 # Combine the obs and cmip data
-out <- bind_rows(cmip_data, out)
+out <- bind_rows(filtered_cmip_df, out)
+
+# Add plotting indicaotrs, I think right not the id column will contain the
+# cmip models, CESM1-BGC, and then what ever observations it is.
+
+# Save a list of the id names to use when defining the id levels.
+observational_data <- filter(out, ensemble == "obs")
+observational_list <- unique(observational_data$model)
+
+id_names <- c("cmip models", "CESM1-BGC", observational_list)
+
+out %>%
+  mutate(id = if_else(ensemble == "obs", model, id_names[1])) %>%
+  mutate(id = if_else(grepl("CESM1", model), id_names[2], id)) %>%
+  # Make sure that time is saved as an integer otherwise plotting becomes difficult
+  mutate(time = substr(time, 1, 6)) %>%
+  mutate(time = as.numeric(time))->
+  out_id
+
+out_id$id <- factor(out_id$id, levels = id_names, ordered = TRUE)
+
 
 
 # ------------------------------------------------------------------------------
 # Save
 # ------------------------------------------------------------------------------
-save(out, file = "data/observations/obs_cmip_comparison_mean.rda")
+save(out_id, file = "data/observations/obs_cmip_comparison_mean.rda")
 
 
 # ----

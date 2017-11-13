@@ -50,7 +50,7 @@ detrended_data %>%
 # Amplitude time series
 amplitude_data %>%
   # Rename the data columns to meet plot.time_series function requirements
-  rename(value = amplitude, time = year) %>%
+  rename(value = amplitude, date = year) %>%
   group_by(model) %>%
   do(fig = plot.time_series(., "interanual seasonal amplitude")) ->
   amplitude_tseries
