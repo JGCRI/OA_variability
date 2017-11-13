@@ -9,13 +9,14 @@
 # Created on: November 9
 #
 # Notes: All csv files were downloaded from http://www.fixo3.eu/observatory-data-ESTOC/
+# Lon -15.5, Lat 29.17 found at http://earthvo.fixo3.eu/
 # ------------------------------------------------------------------------------
 # Environment
 # ------------------------------------------------------------------------------
 # # Load the required libraries
 # library(dplyr)
 # library(tidyr)
-# INPUT_DIR <- needs to be defined here or in the script that calls this one
+# INPUT_DIR <- "raw-data/observations/raw"
 # OUTPUT_DIR <- needs to be defined here or in the script that calls this one
 
 # Save the paths to the observations to csv files to process
