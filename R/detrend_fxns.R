@@ -67,10 +67,9 @@ detrend <- function(data){
     dplyr::group_by(ensemble, experiment, variable, basin, model) %>%
     dplyr::do(out = internal.detrend_poly(.)) %>%
     tidyr::unnest() %>%
-    dplyr::select(ensemble, experiment, variable, basin, model, time, units,
-           method, year, month, month_name, value)
+    dplyr::select(-variable1, -basin1, -model1)
 
-}# end of the detrend.poly_compare function
+} # end of the detrend.poly_compare function
 
 
 # ----
