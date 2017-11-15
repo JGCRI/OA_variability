@@ -65,6 +65,10 @@ figs/
 old/
 man/
 .RData
-# Ignore the data folder for right now
-data/
+*.rda
+# But do not ignore the mean data the .rda objects used by the drivers
+!basin_mean.rda
+!obs_cmip_comparison_mean.rda
+
+
 exec/processing/figure_scripts/old
