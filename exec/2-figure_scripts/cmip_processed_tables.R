@@ -21,7 +21,7 @@ to_remove_df     <- read.csv(remove_list_path) %>%  mutate(note = " ")
 
 
 removed_path <- list.files("data/cmip", "removed", full.names = TRUE)
-removed_df <- get(load(removed_path)) %>% mutate(note = "not all model observations were removed jsut for certain netcdfs")
+removed_df <- get(load(removed_path)) %>% mutate(note = "not all model observations were removed just for certain netcdfs")
 removed_obs <- bind_rows(to_remove_df, removed_df)
 
 

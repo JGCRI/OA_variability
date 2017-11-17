@@ -25,7 +25,7 @@ INPUT_DIR  <- "data/cmip"
 OUTPUT_DIR <- "figs/cmip"
 
 # Print pdf setting, set TRUE or FALSE
-please_print <- TRUE
+please_print <- FALSE
 
 
 # ------------------------------------------------------------------------------
@@ -52,11 +52,12 @@ vis.robustness <- function(data){
     # Add the distribution cloud ribbon thing
     geom_ribbon(aes(ymin = lower_bound, ymax = upper_bound, x=year, linetype=NA),
                 alpha = 0.5, color = "grey") +
-    geom_line(aes(x = year, y = amp_mean), size = 1) +
+    geom_line(aes(x = year, y = amp_mean), size = 2) +
    facet_wrap("basin", scales = "free", ncol = 3) +
     labs(title = paste0("Interannual Robustness\n", vari),
          y = paste0(vari, " amplitude"),
-         caption = "The shaded grey region is equal to mean +/- sd")
+         caption = "The shaded grey region is equal to mean +/- sd \n\n") +
+    oceanpH::MY_SETTINGS
 }
 
 
