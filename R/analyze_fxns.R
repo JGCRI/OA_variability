@@ -104,8 +104,9 @@ get.amplitude <- function(df, dir){
     # Count the distinct number of months in each model / variable / year and subset
     # for model / variable / years with less than 12 observations
     summarise(count = n_distinct(month)) %>%
-    filter(count < 12) %>%
-    mutate(remove = TRUE) ->
+    filter(count < 11) %>%
+    mutate(remove = TRUE) %>%
+    ungroup ->
     incomplete_years
 
   # Save the incomplete years
@@ -120,7 +121,8 @@ get.amplitude <- function(df, dir){
 
   to_process %>%
     group_by(method, units, ensemble, experiment, variable, basin, model, year) %>%
-    summarise(amplitude = max(value) - min(value), min = min(value), max = max(value))
+    summarise(amplitude = max(value) - min(value), min = min(value), max = max(value)) %>%
+    ungroup()
 
 
 }
