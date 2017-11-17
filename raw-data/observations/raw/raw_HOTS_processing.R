@@ -91,7 +91,7 @@ HOTS_data %>%
 #
 # Start by defining all of the conversion factors
 spco2_con_factor <- 1e-6 * 101325
-co3_con_factor   <- 1e-6 / 0.00042
+co3_con_factor   <- 1e-6 * 1027 # this is the aprox densitry of surface ocean water according to https://www.windows2universe.org/earth/Water/density.html
 
 HOTS_data_units %>%
   # Convert spco2 to Pa
