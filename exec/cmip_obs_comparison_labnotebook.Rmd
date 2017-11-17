@@ -1,0 +1,584 @@
+---
+title: "CMIP & Obs Comparison Ocean pH"
+aauthor: "K. Dorheim"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: 
+  html_document:
+    toc: TRUE
+    toc_float:
+      collapsed: true
+      toc_depth : 2
+
+   
+---
+<!---
+```{r opts, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.path = "images/"
+)
+```
+--->
+
+
+
+```{r environment set up, echo = FALSE, warning = FALSE}
+# Libs
+library(knitr)
+library(ggplot2)
+
+# Define the paths to figs directorries
+BASE_NAME <- "C:/Users/dorh012/Documents/GitHub/OA_variability/figs"
+INDVID_MODELS_PATH  <- paste0(BASE_NAME, "/cmip/individual_models")
+MULTIP_MODELS_PATH  <- paste0(BASE_NAME, "/cmip")
+OBS_COMPARISON_PATH <- paste0(BASE_NAME, "/observations")
+
+
+# Define the markdown function 
+
+# The print_list function will take an unnested list and print all of the figures saved there
+print_list <- function(list){
+  
+  for(i in 1:length(list)){
+    
+    if(!is.null(list[[i]])){
+          print(list[[i]])
+    }
+  }
+  
+} # end of the print_list function
+
+```
+
+
+
+ 
+ 
+# Observation vs CMIP 
+**** 
+For all of these figures the cmip basins have been redefined to match the area of the observational data. The observation data sets are sometimes misleading labeled as a model, my bad it is just on the bottom of my to do list.
+
+## BATS comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "BATS.rd", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+## HOTS comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "HOTS.rd", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+``` 
+
+## ESTOC comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "ESTOC", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+```  
+
+## Flinders Reef comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "Flinders", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+``` 
+
+## Iceland Sea comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "Iceland", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+```  
+
+## Irminger Sea comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "Irminger", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+``` 
