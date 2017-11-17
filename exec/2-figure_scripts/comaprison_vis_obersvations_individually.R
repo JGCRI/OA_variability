@@ -71,18 +71,19 @@ vis.tseries_comparison <- function(data, subtitle = ""){
     all_models %>%
       # First plot all of the cmip models
       ggplot(aes(x = time,y = value)) +
-      geom_point(size = 2, color = "grey", alpha = 0.5, na.rm = TRUE) +
+      geom_point(size = 7, color = "grey", alpha = 0.5, na.rm = TRUE) +
       # Plot the example model
-      geom_point(data = ex_model, aes(x = time, y = value), color = "orange", size = 2, na.rm = TRUE, alpha = 0.5) +
+      geom_point(data = ex_model, aes(x = time, y = value), color = "orange", size = 7, na.rm = TRUE, alpha = 0.5) +
       # Plot the pbservational data set
-      geom_point(data = observation, aes(x = time, y = value), color = "blue", size = 2, na.rm = TRUE, alpha = 0.5) +
+      geom_point(data = observation, aes(x = time, y = value), color = "blue", size = 7, na.rm = TRUE, alpha = 0.5) +
       # Remove the background for clarity
       theme(panel.background = element_blank()) +
       labs(title = paste0("CMIP Observation Comparison\n", basin),
            subtitle = subtitle,
            y = paste0(vari, "  ", uni),
            caption = "blue = observational data set \norange = CESM1-BGC\ngrey = other cmip models \n\n\n") +
-      scale_x_date(date_labels ="%b%Y")
+      scale_x_date(date_labels ="%b%Y") +
+      oceanpH::MY_SETTINGS
   }
 
   data %>%
@@ -118,10 +119,10 @@ vis.obs_monthly_mean <- function(data){
   mod <- filter(data, experiment != "obs") %>% add.obs_cmip_id
 
   ggplot(data = mod, aes(month, mean, color = id)) +
-    geom_point(size = 1.5) +
+    geom_point(size = 3) +
     geom_ribbon(data = obs, aes(x = month, ymin = mean - sd, ymax = mean + sd, color = id, linetype = NA),
                 alpha = 0.25) +
-    geom_point(data = obs, aes(month, mean, color = id), size = 2.5) +
+    geom_point(data = obs, aes(month, mean, color = id), size = 3.5) +
     labs(title = paste0("Mean Monthly ", vari, "\n", basin)) +
     scale_x_discrete(limits = obs$month, labels = obs$month_name) +
     oceanpH::MY_SETTINGS
@@ -176,6 +177,8 @@ amplitude_df %>%
 amplitude_df %>%
   full_join(obs_amp_df,  by = c("variable", "basin", "year")) %>%
   filter(KEEP) %>%
+  add.obs_cmip_id %>%
+  mutate(experiment = id) %>%
   group_by(basin, variable) %>%
   do(distribution = vis.amplitude_density(.)) ->
   out
