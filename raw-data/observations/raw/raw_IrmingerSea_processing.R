@@ -15,7 +15,7 @@
 # library(dplyr)
 # library(tidyr)
 #
-# INPUT_DIR <- required may be defined in the sourcing script
+ INPUT_DIR <- "raw-data/observations/raw"
 # OUPUT_DIR <- required may be defined in the sourcing script
 
 # Define path to csv file
