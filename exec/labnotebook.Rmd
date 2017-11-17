@@ -7,23 +7,47 @@ output:
     toc: TRUE
     toc_float:
       collapsed: true
-      toc_depth : 4
+      toc_depth : 2
 
    
 ---
-
+<!---
 ```{r opts, echo = FALSE}
 knitr::opts_chunk$set(
   fig.path = "images/"
 )
 ```
+--->
 
-# New Stuff
 
-New figures include the seasonal amplitude time series and seasonal amplitude distribution for CESM1-BGC. Last time we spoke there was some interest expressed in the IPSL model so I have included the same plots for CESM1-BGC but for IPSL. However IPSL did not do spco2 runs so there are no figures for that. 
 
-I also included time series and amplitude figures of all of the models, however these figures are fairly cluttered and hard to interpret.
+```{r environment set up, echo = FALSE, warning = FALSE}
+# Libs
+library(knitr)
+library(ggplot2)
 
+# Define the paths to figs directorries
+BASE_NAME <- "C:/Users/dorh012/Documents/GitHub/OA_variability/figs"
+INDVID_MODELS_PATH  <- paste0(BASE_NAME, "/cmip/individual_models")
+MULTIP_MODELS_PATH  <- paste0(BASE_NAME, "/cmip")
+OBS_COMPARISON_PATH <- paste0(BASE_NAME, "/observations")
+
+
+# Define the markdown function 
+
+# The print_list function will take an unnested list and print all of the figures saved there
+print_list <- function(list){
+  
+  for(i in 1:length(list)){
+    
+    if(!is.null(list[[i]])){
+          print(list[[i]])
+    }
+  }
+  
+} # end of the print_list function
+
+```
 
 # Methodology 
 ****
@@ -45,410 +69,2254 @@ None of the variables in question have depth information.
 Monthly Mean - monthly mean over a 30 year period. 
 Amplitude - annual range
 
-
 <br>
 
+# Processed Observations 
+***
 
-```{r laod cesm1 figures, echo = FALSE, warning = FALSE}
-library(ggplot2)
-path <- "C:/Users/dorh012/Documents/GitHub/OA_variability/data/figs"
-CESM1 <- get(load(paste0(path, "/FIGS.CESM1.rda")))
+```{r, echo = FALSE, warning = FALSE}
+table_path <- list.files(paste0(BASE_NAME,"/cmip"), "observations_table", full.names = TRUE)
+tables <- get(load(table_path))
 ```
 
-
-
-
-# CESM1-BGC
-****
-
-## 1. Time Series Comparison
-****
-
-
-This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
-
-
-### 1.a. pH
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$raw$ph + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-CESM1$time_series$detrended$ph + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
-```
-
-### 1.b. spco2
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$raw$spco2 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-CESM1$time_series$detrended$spco2 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
-```
-
-### 1.c. tos
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$raw$tos + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-CESM1$time_series$detrended$tos + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
-```
-
-### 1.d. co3
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$raw$co3 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-CESM1$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
-```
-
-
-## 2. Monthly Mean 
-****
-
-Monthly Means over 30 year periods.
-
-### 2.a. pH
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$mean_monthly$ph + theme(text = element_text(size = 18))
-```
-
-### 2.b. spco2
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$mean_monthly$spco2 + theme(text = element_text(size = 18))
-```
-
-### 2.c. tos
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$mean_monthly$tos + theme(text = element_text(size = 18))
-```
-
-### 2.d. co3
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$mean_monthly$co3 + theme(text = element_text(size = 18))
-```
-
-
-## 3. Seasonal Amplitude Time Series
-****
-
-The time series of annual seasonal amplitude for each variable / basin. 
-
-### 3.a. pH
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$amplitude$ph + theme(text = element_text(size = 18))
-```
-
-### 3.b. spco2
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$amplitude$spco2 + theme(text = element_text(size = 18))
-```
-
-### 3.c. tos
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$amplitude$tos + theme(text = element_text(size = 18))
-```
-
-### 3.d. co3
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$time_series$amplitude$co3 + theme(text = element_text(size = 18))
-```
-
-
-
-## 4. Seasonal Amplitude Distirbution
-****
-
-Distirbution of annual seasonal amplitude for each variable / basin. 
-
-### 4.a. pH
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$distribution$ph + theme(text = element_text(size = 18))
-```
-
-### 4.b. spco2
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$distribution$spco2 + theme(text = element_text(size = 18))
-```
-
-### 4.c. tos
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$distribution$tos + theme(text = element_text(size = 18))
-```
-
-### 4.d. co3
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-CESM1$distribution$co3 + theme(text = element_text(size = 18))
-```
-
- 
-```{r laod IPSL figures, echo = FALSE, warning = FALSE}
-remove(CESM1)
-path <- "C:/Users/dorh012/Documents/GitHub/OA_variability/data/figs"
-IPSL <- get(load(paste0(path, "/FIGS.IPSL.rda")))
-```
-
-
-# IPSL
-****
-
-## 5. Time Series Comparison
-****
-
-This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
-
-
-### 5.a. pH
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$time_series$raw$ph + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-IPSL$time_series$detrended$ph + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
-```
-
-### 5.b. spco2
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-print("No spco2 for IPSL")
-```
-
-### 5.c. tos
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$time_series$raw$tos + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-IPSL$time_series$detrended$tos + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
-```
-
-### 5.d. co3
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$time_series$raw$co3 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-IPSL$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+### Model observations removed from analysis
+```{r, echo = FALSE, warning = FALSE}
+tables$observations_removed
 ```
 
 <br>
 
+### Model observations processed
+```{r, echo = FALSE, warning = FALSE}
+tables$experiment_variable
+```
 
-## 6. Monthly Mean 
+
+<br>
+
+
+# Individual Models
 ****
 
-Monthly Means over 30 year periods.
-
-### 6.a. pH
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$mean_monthly$ph + theme(text = element_text(size = 18))
-```
-
-### 6.b. spco2
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-print("No spco2 for IPSL")
-```
-
-### 6.c. tos
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$mean_monthly$tos + theme(text = element_text(size = 18))
-```
-
-### 6.d. co3
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$mean_monthly$co3 + theme(text = element_text(size = 18))
-```
-
-
-## 7. Seasonal Amplitude Time Series
+## 1. CESM1-BGC
 ****
 
-The time series of annual seasonal amplitude for each variable / basin. 
+```{r, echo = FALSE, warning = FALSE}
 
-### 7.a. pH
+fig_path <- list.files(INDVID_MODELS_PATH, "CESM1", full.names = TRUE)
+figures_list <- get(load(fig_path))
 
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$time_series$amplitude$ph + theme(text = element_text(size = 18))
 ```
 
-### 7.b. spco2
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-print("No spco2 for IPSL")
-```
-
-### 7.c. tos
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$time_series$amplitude$tos + theme(text = element_text(size = 18))
-```
-
-### 7.d. co3
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$time_series$amplitude$co3 + theme(text = element_text(size = 18))
-```
-
-
-## 8. Seasonal Amplitude Distirbution
+### Time Series Comparison
 ****
 
-Distirbution of annual seasonal amplitude for each variable / basin. 
-
-### 8.a. pH
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$distribution$ph + theme(text = element_text(size = 18))
-```
-
-### 8.b. spco2
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-print("No spco2 for IPSL")
-```
-
-### 8.c. tos
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$distribution$tos + theme(text = element_text(size = 18))
-```
-
-### 8.d. co3
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-IPSL$distribution$co3 + theme(text = element_text(size = 18))
-```
-
-
- 
-```{r laod all figures, echo = FALSE, warning = FALSE}
-remove(IPSL)
-path <- "C:/Users/dorh012/Documents/GitHub/OA_variability/data/figs"
-ALL <- get(load(paste0(path, "/FIGS.ALL.rda")))
-```
-
-
-# All Models
-****
-
-## 9. Time Series Comparison
-****
 
 This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
 
-
-### 9.a. pH
-
-```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$time_series$raw$ph + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-ALL$time_series$detrended$ph + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
-```
-
-### 9.b. spco2
+#### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$time_series$raw$spco2 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-ALL$time_series$detrended$spco2 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
 ```
 
-### 9.c. tos
+#### spco2
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$time_series$raw$tos + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-ALL$time_series$detrended$tos + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
 ```
 
-### 9.d. co3
+#### tos
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$time_series$raw$co3 + labs(subtitle = "Before Detrending", caption = "") + theme(text = element_text(size = 18))
-ALL$time_series$detrended$co3 + labs(subtitle = "After Detrending", caption = "") + theme(text = element_text(size = 18))
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
 ```
 
-### 2.c. co3
+#### co3
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-ALL$mean_monthly$co3 + theme(text = element_text(size = 17))
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
 ```
 
 
-## 3. Monthly Range 
-****
+<br>
+
+### Monthly Mean 
 
 
-## 10. Seasonal Amplitude Time Series
-****
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
 
 The time series of annual seasonal amplitude for each variable / basin. 
 
-### 10.a. pH
+#### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$time_series$amplitude$ph + theme(text = element_text(size = 18))
+figures_list$amplitude_tseries$ph
 ```
 
-### 10.b. spco2
+#### spco2
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$time_series$amplitude$spco2 + theme(text = element_text(size = 18))
+figures_list$amplitude_tseries$spco2
 ```
 
-### 10.c. tos
+#### tos
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$time_series$amplitude$tos + theme(text = element_text(size = 18))
+figures_list$amplitude_tseries$tos
 ```
 
-### 10.d. co3
+#### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$time_series$amplitude$tos + theme(text = element_text(size = 18))
+figures_list$amplitude_tseries$co3
 ```
 
-### 3.b. spco2
+<br>
 
-```{r, echo = FALSE, warning = FALSE, fig.height=12, fig.width=12}
-ALL$monthly_range$spco2 + theme(text = element_text(size = 17))
-```
-
-
-## 11. Seasonal Amplitude Distirbution
-****
+### Seasonal Amplitude Distirbution
 
 Distirbution of annual seasonal amplitude for each variable / basin. 
 
-### 11.a. pH
+#### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$distribution$ph + theme(text = element_text(size = 18))
+figures_list$amplitude_density$ph
 ```
 
-### 11.b. spco2
+#### spco2
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$distribution$spco2 + theme(text = element_text(size = 18))
+figures_list$amplitude_density$spco2
 ```
 
-### 11.c. tos
+#### tos
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$distribution$tos + theme(text = element_text(size = 18))
+figures_list$amplitude_density$tos
 ```
 
-### 11.d. co3
+#### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
-ALL$distribution$co3 + theme(text = element_text(size = 18))
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+<br>
+ 
+## 2. IPSL
+****
+
+```{r, echo = FALSE, warning = FALSE}
+fig_path <- list.files(INDVID_MODELS_PATH, "IPSL", full.names = TRUE)
+figures_list <- get(load(fig_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+## 3. CMCC-CESM
+****
+
+```{r, echo = FALSE, warning = FALSE}
+fig_path <- list.files(INDVID_MODELS_PATH, "CMCC-CESM", full.names = TRUE)
+figures_list <- get(load(fig_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+## 4. MPI-ESM-LR
+****
+
+```{r, echo = FALSE, warning = FALSE}
+fig_path <- list.files(INDVID_MODELS_PATH, "MPI-ESM-LR", full.names = TRUE)
+figures_list <- get(load(fig_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+## 5. MPI-ESM-MR
+****
+
+```{r, echo = FALSE, warning = FALSE}
+fig_path <- list.files(INDVID_MODELS_PATH, "MPI-ESM-MR", full.names = TRUE)
+figures_list <- get(load(fig_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+## 6. HadGEM2-CC
+****
+
+```{r, echo = FALSE, warning = FALSE}
+fig_path <- list.files(INDVID_MODELS_PATH, "HadGEM2-CC", full.names = TRUE)
+figures_list <- get(load(fig_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+## 7. GFDL-ESM2G
+****
+
+```{r, echo = FALSE, warning = FALSE}
+fig_path <- list.files(INDVID_MODELS_PATH, "GFDL-ESM2G", full.names = TRUE)
+figures_list <- get(load(fig_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+## 8. GFDL-ESM2M
+****
+
+```{r, echo = FALSE, warning = FALSE}
+fig_path <- list.files(INDVID_MODELS_PATH, "GFDL-ESM2M", full.names = TRUE)
+figures_list <- get(load(fig_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+## 9. HadGEM2-ES
+****
+
+```{r, echo = FALSE, warning = FALSE}
+fig_path <- list.files(INDVID_MODELS_PATH, "HadGEM2-ES", full.names = TRUE)
+figures_list <- get(load(fig_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$ph
+figures_list$detrended_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$spco2
+figures_list$detrended_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tos
+figures_list$detrended_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$co3
+figures_list$detrended_tseries$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter$S)
+```
+
+#### Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$deltaKS_scatter[[1]]
+```
+
+
+# Multiple Models
+```{r, echo = FALSE, warning = FALSE}
+data_path <- list.files(MULTIP_MODELS_PATH, "multiple_models_figures", full.names = TRUE)
+figures_list <- get(load(data_path))
+```
+
+### Time Series Comparison
+****
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$raw$ph
+figures_list$time_series$detrended$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$raw$spco2
+figures_list$time_series$detrended$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$raw$tos
+figures_list$time_series$detrended$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$raw$co3
+figures_list$time_series$detrended$co3
+```
+
+
+<br>
+
+### Monthly Mean 
+
+
+Monthly Means over 30 year periods.
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$mean_monthly$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$mean_monthly$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$mean_monthly$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$mean_monthly$co3
+```
+
+<br>
+
+### Seasonal Amplitude Time Series
+
+The time series of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$amplitude$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$amplitude$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$amplitude$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$amplitude$co3
+```
+
+<br>
+
+### Seasonal Amplitude Distirbution
+
+Distirbution of annual seasonal amplitude for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$distribution$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$distribution$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$distribution$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$distribution$co3
+```
+
+
+### K and S Figures
+ 
+#### K historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter_figs$K)
+```
+
+
+#### S historical vs future 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(figures_list$KS_scatter_figs$S)
+```
+
+# Delta K and S
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$delta_K
 ```
 
 
 
-The End
+## 11. Delta K & S Tables 
+
+
+```{r laod the K and S tables, echo = FALSE, warning = FALSE}
+table_path <- list.files(paste0(BASE_NAME,"/cmip"), "delta_KS_tables", full.names = TRUE)
+TABLES <- get(load(table_path))
+```
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+TABLES$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+TABLES$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+TABLES$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+TABLES$co3
+```
+
+
 
 
  
  
+# Amplitude Sameness
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+fig_path <- list.files(MULTIP_MODELS_PATH, "amplitude_sameness", full.names = TRUE)
+sameness_list <- get(load(fig_path))
+```
+
+
+## Amplitude Sameness Figures
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+print_list(sameness_list$figures)
+```
+
+
+## Percent Within "Sameness Index"
+
+The precent of observations that are within the similarity band.
+
+#### ph 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$within$ph
+```
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$within$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$within$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$within$co3
+```
+
+
+## Percent Above "Sameness Index"
+
+The precent of observations that are above the similarity band.
+
+#### ph 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$above$ph
+```
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$above$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$above$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$above$co3
+```
+
+## Percent Below "Sameness Index"
+
+The precent of observations that are below the similarity band.
+
+#### ph 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$below$ph
+```
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$below$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$below$tos
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$below$co3
+```
+
+
+
+
+
+
+
+
+ 
+ 
+# Observation vs CMIP 
+**** 
+For all of these figures the cmip basins have been redefined to match the area of the observational data. The observation data sets are sometimes misleading labeled as a model, my bad it is just on the bottom of my to do list.
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+compar_path <- list.files(OBS_COMPARISON_PATH, ".rd", full.names = TRUE)
+sameness_list <- get(load(fig_path))
+``` 
+
+
+## BATS comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "BATS.rd", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+## HOTS comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "HOTS.rd", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+``` 
+
+## ESTOC comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "ESTOC", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+```  
+
+## Flinders Reef comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "Flinders", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+``` 
+
+## Iceland Sea comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "Iceland", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+```  
+
+## Irminger Sea comparison 
+*** 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+path <- list.files(OBS_COMPARISON_PATH, "Irminger", full.names = TRUE)
+obs_list <- get(load(path))
+``` 
+
+
+#### ph
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$ph$monthly_mean
+``` 
+
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$spco2$monthly_mean
+``` 
+
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$tos$monthly_mean
+``` 
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$raw_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$detrended_tsereis
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_tseries
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$amp_distribution
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=10, fig.width=10}
+obs_list$co3$monthly_mean
+``` 
