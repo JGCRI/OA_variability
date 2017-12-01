@@ -1,0 +1,101 @@
+---
+title: "Meeting 11/21"
+output: word_document
+---
+
+```{r environment set up, echo = FALSE, warning = FALSE}
+# Libs
+library(knitr)
+library(ggplot2)
+
+# Define the paths to figs directorries
+BASE_NAME <- "C:/Users/dorh012/Documents/GitHub/OA_variability/figs"
+INDVID_MODELS_PATH  <- paste0(BASE_NAME, "/cmip/individual_models")
+MULTIP_MODELS_PATH  <- paste0(BASE_NAME, "/cmip")
+OBS_COMPARISON_PATH <- paste0(BASE_NAME, "/observations")
+
+
+# Define the markdown function 
+
+# The print_list function will take an unnested list and print all of the figures saved there
+print_list <- function(list){
+  
+  for(i in 1:length(list)){
+    
+    if(!is.null(list[[i]])){
+          print(list[[i]])
+    }
+  }
+  
+} # end of the print_list function
+
+```
+
+```{r, echo = FALSE, fig.width = 10, fig.height=10}
+CESM_path <- list.files(INDVID_MODELS_PATH, "CESM1", full.names = TRUE)
+CESM_figs <- get(load(CESM_path))
+```
+
+### CESM1-BGC K and S
+
+```{r, echo = FALSE, fig.width = 10, fig.height=10}
+CESM_figs$KS_scatter$K$variable
+CESM_figs$KS_scatter$K$variable_by_basin
+CESM_figs$KS_scatter$K$basin
+CESM_figs$KS_scatter$K$basin_variable
+
+
+CESM_figs$KS_scatter$S$variable
+CESM_figs$KS_scatter$S$variable_by_basin
+CESM_figs$KS_scatter$S$basin
+CESM_figs$KS_scatter$S$basin_variable
+
+```
+
+
+```{r, echo = FALSE, fig.width = 10, fig.height=10, warning = FALSE}
+CESM_figs$deltaKS_scatter
+```
+
+
+```{r, echo = FALSE, fig.width = 10, fig.height=10, warning = FALSE}
+KS_path <- list.files(MULTIP_MODELS_PATH, "all_models", full.names = TRUE)
+KS_figs <- get(load(KS_path))
+```
+
+### Multiple Models K and S
+
+```{r, echo = FALSE, fig.width = 10, fig.height=10, warning = FALSE}
+KS_figs$KS_scatter_figs$K$variable + oceanpH::MY_SETTINGS
+KS_figs$KS_scatter_figs$K$variable + oceanpH::MY_SETTINGS
+KS_figs$KS_scatter_figs$K$variable_by_basin + oceanpH::MY_SETTINGS
+KS_figs$KS_scatter_figs$K$basin + oceanpH::MY_SETTINGS
+KS_figs$KS_scatter_figs$K$basin_variable + oceanpH::MY_SETTINGS
+
+
+KS_figs$KS_scatter_figs$S$variable + oceanpH::MY_SETTINGS
+KS_figs$KS_scatter_figs$S$variable_by_basin + oceanpH::MY_SETTINGS
+KS_figs$KS_scatter_figs$S$basin + oceanpH::MY_SETTINGS
+KS_figs$KS_scatter_figs$S$basin_variable + oceanpH::MY_SETTINGS
+
+```
+
+
+```{r, echo = FALSE, fig.width = 10, fig.height=10, warning = FALSE}
+KS_figs$delta_K
+```
+
+
+### Sameness Figures
+```{r, echo = FALSE, fig.width = 10, fig.height=10, warning = FALSE}
+same_path <- list.files(MULTIP_MODELS_PATH, "same", full.names = TRUE)
+same_figs <- get(load(same_path))
+```
+
+```{r, echo = FALSE, fig.width = 10, fig.height=10, warning = FALSE}
+same_figs$figures$ph
+same_figs$figures$spco2
+same_figs$figures$co3
+same_figs$figures$tos
+```
+
