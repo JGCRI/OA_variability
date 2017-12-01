@@ -11,13 +11,13 @@ output:
 
    
 ---
-<!---
+
 ```{r opts, echo = FALSE}
 knitr::opts_chunk$set(
   fig.path = "images/"
 )
 ```
---->
+
 
 
 
@@ -257,6 +257,28 @@ figures_list$deltaKS_scatter[[1]]
 ```
 
 <br>
+
+#### Annual Extremes
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
+```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+``` 
  
 ## 2. IPSL
 ****
@@ -410,7 +432,29 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
+ 
+ 
+#### Annual Extremes
 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
+```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+``` 
 ## 3. CMCC-CESM
 ****
 
@@ -562,7 +606,30 @@ print_list(figures_list$KS_scatter$S)
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
+``` 
+
+
+#### Annual Extremes
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
 ```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+``` 
 
 ## 4. MPI-ESM-LR
 ****
@@ -716,6 +783,29 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
+ 
+ 
+#### Annual Extremes
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
+```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+``` 
 
 ## 5. MPI-ESM-MR
 ****
@@ -869,6 +959,29 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
+ 
+ 
+#### Annual Extremes
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
+```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+``` 
 
 ## 6. HadGEM2-CC
 ****
@@ -1022,6 +1135,29 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
+ 
+ 
+#### Annual Extremes
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
+```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+``` 
 
 ## 7. GFDL-ESM2G
 ****
@@ -1175,6 +1311,29 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
+ 
+ 
+#### Annual Extremes
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
+```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+```  
 
 ## 8. GFDL-ESM2M
 ****
@@ -1328,6 +1487,29 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
+ 
+ 
+#### Annual Extremes
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
+```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+```  
 
 ## 9. HadGEM2-ES
 ****
@@ -1482,6 +1664,29 @@ print_list(figures_list$KS_scatter$S)
 figures_list$deltaKS_scatter[[1]]
 ```
 
+ 
+ 
+#### Annual Extremes
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$ph$max
+figures_list$extreme_heat_map$ph$min
+```
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$spco2$max
+figures_list$extreme_heat_map$spco2$min
+``` 
+ 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tos$max
+figures_list$extreme_heat_map$tos$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$co3$max
+figures_list$extreme_heat_map$co3$min
+``` 
 
 # Multiple Models
 ```{r, echo = FALSE, warning = FALSE}
@@ -1784,7 +1989,64 @@ sameness_list$below$co3
 
 
  
- 
+  
+
+# Annual Extreme Sameness
+
+### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$ph$max
+```
+
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$ph$min
+```
+
+The models agree more on the timing of the annual min value than they do on the timing of the max. 
+
+### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$spco2$max
+```
+
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$spco2$min
+```
+
+Where as in spco2 the models agree more on the timing of the annual max. 
+
+
+### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$tos$max
+```
+
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$tos$min
+```
+
+Timing of the max and min values are consitent over time and across models for tos.
+
+### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$co3$max
+```
+
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$co3$min
+```
+
+CO3 in the southern ocean we see the signal of a temporal change in the timing of the min. Min is occurring earlier in the winter season, may be cause summer is occuring earlier? 
+
+
 # Observation vs CMIP 
 **** 
 For all of these figures the cmip basins have been redefined to match the area of the observational data. The observation data sets are sometimes misleading labeled as a model, my bad it is just on the bottom of my to do list.
