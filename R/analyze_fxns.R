@@ -169,6 +169,46 @@ get.K_S <- function(data){
 } # end of get.K_S function
 
 
+
+
+# ------------------------------------------------------------------------------
+# get.timing_info
+# ------------------------------------------------------------------------------
+#' Determine when each seasonal min and max occurs
+#'
+#' \code{get.timing_info} Determine when each annual min and max occurs for each
+#' model / basin/ varible combination
+#'
+#' @param data a dataframe of monthly bains means
+#' @importFrom dplyr %>%
+#' @return a data frame of annual max and mins
+#' @export
+
+get.timing_info <- function(input_data){
+
+  # The internal funciton that that determines the max and min for each year
+  internal.max_min <- function(data){
+
+    max_month <- filter(data, value == max(value))
+    max_month$value_type <- "max"
+
+    min_month <- filter(data, value == min(value))
+    min_month$value_type <- "min"
+
+    bind_rows(min_month, max_month)
+
+  }
+
+  # Use the interal function to dermine the max and min of each year for
+  # every ensemble / experiment / model / variable combination.
+  input_data %>%
+    group_by(basin, ensemble, experiment, variable, year, model, units) %>%
+    do(internal.max_min(.)) %>%
+    ungroup
+
+}
+
+
 # ----
 # End
 

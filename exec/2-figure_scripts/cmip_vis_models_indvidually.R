@@ -22,7 +22,7 @@ OUTPUT_DIR <- "figs"
 # pint_pdfs is a logic statement used to turn on or off the function that prints all of the
 # figures generated in this script in pdfs for each model. Printing the pdfs is time intensive,
 # to improve run time by setting to FALSE.
-print_pdfs <- FALSE
+print_pdfs <- TRUE
 
 # Load Data Sets  ------------------------------------------------------------------------------
 
@@ -32,12 +32,14 @@ detrended_path <- list.files(INPUT_DIR, "detrended_data.rda", full.names = TRUE)
 summary_path   <- list.files(INPUT_DIR, "summary_stats.rda", full.names = TRUE)
 amplitude_path <- list.files(INPUT_DIR, "amplitude.rda", full.names = TRUE)
 kurotsis_path  <- list.files(INPUT_DIR, "Kurtosis", full.names = TRUE)
+max_min_path   <- list.files(INPUT_DIR, "max_min", full.names = TRUE)
 
 # Now load data sets
 raw_data <- get(load(raw_path))
 detrended_data <- get(load(detrended_path))
 summary_data   <- get(load(summary_path))
 amplitude_data <- get(load(amplitude_path))
+max_min_data <- get(load(max_min_path))
 
 # Since KS values are saved as dataframes in a list you will need to extract the
 # data frames from the list.
@@ -120,6 +122,52 @@ delta_KS %>%
   FIGURES
 
 
+
+# Annual Extreme Heat Maps ----------------------------------------------------------------
+
+# The only percent we should see in these is 100, could turn the the legend off and chagne
+# the label but I think that is a trival change to the figure and not really that important
+# for the overall analysis.
+
+# Start by calcualting the percent of max or min ocurring in each month by
+# year / basin / variable. Count the number of observations in each month
+# and divide by number of observations in each year.
+max_min_data %>%
+  group_by(model, year, basin, variable, month_name, value_type) %>%
+  summarise(count = n()) %>%
+  ungroup %>%
+  group_by(model, year, basin, variable, value_type) %>%
+  mutate(percent = 100 * count / sum(count)) %>%
+  ungroup ->
+  percent_data
+
+# Since the percent_data only contains observations for the months of annual
+# extemes the figures will not show a full 12 month annual cycle. In order to
+# include all of the months in the figures, create at data frame for year 2101
+# and add to the data frame to plot.
+percent_data %>%
+  select(model, basin, variable, value_type) %>%
+  gcamdata::repeat_add_columns(tibble(month_name = MONTH_NAME$month_name)) %>%
+  mutate(year = 2101, percent = NA) ->
+  fake_2101
+
+# Combine the percent_data and the fake 2101 observations in to a single data
+# frame to plot.
+fake_2101 %>%
+  bind_rows(percent_data) ->
+  percent_data_2101
+
+# Order the months for plotting.
+percent_data_2101$month_name <- factor(percent_data_2101$month_name, levels = rev(MONTH_NAME$month_name), ordered = TRUE)
+
+# Make figures
+percent_data_2101 %>%
+  group_by(model) %>%
+  do(extreme_fig = vis.annual_extremes(.)) %>%
+  left_join(FIGURES, by = "model") ->
+  FIGURES
+
+
 # Save --------------------------------------------------------------------------------------
 
 # Define the function for saving the figures
@@ -135,7 +183,8 @@ save_rda <- function(data, path = "figs/cmip/individual_models/"){
    out = list(raw_tseries = intermediate$raw_tseries, detrended_tseries = intermediate$detrended_tseries,
               amplitude_tseries = intermediate$amplitude_tseries, monthly_mean = intermediate$monthly_mean,
               amplitude_density = intermediate$amplitude_density, deltaKS_scatter = data$delatKS_scatter,
-              KS_scatter = intermediate$KS_scatter)
+              KS_scatter = intermediate$KS_scatter,
+              extreme_heat_map = intermediate$extreme_fig)
 
    save(out, file = paste0(path, model_name, ".rda"))
 

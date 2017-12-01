@@ -44,6 +44,7 @@ raw_path <- list.files(INPUT_DIR, "basin_mean.rda", full.names = TRUE)
 detrended_path <- list.files(INPUT_DIR, "detrended_data.rda", full.names = TRUE)
 summary_path   <- list.files(INPUT_DIR, "summary_stats.rda", full.names = TRUE)
 amplitude_path <- list.files(INPUT_DIR, "amplitude.rda", full.names = TRUE)
+extreme_path   <- list.files("data/cmip/", "max_min", full.names = TRUE)
 KS_path <- list.files(INPUT_DIR, "Kurtosis_Skewness", full.names = TRUE)
 
 
@@ -52,6 +53,7 @@ raw_data <- get(load(raw_path))
 detrended_data <- get(load(detrended_path))
 summary_data   <- get(load(summary_path))
 amplitude_data <- get(load(amplitude_path))
+extreme_data   <- get(load(extreme_path))
 
 # Load the list of the K and S dataframes, parse out the dataframes from the list
 KS_list  <- get(load(KS_path))
@@ -127,6 +129,46 @@ KS_scatter_figs <- vis.KS_scatter_plots(KS_data)
 delta_KS_fig <- vis.delta_KS(delta_KS, TRUE)
 
 
+
+# Annual Extreme Heat Maps ----------------------------------------------------------------
+
+# Start by calcualting the percent of max or min ocurring in each month by
+# year / basin / variable. Count the number of observations in each month
+# and divide by number of observations in each year.
+extreme_data %>%
+  group_by(year, basin, variable, month_name, value_type) %>%
+  summarise(count = n()) %>%
+  ungroup %>%
+  group_by(year, basin, variable, value_type) %>%
+  mutate(percent = 100 * count / sum(count)) %>%
+  ungroup ->
+  percent_data
+
+# Since the percent_data only contains observations for the months of annual
+# extemes the figures will not show a full 12 month annual cycle. In order to
+# include all of the months in the figures, create at data frame for year 2101
+# and add to the data frame to plot.
+percent_data %>%
+  select(basin, variable, value_type) %>%
+  gcamdata::repeat_add_columns(tibble(month_name = MONTH_NAME$month_name)) %>%
+  mutate(year = 2101, percent = NA) ->
+  fake_2101
+
+# Combine the percent_data and the fake 2101 observations in to a single data
+# frame to plot.
+fake_2101 %>%
+  bind_rows(percent_data) ->
+  percent_data_2101
+
+# Order the months for plotting.
+percent_data_2101$month_name <- factor(percent_data_2101$month_name, levels = rev(MONTH_NAME$month_name), ordered = TRUE)
+
+# Make figures
+extreme_figs <- vis.annual_extremes(percent_data_2101)
+
+
+
+
 # Save Plots ------------------------------------------------------------------------------
 
 # Combine the time series plots into a list
@@ -137,7 +179,8 @@ all_models = list(time_series = time_series,
                   mean_monthly = mean_monthly,
                   distribution = amp_density_figs,
                   KS_scatter_figs = KS_scatter_figs,
-                  delta_K = delta_KS_fig)
+                  delta_K = delta_KS_fig,
+                  annual_extremes = extreme_figs)
 
 # Save figures asll .rda object
 save(all_models, file = paste0(OUTPUT_DIR, "/multiple_models_figures.rda"))

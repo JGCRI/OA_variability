@@ -8,7 +8,8 @@
 # Modified:   xxx
 #
 # Notes: I am unsure if I want to go with driver functions or driver scripts??? what would
-# be easiest?
+# be easiest? Also this takes forever when we include the max and min timing scripts... idk
+# what we should do about that
 #
 # Set Up Environment  -------------------------------------------------------------------------
 
@@ -44,6 +45,15 @@ amplitude <- get.amplitude(detrended_data, OUTPUT_DIR)
 
 # Save
 save(amplitude, file = paste0(OUTPUT_DIR, "/amplitude.rda"))
+
+
+# Max and Min Timing ---------------------------------------------------------------------------
+
+# Determine when the annaul max and min occur.
+max_min_timing <- get.timing_info(detrended_data)
+
+# Save
+save(max_min_timing, file = paste0(OUTPUT_DIR, "/seasonal_max_min.rda"))
 
 
 # Monthly Stats ------------------------------------------------------------------------------

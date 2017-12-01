@@ -10,10 +10,6 @@
 #
 # Notes: vis.time_series need a better way to lable the time axis.
 
-# Define my fav figure settings
-MY_SETTINGS <- ggplot2::theme(text = ggplot2::element_text(size = 20)) +
-  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
-
 # -------------------------------------------------------------------------------------------
 # vis.is_outlier()
 # ------------------------------------------------------------------------------
@@ -400,7 +396,7 @@ internal.KS_scatterplot <- function(data){
   data %>%
     ggplot(aes(historical, future, color = variable)) +
     geom_point(size = 6) +
-    MY_SETTINGS +
+    oceanpH::MY_SETTINGS +
     labs(x = paste0(stat_label, " historical"),
          y = paste0(stat_label, " future"),
          title = paste0(model_label, "\nComparing Variables")) ->
@@ -417,7 +413,7 @@ internal.KS_scatterplot <- function(data){
   data %>%
     ggplot(aes(historical, future, color = basin)) +
     geom_point(size = 6) +
-    MY_SETTINGS +
+    oceanpH::MY_SETTINGS +
     labs(x = paste0(stat_label, " historical"),
          y = paste0(stat_label, " future"),
          title = paste0(model_label, "\nComparing Basins")) ->
@@ -437,7 +433,7 @@ internal.KS_scatterplot <- function(data){
     data %>%
       ggplot(aes(historical, future, color = model)) +
       geom_point(size = 6) +
-      MY_SETTINGS +
+      oceanpH::MY_SETTINGS +
       labs(x = paste0(stat_label, " historical"),
            y = paste0(stat_label, " future"),
            title = paste0(model_label, "\nComparing Models")) ->
@@ -518,7 +514,7 @@ vis.KS_scatter_plots <- function(data){
 #' \code{vis.delta_KS} This function makes the a scatter plot from change in K and S from the
 #' future vs historical data sets.
 #'
-#' @param data data frame of the cahnge in K and S amplitude distribution measurements
+#' @param data data frame of the change in K and S amplitude distribution measurements
 #' @parm print_outliers default is set to false, if set to true then will label observations that count as outliers
 #' @return a single scatter plot of the change in K and S values
 
@@ -537,7 +533,7 @@ vis.delta_KS <- function(data, print_outliers = FALSE){
   to_plot %>%
     ggplot(aes(basin, delta, shape = stat_variable, color = stat_variable)) +
     geom_point(size = 6) +
-    MY_SETTINGS +
+    oceanpH::MY_SETTINGS +
     facet_wrap("variable") +
     labs(title = paste0(mo_label, "\nDelta K and S comparison"),
          y = "Change in K and S") ->
@@ -545,13 +541,62 @@ vis.delta_KS <- function(data, print_outliers = FALSE){
 
   # Add the labels to the figures if specified
   if(print_outliers){
-   p <- p + geom_text(data = to_plot, aes(label = outlier), na.rm = TRUE, size = 3, check_overlap = TRUE)
+   p <- p + geom_text(data = to_plot, aes(label = outlier), na.rm = TRUE, size = 6, check_overlap = TRUE)
   }
 
   return(p)
 
 } # end of the vis.delta_KS
 
+
+# -------------------------------------------------------------------------------------------
+# vis.annual_extremes
+# -------------------------------------------------------------------------------------------
+#' Make the heat map of when annual seasonal extremes occur
+#'
+#' \code{vis.annual_extremes} This function creates heat maps for the timing of the when annual
+#' max and mins occur in hopes to visualize any sort of changes in the timing of the seasonal max and mins
+#'
+#' @param data data frame of the percent of value observed in each month
+#' @return a flat list of percent agreement heat maps by variable and value type faceted by basin
+
+vis.annual_extremes <- function(data){
+
+  # Define the internal function that creates a single heat map
+  internal <- function(df){
+
+    # Save variable and value type information to used in labeling the figures.
+    vari     <- unique(df$variable)
+    val_type <- unique(df$value_type)
+
+    # Create a heat map shaded light (low) to dark (high) and facet by basin
+    df %>%
+      ggplot(aes(year, month_name), na.rm = FALSE) +
+      geom_tile(aes(fill = percent), na.rm = FALSE) +
+      scale_fill_gradient(low = "#56B1F7", high = "#132B43", na.value = NA) +
+      labs(y = "Month",
+           title = paste0("Annual ", val_type, " Agreement Heat Map \n", vari)) +
+      facet_wrap("basin", ncol = 3) +
+      MY_SETTINGS
+  }
+
+  # For every variable / val_type combination create a heat map of the
+  # percent agreement.
+  data %>%
+    group_by(variable, value_type) %>%
+    do(fig = internal(.)) ->
+    unformated_out
+
+  # Use a for loop to store the figures in a flat list and return output
+  output = list()
+
+  for(i in 1:nrow(unformated_out)){
+    output[[paste0(unformated_out$variable[i])]][[paste0(unformated_out$value_type[i])]] <- unformated_out$fig[[i]]
+  }
+
+  return(output)
+
+}
 
 # -----
 # End
