@@ -16,6 +16,16 @@ library(dplyr); library(tidyr); library(ggplot2)
 # Define the location where to save the products/outputs from the script
 OUT_DIR <- "data/cmip"
 
+# Basins
+
+# As of 12/1 we decided to narrow down the number of basins we are looking at.
+# the basins to keep list will determine which basins should be included in the
+# the upstream analysis.
+
+# If set to ALL then all of the basins will be processed
+keep_basins <- c("Arctic", "NH Atlantic",  "SH Atlantic",
+                 "NH Pacific", "Southern Ocean", "SH Pacific")
+
 # ------------------------------------------------------------------------------
 # Load and concatenate the csv files created on pic.
 # ------------------------------------------------------------------------------
@@ -41,6 +51,7 @@ for(i in 1:length(to_process_df$file)){
 # ------------------------------------------------------------------------------
 # Convert temperature data from K to C and assign ph blank units (for graphs).
 data %>%
+  dplyr::filter(basin %in% keep_basins) %>%
   dplyr::mutate(value = ifelse(variable == "tos", value - 273.17, value)) %>%
   dplyr::mutate(units = ifelse(variable == "tos", "C", units)) %>%
   dplyr::mutate(units = ifelse(variable == "ph", "", units)) ->
