@@ -37,8 +37,11 @@ data      <- get(load(data_path))
 
 
 # Create a dataframe of the unique model / variable / experiment combinations.
+basin1 <- unique(data$basin)[1]
+
+
 data %>%
-  filter(basin == "Global", month_name == "Jan") %>%
+  filter(basin == basin1, month_name == "Jan") %>%
   select(experiment, variable, model, year, value) %>%
   distinct() %>%
   spread(variable, value) ->
