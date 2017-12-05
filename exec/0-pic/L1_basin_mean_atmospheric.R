@@ -7,8 +7,9 @@
 #
 # Notes: This script will need to be executed on pic with an sbatch and will
 # take about an hour to run.
-#
+
 # Environment ------------------------------------------------------------------------------
+
 # Define the base name directory, should be the location of the package.
 BASE_NAME <- "/pic/projects/GCAM/Dorheim/OA_variability"
 
@@ -16,6 +17,7 @@ BASE_NAME <- "/pic/projects/GCAM/Dorheim/OA_variability"
 OUTPUT_DIR <- paste0(BASE_NAME, "/raw-data/")
 
 # Call the pacakge
+
 source(paste0(BASE_NAME,"/exec/0-pic/call_package.R"))
 
 # Import the defined basins
@@ -36,11 +38,9 @@ output <- cdo.sellonlat(cdo_operator = "fldmean", data_input = df, defined_basin
 
 final_output <- mutate(output, year = substr(time, 1, 4), month = substr(time, 5, 6))
 
+
 write.csv(final_output, paste0(OUTPUT_DIR,"L1_basin_fldmean_tas.csv"), row.names = FALSE)
 
 
 
 # End -----
-message("Complete no errors")
-
-
