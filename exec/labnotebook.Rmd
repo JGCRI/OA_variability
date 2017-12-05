@@ -258,7 +258,7 @@ figures_list$deltaKS_scatter[[1]]
 
 <br>
 
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -434,7 +434,7 @@ figures_list$deltaKS_scatter[[1]]
 ```
  
  
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -609,7 +609,7 @@ figures_list$deltaKS_scatter[[1]]
 ``` 
 
 
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -785,7 +785,7 @@ figures_list$deltaKS_scatter[[1]]
 ```
  
  
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -961,7 +961,7 @@ figures_list$deltaKS_scatter[[1]]
 ```
  
  
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -1137,7 +1137,7 @@ figures_list$deltaKS_scatter[[1]]
 ```
  
  
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -1313,7 +1313,7 @@ figures_list$deltaKS_scatter[[1]]
 ```
  
  
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -1489,7 +1489,7 @@ figures_list$deltaKS_scatter[[1]]
 ```
  
  
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -1666,7 +1666,7 @@ figures_list$deltaKS_scatter[[1]]
 
  
  
-#### Annual Extremes
+### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$ph$max
@@ -1922,6 +1922,21 @@ sameness_list$within$tos
 sameness_list$within$co3
 ```
 
+
+#### Percent Within Bar 
+```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=14}
+sameness_list$fig_bar
+``` 
+
+#### Percent Within Ranking
+```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=14}
+sameness_list$count
+``` 
+
+#### Mean Percent Within 
+```{r, echo = FALSE, warning = FALSE, fig.height=7, fig.width=14}
+sameness_list$mean
+``` 
 
 ## Percent Above "Sameness Index"
 
