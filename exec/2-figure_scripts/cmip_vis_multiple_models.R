@@ -1,4 +1,3 @@
-# ------------------------------------------------------------------------------------------
 # Purpose: This script looks at the observations for the complete data set.
 #
 # Created by: Dorheim, Kalyn
@@ -126,7 +125,7 @@ KS_scatter_figs <- vis.KS_scatter_plots(KS_data)
 
 
 # Delta K and S scatter plots
-delta_KS_fig <- vis.delta_KS(delta_KS, TRUE)
+delta_KS_fig <- vis.delta_KS(delta_KS, boxplot = TRUE)
 
 
 

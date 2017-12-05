@@ -509,16 +509,17 @@ vis.KS_scatter_plots <- function(data){
 # -------------------------------------------------------------------------------------------
 # vis.delta_KS
 # -------------------------------------------------------------------------------------------
-#' Make the scatter plot of delta K and S
+#' Make the scatter or boxplot of delta K and S
 #'
 #' \code{vis.delta_KS} This function makes the a scatter plot from change in K and S from the
 #' future vs historical data sets.
 #'
 #' @param data data frame of the change in K and S amplitude distribution measurements
 #' @parm print_outliers default is set to false, if set to true then will label observations that count as outliers
+#' @param boxplot default is set to FALSE if set to TRUE then makes a boxplot instead of a point plot
 #' @return a single scatter plot of the change in K and S values
 
-vis.delta_KS <- function(data, print_outliers = FALSE){
+vis.delta_KS <- function(data, print_outliers = FALSE, boxplot = FALSE){
 
   # Save a label of info about the models used
   mo_label <- vis.model_label(data)
@@ -530,14 +531,27 @@ vis.delta_KS <- function(data, print_outliers = FALSE){
     ungroup ->
     to_plot
 
-  to_plot %>%
-    ggplot(aes(basin, delta, shape = stat_variable, color = stat_variable)) +
-    geom_point(size = 6) +
-    oceanpH::MY_SETTINGS +
-    facet_wrap("variable") +
-    labs(title = paste0(mo_label, "\nDelta K and S comparison"),
-         y = "Change in K and S") ->
-    p
+  if(!boxplot){
+    to_plot %>%
+      ggplot(aes(basin, delta, shape = stat_variable, color = stat_variable)) +
+      geom_point(size = 6) +
+      oceanpH::MY_SETTINGS +
+      facet_wrap("variable") +
+      labs(title = paste0(mo_label, "\nDelta K and S comparison"),
+           y = "Change in K and S") ->
+      p
+  } else {
+
+    to_plot %>%
+      ggplot(aes(x = basin, y = delta, fill = stat_variable)) +
+      geom_boxplot() +
+      oceanpH::MY_SETTINGS +
+      facet_wrap("variable") +
+      labs(title = paste0(mo_label, "\nDelta K and S comparison"),
+           y = "Change in K and S") ->
+      p
+    }
+
 
   # Add the labels to the figures if specified
   if(print_outliers){
