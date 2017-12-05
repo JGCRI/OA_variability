@@ -1,0 +1,13 @@
+basin,lat1,lat2,lon1,lon2
+Global,-90,90,0,360
+Arctic,55,90,0,360
+South Hemi,-90,0,0,360
+North Hemi,0,90,0,360
+Indian,-60,30,20,146
+Atlantic,-60,55,-68,20
+NH Atlantic,-0,55,-68,20
+SH Atlantic,-60,0,-68,20
+Southern Ocean,-90,-55,-180,180
+Pacific,-60,55,146,292
+NH Pacific,0,55,146,292
+SH Pacific,-60,0,146,292
