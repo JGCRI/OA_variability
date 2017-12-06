@@ -1,4 +1,3 @@
-# ------------------------------------------------------------------------------
 # Purpose: This script looks at the robustness index of the seasonal amplitude
 # across models / basin / variable. This script produces an .rda object of a list
 # that contains the basin / variable sameness(robustness index) line graphs
@@ -10,9 +9,9 @@
 #
 # Notes: The idea for these figures & analysis came from reading
 # https://www.biogeosciences.net/10/6225/2013/
-# ------------------------------------------------------------------------------
-# Environment
-# ------------------------------------------------------------------------------
+#
+# Environment ------------------------------------------------------------------------------
+
 # Required libs
 devtools::load_all()
 library(dplyr)
@@ -28,9 +27,9 @@ OUTPUT_DIR <- "figs/cmip"
 please_print <- FALSE
 
 
-# ------------------------------------------------------------------------------
-# Script Functions
-# ------------------------------------------------------------------------------
+
+# Script Functions ------------------------------------------------------------------------------
+#
 # Define the graphing function used by this script. If this turns out to be a
 # good function considered adding to R/
 
@@ -74,9 +73,9 @@ kable.robustness <- function(data, caption = ""){
 }
 
 
-# ------------------------------------------------------------------------------
-# Robustness/Sameness Index
-# ------------------------------------------------------------------------------
+
+# Robustness/Sameness Index  ------------------------------------------------------------------------------
+
 # Import the amplitude data
 path <- list.files(INPUT_DIR, "amplitude", full.names = TRUE)
 data <- get(load(path)) %>%  ungroup
@@ -128,9 +127,8 @@ amp_observations_count %>%
   percent_robustness_df
 
 
-# ------------------------------------------------------------------------------
-# Line Graphs
-# ------------------------------------------------------------------------------
+# Line Graphs ------------------------------------------------------------------------------
+
 # This section makes line graphs of the amplitude distribution, mean values, and
 # single models at a time
 #
@@ -150,9 +148,9 @@ to_plot %>%
 robustness_figs <- setNames(object = robustness_figs_df$fig, nm = robustness_figs_df$variable)
 
 
-# ------------------------------------------------------------------------------
-# Sameness kables
-# ------------------------------------------------------------------------------
+
+# Sameness Kables ------------------------------------------------------------------------------
+
 # Format the data to make into the table. Control the number of digits and
 # select which percent to spread.
 
@@ -204,13 +202,51 @@ to_table %>%
 
 below_distribution <- setNames(robustness_kable_df$kable, nm = robustness_kable_df$variable)
 
-# ------------------------------------------------------------------------------
-# Final Formating and save Script Products
-# ------------------------------------------------------------------------------
+
+# Percent Within Bar Plots ------------------------------------------------------------------------------
+
+percent_robustness_df %>%
+  ggplot(aes(x = basin, y = percent_within,  fill = model, group = model)) +
+  geom_col(position = "dodge") +
+  facet_wrap("variable") +
+  MY_SETTINGS +
+  labs(title = "Percent Within Robust Distribution \nby Model",
+       y = "% of total amplitude time series within ") ->
+  percent_within_bar
+
+
+# Which Model(s) Most Consistent ------------------------------------------------------------------------
+
+percent_robustness_df %>%
+  select(model, variable, basin, percent_within) %>%
+  group_by(basin, variable) %>%
+  filter(percent_within == max(percent_within)) %>%
+  ungroup %>%
+  group_by(model) %>%
+  summarise(count = n()) %>%
+  arrange(count) %>%
+  knitr::kable() ->
+  count_within
+
+percent_robustness_df %>%
+  select(model, variable, basin, percent_within) %>%
+  group_by(model) %>%
+  summarise(mean = mean(percent_within)) %>%
+  arrange(mean) %>%
+  knitr::kable(digits = 2) ->
+  mean_percent_within
+
+
+
+# Final Formating and save Script Products --------------------------------------------------------------
+
 out = list(within = within_distribution,
            above = above_distribution,
            below = below_distribution,
-           figures = robustness_figs)
+           figures = robustness_figs,
+           fig_bar = percent_within_bar,
+           count = count_within,
+           mean = mean_percent_within)
 
 save(out, file = paste0(OUTPUT_DIR,"/amplitude_sameness.rda"))
 
@@ -229,9 +265,7 @@ if(please_print){
 
 
 
-# ----
-# End
-# ----
+# End -----
 message("script complete")
 
 
