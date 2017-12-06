@@ -24,7 +24,7 @@ source(paste0(BASE_NAME,"/exec/0-pic/call_package.R"))
 basins <- read.csv2(paste0(BASE_NAME,"/exec/0-pic/defined_basins.csv"), sep = ",")
 
 
-# tas ------------------------------------------------------------------------------
+# FGCO2 ------------------------------------------------------------------------------
 # Find the netcdfs to process
 cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin",
              variable = "fgco2", domain = "Omon", experiment = c("rcp85", "historical"), ensemble = "r1i1p1") %>%
