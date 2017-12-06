@@ -145,7 +145,7 @@ vis.model_label <- function(data){
 
 # To do i need to figure out a better way to label the x axis
 
-internal.time_series <- function(input_df, subtitle = ""){
+internal.time_series <- function(input_df, subtitle = "", legend = TRUE){
 
   # Checks
   #
@@ -171,9 +171,16 @@ internal.time_series <- function(input_df, subtitle = ""){
     geom_line(size = 2) +
     facet_wrap(facets = "basin", ncol = 3, scales = "free") +
     labs(y = paste0(var," ", units), title = "Time Series",
-         caption = paste0("Historical and future experiments plotted together for aesthetic purposes only"),
+         #caption = paste0("Historical and future experiments plotted together for aesthetic purposes only"),
          subtitle = subtitle) +
-    MY_SETTINGS
+    MY_SETTINGS ->
+    p
+
+  if(!legend){
+    p + theme(legend.position = "none") -> p
+  }
+
+  return(p)
 
 } # end of the vis.time_series
 
@@ -195,7 +202,7 @@ internal.time_series <- function(input_df, subtitle = ""){
 #' @return a data frame with all of the meta information
 #' @keywords internal
 
-plot.time_series <- function(data, subtitle = ""){
+plot.time_series <- function(data, subtitle = "", legend = TRUE){
 
   out = list()
   var_list <- unique(data$variable)
@@ -205,7 +212,7 @@ plot.time_series <- function(data, subtitle = ""){
     to_plot   <- dplyr::filter(data, variable == var_list[i])
     variable  <- unique(to_plot$variable)
 
-    out[[paste0(variable)]] <- internal.time_series(to_plot, subtitle)
+    out[[paste0(variable)]] <- internal.time_series(to_plot, subtitle, legend)
 
   }
 
