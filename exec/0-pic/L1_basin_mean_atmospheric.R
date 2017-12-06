@@ -27,7 +27,7 @@ basins <- read.csv2(paste0(BASE_NAME,"/exec/0-pic/defined_basins.csv"), sep = ",
 # tas ------------------------------------------------------------------------------
 # Find the netcdfs to process
 cmip.find_me(path = "/pic/projects/GCAM/CMIP5-CHartin",
-             variable = "tas", domain = "Omon", experiment = c("rcp85", "historical"), ensemble = "r1i1p1") %>%
+             variable = "tas", domain = "Amon", experiment = c("rcp85", "historical"), ensemble = "r1i1p1") %>%
   cmip.file_info %>%
   mutate(variable = "tas") ->
   df
