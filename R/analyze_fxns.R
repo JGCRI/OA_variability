@@ -29,7 +29,7 @@ single.sum_stats <- function(df){
   info <- cmip.meta(df)
 
   # Use the experiment to determine how to filer the years.
-  if(grepl("rcp", info$experiment)){
+  if(grepl("rcp", unique(info$experiment))){
     # If its the future experiment then use the last 30 years.
     end_year   <- max(df$year)
     start_year <- end_year - 30
