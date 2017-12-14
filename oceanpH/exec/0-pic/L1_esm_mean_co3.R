@@ -14,7 +14,7 @@
 BASE_NAME <- "/pic/projects/GCAM/Dorheim/OA_variability/oceanpH"
 
 # Define the output directory.
-OUTPUT_DIR <- file.path(BASE_NAME, "raw-data", "cmip", "emsrcp85")
+OUTPUT_DIR <- file.path(BASE_NAME, "raw-data", "cmip", "esmrcp85")
 
 # Call the pacakge
 source(file.path(BASE_NAME,"exec", "0-pic", "build_package.R"))

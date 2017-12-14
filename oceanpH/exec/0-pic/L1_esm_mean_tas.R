@@ -17,7 +17,7 @@
 BASE_NAME <- "/pic/projects/GCAM/Dorheim/OA_variability/oceanpH"
 
 # Define the output directory.
-OUTPUT_DIR <- file.path(BASE_NAME, "raw-data", "cmip", "esrcp85")
+OUTPUT_DIR <- file.path(BASE_NAME, "raw-data", "cmip", "esmrcp85")
 
 # Call the pacakge
 
