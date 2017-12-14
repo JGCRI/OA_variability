@@ -7,20 +7,21 @@
 # Modified:   October 19, 2017
 #
 # Notes:
-# ------------------------------------------------------------------------------
-# Environment Set Up
-# ------------------------------------------------------------------------------
+
+# Environment ------------------------------------------------------------------------------
+
 # Define the base name directory, should be the location of the package.
-BASE_NAME <- "/pic/projects/GCAM/Dorheim/OA_variability"
+BASE_NAME <- "/pic/projects/GCAM/Dorheim/OA_variability/oceanpH"
 
 # Define the output directory.
-OUTPUT_DIR <- paste0(BASE_NAME, "/raw-data/")
+OUTPUT_DIR <- file.path(BASE_NAME, "raw-data", "cmip", "rcp85")
 
 # Call the pacakge
-source(paste0(BASE_NAME,"/exec/processing/call_package.R"))
+
+source(file.path(BASE_NAME,"exec", "0-pic", "build_package.R"))
 
 # Import the defined basins
-basins <- read.csv2(paste0(BASE_NAME,"/exec/processing/L0/defined_basins.csv"), sep = ",")
+basins <- read.csv2(file.path(BASE_NAME,"exec", "0-pic", "defined_basins.csv"), sep = ",")
 
 
 # ------------------------------------------------------------------------------
