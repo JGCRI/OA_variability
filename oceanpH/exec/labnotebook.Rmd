@@ -103,7 +103,7 @@ tables$experiment_variable
 
 ```{r, echo = FALSE, warning = FALSE}
 
-fig_path <- list.files(INDVID_MODELS_PATH, "CESM1", full.names = TRUE)
+fig_path <- list.files(INDVID_MODELS_PATH, "CESM1-BGC", full.names = TRUE)
 figures_list <- get(load(fig_path))
 
 ```
@@ -135,6 +135,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -142,8 +149,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -168,10 +181,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -198,10 +223,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -228,12 +265,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -271,6 +319,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -278,6 +331,11 @@ figures_list$extreme_heat_map$tos$min
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
 ``` 
  
 ## 2. IPSL
@@ -291,6 +349,9 @@ figures_list <- get(load(fig_path))
 ### Time Series Comparison
 ****
 
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
 #### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -312,6 +373,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -319,8 +387,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -345,10 +419,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -375,10 +461,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -405,12 +503,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -432,8 +541,9 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
- 
- 
+
+<br>
+
 ### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -447,6 +557,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -455,6 +570,12 @@ figures_list$extreme_heat_map$tos$min
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
 ``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
+``` 
+
 ## 3. CMCC-CESM
 ****
 
@@ -466,6 +587,9 @@ figures_list <- get(load(fig_path))
 ### Time Series Comparison
 ****
 
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
 #### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -487,6 +611,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -494,8 +625,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -520,10 +657,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -550,10 +699,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -580,12 +741,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -606,8 +778,9 @@ print_list(figures_list$KS_scatter$S)
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
-``` 
+```
 
+<br>
 
 ### Annual Extremes
 
@@ -622,6 +795,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -630,6 +808,11 @@ figures_list$extreme_heat_map$tos$min
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
 ``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
+```
 
 ## 4. MPI-ESM-LR
 ****
@@ -642,6 +825,9 @@ figures_list <- get(load(fig_path))
 ### Time Series Comparison
 ****
 
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
 #### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -663,6 +849,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -670,8 +863,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -696,10 +895,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -726,10 +937,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -756,12 +979,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -783,8 +1017,9 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
- 
- 
+
+<br>
+
 ### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -798,6 +1033,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -805,6 +1045,11 @@ figures_list$extreme_heat_map$tos$min
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
 ``` 
 
 ## 5. MPI-ESM-MR
@@ -818,6 +1063,9 @@ figures_list <- get(load(fig_path))
 ### Time Series Comparison
 ****
 
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
 #### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -839,6 +1087,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -846,8 +1101,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -872,10 +1133,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -902,10 +1175,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -932,12 +1217,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -959,8 +1255,9 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
- 
- 
+
+<br>
+
 ### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -974,6 +1271,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -981,6 +1283,11 @@ figures_list$extreme_heat_map$tos$min
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
 ``` 
 
 ## 6. HadGEM2-CC
@@ -994,6 +1301,9 @@ figures_list <- get(load(fig_path))
 ### Time Series Comparison
 ****
 
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
 #### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1015,6 +1325,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1022,8 +1339,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -1048,10 +1371,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -1078,10 +1413,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -1108,12 +1455,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -1135,8 +1493,9 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
- 
- 
+
+<br>
+
 ### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1150,6 +1509,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -1157,6 +1521,11 @@ figures_list$extreme_heat_map$tos$min
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
 ``` 
 
 ## 7. GFDL-ESM2G
@@ -1170,6 +1539,9 @@ figures_list <- get(load(fig_path))
 ### Time Series Comparison
 ****
 
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
 #### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1191,6 +1563,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1198,8 +1577,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -1224,10 +1609,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -1254,10 +1651,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -1284,12 +1693,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -1311,8 +1731,9 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
- 
- 
+
+<br>
+
 ### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1326,6 +1747,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -1333,7 +1759,12 @@ figures_list$extreme_heat_map$tos$min
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
-```  
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
+``` 
 
 ## 8. GFDL-ESM2M
 ****
@@ -1346,6 +1777,9 @@ figures_list <- get(load(fig_path))
 ### Time Series Comparison
 ****
 
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
 #### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1367,6 +1801,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1374,8 +1815,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -1400,10 +1847,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -1430,10 +1889,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -1460,12 +1931,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -1487,8 +1969,9 @@ print_list(figures_list$KS_scatter$S)
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$deltaKS_scatter[[1]]
 ```
- 
- 
+
+<br>
+
 ### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1502,6 +1985,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -1509,8 +1997,12 @@ figures_list$extreme_heat_map$tos$min
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
-```  
+``` 
 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
+``` 
 ## 9. HadGEM2-ES
 ****
 
@@ -1522,6 +2014,9 @@ figures_list <- get(load(fig_path))
 ### Time Series Comparison
 ****
 
+
+This section currently only displays the historical & future rcp time series for the Global ocean basins but can be modified to incldue other basins. The histoircal & rcp cmip observations were detrended separtely using a third degree polynomail. The figures below contain historical & future rcp observations on the same plot for visual purposes to make comparing the data before and after detrending easier.
+
 #### pH
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1543,6 +2038,13 @@ figures_list$raw_tseries$tos
 figures_list$detrended_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$tas
+figures_list$detrended_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1550,8 +2052,14 @@ figures_list$raw_tseries$co3
 figures_list$detrended_tseries$co3
 ```
 
+#### fgco2
 
-<br>
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$raw_tseries$fgco2
+figures_list$detrended_tseries$fgco2
+```
+
+
 
 ### Monthly Mean 
 
@@ -1576,10 +2084,22 @@ figures_list$monthly_mean$spco2
 figures_list$monthly_mean$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$monthly_mean$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$monthly_mean$fgco2
 ```
 
 <br>
@@ -1606,10 +2126,22 @@ figures_list$amplitude_tseries$spco2
 figures_list$amplitude_tseries$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_tseries$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_tseries$fgco2
 ```
 
 <br>
@@ -1636,12 +2168,23 @@ figures_list$amplitude_density$spco2
 figures_list$amplitude_density$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$amplitude_density$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$amplitude_density$fgco2
+```
 
 ### K and S Figures
  
@@ -1664,8 +2207,8 @@ print_list(figures_list$KS_scatter$S)
 figures_list$deltaKS_scatter[[1]]
 ```
 
- 
- 
+<br>
+
 ### Annual Extremes
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1679,6 +2222,11 @@ figures_list$extreme_heat_map$spco2$min
 ``` 
  
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$tas$max
+figures_list$extreme_heat_map$tas$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$tos$max
 figures_list$extreme_heat_map$tos$min
 ``` 
@@ -1686,6 +2234,11 @@ figures_list$extreme_heat_map$tos$min
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$extreme_heat_map$co3$max
 figures_list$extreme_heat_map$co3$min
+``` 
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$extreme_heat_map$fgco2$max
+figures_list$extreme_heat_map$fgco2$min
 ``` 
 
 # Multiple Models
@@ -1718,6 +2271,13 @@ figures_list$time_series$raw$tos
 figures_list$time_series$detrended$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$raw$tas
+figures_list$time_series$detrended$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -1725,6 +2285,12 @@ figures_list$time_series$raw$co3
 figures_list$time_series$detrended$co3
 ```
 
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$raw$fgco2
+figures_list$time_series$detrended$fgco2
+```
 
 <br>
 
@@ -1751,10 +2317,22 @@ figures_list$mean_monthly$spco2
 figures_list$mean_monthly$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$mean_monthly$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$mean_monthly$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$mean_monthly$fgco2
 ```
 
 <br>
@@ -1781,14 +2359,107 @@ figures_list$time_series$amplitude$spco2
 figures_list$time_series$amplitude$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$amplitude$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$time_series$amplitude$co3
 ```
 
-<br>
+#### fgco2
 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$amplitude$fgco2
+```
+
+### Seasonal Min Time Series
+
+The time series of annual min for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$min$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$min$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$min$tos
+```
+
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$min$tas
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$min$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$min$fgco2
+```
+
+<br>
+ 
+### Seasonal Max Time Series
+
+The time series of annual min for each variable / basin. 
+
+#### pH
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$max$ph
+```
+
+#### spco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$max$spco2
+```
+
+#### tos
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$max$tos
+```
+
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$max$tas
+```
+
+#### co3
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$max$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$time_series$max$fgco2
+```
+
+ 
 ### Seasonal Amplitude Distirbution
 
 Distirbution of annual seasonal amplitude for each variable / basin. 
@@ -1811,10 +2482,22 @@ figures_list$distribution$spco2
 figures_list$distribution$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$distribution$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 figures_list$distribution$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$distribution$fgco2
 ```
 
 
@@ -1867,13 +2550,23 @@ TABLES$spco2
 TABLES$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+TABLES$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 TABLES$co3
 ```
 
+#### fgco2
 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+TABLES$fgco2
+```
 
 
  
@@ -1916,10 +2609,22 @@ sameness_list$within$spco2
 sameness_list$within$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$within$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 sameness_list$within$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$within$fgco2
 ```
 
 
@@ -1961,10 +2666,22 @@ sameness_list$above$spco2
 sameness_list$above$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$above$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 sameness_list$above$co3
+```
+
+#### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$above$fgco2
 ```
 
 ## Percent Below "Sameness Index"
@@ -1990,13 +2707,23 @@ sameness_list$below$spco2
 sameness_list$below$tos
 ```
 
+#### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$below$tas
+```
+
 #### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
 sameness_list$below$co3
 ```
 
+#### fgco2
 
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+sameness_list$below$fgco2
+```
 
 
 
@@ -2048,6 +2775,17 @@ figures_list$annual_extremes$tos$min
 
 Timing of the max and min values are consitent over time and across models for tos.
 
+### tas
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$tas$max
+```
+
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$tas$min
+```
+
 ### co3
 
 ```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
@@ -2061,6 +2799,16 @@ figures_list$annual_extremes$co3$min
 
 CO3 in the southern ocean we see the signal of a temporal change in the timing of the min. Min is occurring earlier in the winter season, may be cause summer is occuring earlier? 
 
+### fgco2
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$fgco2$max
+```
+
+
+```{r, echo = FALSE, warning = FALSE, fig.height=14, fig.width=14}
+figures_list$annual_extremes$fgco2$min
+```
 
 # Observation vs CMIP 
 **** 

@@ -14,7 +14,7 @@ library(dplyr)
 library(tidyr)
 
 # Define the location where to save the products/outputs from the script
-OUT_DIR <- "data/cmip"
+OUT_DIR <- "data/cmip/rcp85"
 
 # Basins
 
@@ -31,7 +31,7 @@ keep_basins <- c("Arctic", "NH Atlantic",  "SH Atlantic",
 # Load and concatenate the csv files created on pic ---------------------------------------------
 
 # Find all of the csv files within the inst/extdata directory
-csv_list <- tibble::tibble(file = list.files("raw-data/cmip", pattern = ".csv", full.names = TRUE))
+csv_list <- tibble::tibble(file = list.files("raw-data/cmip/rcp85", pattern = ".csv", full.names = TRUE))
 
 csv_list %>%
   filter(grepl("raw-data", file)) %>%
@@ -53,8 +53,8 @@ for(i in 1:length(to_process_df$file)){
 # Convert temperature data from K to C and assign ph blank units (for graphs).
 data %>%
   dplyr::filter(basin %in% keep_basins) %>%
-  dplyr::mutate(value = ifelse(variable == "tos", value - 273.17, value)) %>%
-  dplyr::mutate(units = ifelse(variable == "tos", "C", units)) %>%
+  dplyr::mutate(value = ifelse(variable %in% c("tos", "tas"), value - 273.17, value)) %>%
+  dplyr::mutate(units = ifelse(variable%in% c("tos", "tas"), "C", units)) %>%
   dplyr::mutate(units = ifelse(variable == "ph", "", units)) ->
   data_units
 

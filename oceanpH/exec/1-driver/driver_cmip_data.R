@@ -1,4 +1,3 @@
-# Script Info --- ------------------------------------------------------------------------------
 # Purpose: This script acts as the driver for processing the cmip data sets. Note this script
 # requires post cdo processing or that the data processed on pic (saved in raw-data/cmip) has
 # been formated, the materials do do that can be found in the raw-data directory.
@@ -19,8 +18,8 @@ library(tidyr)
 devtools::load_all()
 
 # Define the input and output directories for this script
-INPUT_DIR  <- "data/cmip"
-OUTPUT_DIR <- "data/cmip"
+INPUT_DIR  <- "data/cmip/rcp85"
+OUTPUT_DIR <- "data/cmip/rcp85"
 
 
 # Load the cmip_observations data to start with, or the raw data

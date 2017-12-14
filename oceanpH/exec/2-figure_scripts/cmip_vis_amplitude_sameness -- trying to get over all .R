@@ -47,7 +47,7 @@ vis.robustness <- function(data){
     ggplot(aes(x = year, y = amp_mean)) +
     oceanpH::MY_SETTINGS +
     # Add the individual annual model amplitudes to the graph
-    geom_line(aes(x = year, y = amplitude, color = model), size = 0.5) +
+    geom_line(aes(x = year, y = amplitude), size = 0.5) +
     # Add the distribution cloud ribbon thing
     geom_ribbon(aes(ymin = lower_bound, ymax = upper_bound, x=year, linetype=NA),
                 alpha = 0.5, color = "grey") +
@@ -78,7 +78,7 @@ kable.robustness <- function(data, caption = ""){
 
 # Import the amplitude data
 path <- list.files(INPUT_DIR, "amplitude", full.names = TRUE)
-data <- get(load(path)) %>%  ungroup
+data <- get(load(path)) %>% ungroup
 
 
 # Then determine the all models average and sd for each year / basin / variable.
@@ -109,11 +109,11 @@ data %>%
 # Find the number of counts for observations and the three indicator variables. These counts will
 # be used to calculate the percent of the observations.
 amp_robustness_df %>%
-  group_by(model, variable, basin) %>%
+  group_by(variable, basin) %>%
   summarise(within_count = sum(within),
             above_bounds_count = sum(above_bounds),
             below_bounds_count = sum(below_bounds),
-            obs_count = n_distinct(year)) %>%
+            obs_count = n()) %>%
   ungroup ->
   amp_observations_count
 
@@ -123,29 +123,9 @@ amp_observations_count %>%
   mutate(percent_within = 100 * within_count / obs_count,
          percent_above  = 100 * above_bounds_count / obs_count,
          percent_below  = 100 * below_bounds_count / obs_count) %>%
-  select(model, variable, basin, percent_within, percent_above, percent_below) ->
+  select(variable, basin, percent_within, percent_above, percent_below) ->
+  #select(model, variable, basin, percent_within, percent_above, percent_below) ->
   percent_robustness_df
-
-
-# Line Graphs ------------------------------------------------------------------------------
-
-# This section makes line graphs of the amplitude distribution, mean values, and
-# single models at a time
-#
-# Start by selecting the the data to plot
-amp_robustness_df %>%
-  select(year, units, ensemble, experiment, variable, basin, model, amplitude,
-         amp_mean, lower_bound, upper_bound) ->
-  to_plot
-
-# For each variable / basin create a robustness line graph.
-to_plot %>%
-  group_by(variable) %>%
-  do(fig = vis.robustness(.)) ->
-  robustness_figs_df
-
-# Save the figures in a list named by the
-robustness_figs <- setNames(object = robustness_figs_df$fig, nm = robustness_figs_df$variable)
 
 
 
@@ -157,7 +137,8 @@ robustness_figs <- setNames(object = robustness_figs_df$fig, nm = robustness_fig
 # Within the distribution percent kable
 percent_robustness_df %>%
   mutate(percent_within = signif(percent_within, 3)) %>%
-  select(basin, model, variable, percent_within) %>%
+#  select(basin, model, variable, percent_within) %>%
+  select(basin, variable, percent_within) %>%
   spread(basin, percent_within) ->
   to_table
 
@@ -173,7 +154,8 @@ within_distribution <- setNames(robustness_kable_df$kable, nm = robustness_kable
 # Percent above the distribution
 percent_robustness_df %>%
   mutate(percent_above = signif(percent_above, 3)) %>%
-  select(basin, model, variable, percent_above) %>%
+ # select(basin, model, variable, percent_above) %>%
+  select(basin, variable, percent_above) %>%
   spread(basin, percent_above) ->
   to_table
 
@@ -190,7 +172,8 @@ above_distribution <- setNames(robustness_kable_df$kable, nm = robustness_kable_
 # Percent below the distribution
 percent_robustness_df %>%
   mutate(percent_below = signif(percent_below, 3)) %>%
-  select(basin, model, variable, percent_below) %>%
+#  select(basin, model, variable, percent_below) %>%
+  select(basin, variable, percent_below) %>%
   spread(basin, percent_below) ->
   to_table
 
@@ -206,11 +189,12 @@ below_distribution <- setNames(robustness_kable_df$kable, nm = robustness_kable_
 # Percent Within Bar Plots ------------------------------------------------------------------------------
 
 percent_robustness_df %>%
-  ggplot(aes(x = basin, y = percent_within,  fill = model, group = model)) +
+  #ggplot(aes(x = basin, y = percent_within,  fill = model, group = model)) +
+  ggplot(aes(x = basin, y = percent_within, fill = basin)) +
   geom_col(position = "dodge") +
   facet_wrap("variable") +
   MY_SETTINGS +
-  labs(title = "Percent Within Robust Distribution \nby Model",
+  labs(title = "Percent of Model Observations \nWithin Robust Distribution",
        y = "% of total amplitude time series within ") ->
   percent_within_bar
 

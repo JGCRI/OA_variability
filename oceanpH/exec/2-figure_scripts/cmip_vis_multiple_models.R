@@ -75,8 +75,19 @@ tseries_detrended <- plot.time_series(detrended_data)
 # plot.time_series function
 amplitude_data %>%
   rename(date = year, value = amplitude) %>%
-  plot.time_series ->
+  plot.time_series(subtitle = "Seasonal Amplitude", legend = FALSE) ->
   tseries_amplitude
+
+amplitude_data %>%
+  rename(date = year, value = min) %>%
+  plot.time_series(subtitle = "Annual Min Value", legend = FALSE) ->
+  tseries_min
+
+amplitude_data %>%
+  rename(date = year, value = max) %>%
+  plot.time_series(subtitle = "Annual Max Value", legend = F) ->
+  tseries_max
+
 
 
 
@@ -98,12 +109,13 @@ for(i in 1:length(var_list)){
     summarise(mean = mean(value), sd = sd(value)) %>%
     ggplot(aes(x = month, y = mean, color = experiment)) +
     geom_line(size = 2) +
-    geom_ribbon(aes(ymin = mean - 2*sd, ymax = mean + 2*sd, x = month, group = experiment, linetype=NA), alpha = 0.25) +
+  #  geom_ribbon(aes(ymin = mean - 2*sd, ymax = mean + 2*sd, x = month, group = experiment, linetype=NA), alpha = 0.25) +
     facet_wrap(facets = "basin", ncol = 3, scale = "free") +
     theme(text = element_text(size = 13)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(title = "All-Models mean monthly with 2 sigma band",
-         y = paste0("Mean Detrended ", variable),
+  #  labs(title = "All-Models mean monthly with 2 sigma band",
+  #       y = paste0("Mean Detrended ", variable),
+    labs(title = "All-Models mean monthly", y = paste0("Mean Detrended ", variable),
          caption = paste0(yr_labels[1,], "\n", yr_labels[2,], "/n/n")) +
     scale_x_discrete(limits = to_plot$month, labels = to_plot$month_name) +
     oceanpH::MY_SETTINGS ->
@@ -171,7 +183,8 @@ extreme_figs <- vis.annual_extremes(percent_data_2101)
 # Save Plots ------------------------------------------------------------------------------
 
 # Combine the time series plots into a list
-time_series = list(detrended = tseries_detrended, raw = tseries_raw, amplitude = tseries_amplitude)
+time_series = list(detrended = tseries_detrended, raw = tseries_raw, amplitude = tseries_amplitude,
+                   min = tseries_min, max = tseries_max)
 
 # Save all of the figures in a single list
 all_models = list(time_series = time_series,

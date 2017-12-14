@@ -3,11 +3,12 @@
 ^\.Rproj\.user$
 
 # Ignore for now
-building/
-raw-data/
-exec/
-figs/
-old/
+building/*
+raw-data/*
+exec/*
+figs/*
+old/*
+data/*
 
 # Ignore the html file from the lab notebook
 ^.*\.html$
