@@ -34,7 +34,7 @@ single.sum_stats <- function(df){
     end_year   <- max(df$year)
     start_year <- end_year - 30
 
-  } else if (info$experiment == "historical") {
+  } else if (grepl("[H|h]istorical", unique(info$experiment))) {
     # If looking at the historical experiment then use the first 30 years.
     start_year <- min(df$year)
     end_year   <- start_year + 30
@@ -155,9 +155,10 @@ get.K_S <- function(data){
 
   # Find delta K and S for difference between the future and historical period K and S.
   raw %>%
+    dplyr::mutate(experiment = if_else(grepl("[H|h]istorical", experiment), "historical", "future")) %>%
     tidyr::spread(experiment, value) %>%
     na.omit %>%
-    dplyr::mutate(delta = rcp85 - historical) %>%
+    dplyr::mutate(delta = future - historical) %>%
     dplyr::mutate(stat_variable = paste0("delta  ", stat_variable)) %>%
     dplyr::select(ensemble, variable, units, basin, model, stat_variable, delta) ->
     delta
