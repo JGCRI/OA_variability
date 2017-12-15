@@ -1,4 +1,3 @@
-# ------------------------------------------------------------------------------
 # Purpose: This script contains all of the cdo family of functions that use the
 # cdo in some capacity, whether it is is to analyze or process the netcdfs.
 #
@@ -7,9 +6,9 @@
 # Modified:   xxx
 #
 # Notes:
-# ------------------------------------------------------------------------------
-# cdo.concatenate_regrid function
-# ------------------------------------------------------------------------------
+
+# cdo.concatenate_regrid function ------------------------------------------------------------------------------
+
 #' Concatenate netcdfs, convert to absolute time, and regrid the netcdf.
 #'
 #' \code{cdo.concatenate_regrid}
@@ -47,9 +46,9 @@ cdo.concatenate_regrid <- function(df, cdo_path, ofile1, ofile2){
 } # end of cdo.concatenate
 
 
-# ------------------------------------------------------------------------------
-# sellonlat_operator
-# ------------------------------------------------------------------------------
+
+# sellonlat_operator ------------------------------------------------------------------------------
+
 #' Applies a cdo operator to a defined geographical region
 #'
 #' \code{sellonlat_operator} is function that is used internally in the cdo.sellonlat
@@ -89,6 +88,18 @@ sellonlat_operator <- function(basin_df){
     var_uni <- ncdf4::ncatt_get(nc_out, v)["units"]
     tim_out <- ncdf4::ncvar_get(nc_out, "time")
 
+    # If there is a dpeth or height value then select column of the corresponding column with the
+    # pressure or dpeth levels closet to the surface.
+
+    if(dim(var_out)[1] > 2 & v == "co2"){
+
+      level <- ncdf4::ncvar_get(nc_out, "plev")
+      to_save <- which.min(level)
+      var_out <- var_out[to_save,]
+
+      }
+
+
     # Create and format a data frame for output.
     tibble::tibble(time = tim_out, value = var_out) %>%
       dplyr::mutate(variable = paste0(v), units = paste0(var_uni), basin = paste0(basin_name), model = paste0(mo),
@@ -114,9 +125,9 @@ sellonlat_operator <- function(basin_df){
 
 } # end of the sellonlat_operator
 
-# ------------------------------------------------------------------------------
-# multiple_basins_sellonlat function
-# ------------------------------------------------------------------------------
+
+# multiple_basins_sellonlat function ------------------------------------------------------------------------------
+
 #' Internal function that applies a cdo operator to all of the defined geographical regions
 #'
 #' \code{multiple_basins_sellonlat} is function that is used internally in the cdo.sellonlat function
@@ -175,9 +186,9 @@ multiple_basins_sellonlat <- function(internal_df){
 
 }
 
-# ------------------------------------------------------------------------------
-# cdo.sellonlat function
-# ------------------------------------------------------------------------------
+
+# cdo.sellonlat function ------------------------------------------------------------------------------
+
 #' The R functional form of the cdo operator sellonlat
 #'
 #' \code{cdo.sellonlat} is function that applies a cdo operator over a defined
