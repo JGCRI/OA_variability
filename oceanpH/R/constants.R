@@ -21,4 +21,6 @@ MY_SETTINGS <- ggplot2::theme(text = ggplot2::element_text(size = 18)) +
 # column to a data frame.
 MONTH_NAME <- data.frame(month = 1:12, month_name = c("Jan", "Feb", "Mar", "Apr", "May",
                                                       "Jun", "Jul", "Aug", "Sep", "Oct",
-                                                      "Nov", "Dec"))
+                                                      "Nov", "Dec"),
+                         month_ch = c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+                                      "11", "12"))
