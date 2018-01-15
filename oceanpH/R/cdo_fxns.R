@@ -5,7 +5,7 @@
 # Created on: August 10 2017
 # Modified:   xxx
 #
-# Notes:
+# Notes: this code is based off of code from Russell Horowitz and BBL
 
 # cdo.concatenate_regrid function ------------------------------------------------------------------------------
 
