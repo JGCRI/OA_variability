@@ -4,6 +4,7 @@ oceanpH_0.1.0.tar.gz
 **.RData/
 **.Ruserdata/
 *.Rhistory
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -73,3 +74,5 @@ man/
 
 
 exec/processing/figure_scripts/old
+exec/old_labnotebooks
+*.Rmd
