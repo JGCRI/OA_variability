@@ -5,17 +5,20 @@
 # Created on: Jan 8 2018
 # Modified:   xxx
 #
-# Notes:
-
+# Notes: Figures made by this script have not been finalized yet. there are several notes to search for
+# functionalize the make table 1? also write code for a second table that is more consolidated. Smallest CMIP percent change
+# Also what about the t test results? where does that fit in?
+#
 # Setup Environment ------------------------------------------------------------------------------
 # Libraries
 library(ggplot2)
 library(dplyr)
-devtools::load_all()
+library(oceanpH)
 
+# Determine script / module name.
 script_name <- find_scriptName()
 
-# Define Directories
+# Define Directories -- these may need to change
 BASE <- getwd()
 INPUT_DIR  <- file.path(BASE, "output", "cmip", "AGUoceans")
 OUTPUT_DIR <- file.path(BASE, "output", "cmip", "AGUoceans_figs"); dir.create(OUTPUT_DIR, F)
@@ -70,11 +73,14 @@ make_figure1 <- function(data, line_size = 1, caption = ""){
 
   # Manipulate the color scheme and legend.
   cmip_models_median +
+    # Manually set the desired colo characteristics and labels.
     scale_color_manual(name = "model",
                        values = c("grey", "black"),
                        breaks=c("CMIP5 Models", "Multi Model Median"),
                        labels=c("CMIP5 Models", "Multi Model Median")) +
+    # Change the number of years shown on the axis.
     scale_x_date(date_breaks = '20 years') +
+    # Final figure edits
     theme(legend.title = element_blank(),
           legend.position = "bottom") +
     facet_wrap("basin", ncol = 1) +
@@ -87,7 +93,10 @@ make_figure1 <- function(data, line_size = 1, caption = ""){
 # make_figure2: makes the second figure for GitHub issue 17 (see there for more details). This function
 # make a box plot of the change in K and S for each model by basin / variable. It will also include
 # points for the K and S from the multi model median amplitude distribution.
-make_figure2 <- function(cmip_data, mean_data, caption = ""){
+#
+# NOTE: Trying to decide if we want to use the mean or the median. I when we make that decision
+# then we will see major changes in this specific function.
+make_figure2 <- function(cmip_data, median_data, mean_data, caption = ""){
 
   # Start by making the box plot layer to illustrate the distribution
   # of individual model amplitude change in K and S from the amplitude historical and
@@ -103,7 +112,12 @@ make_figure2 <- function(cmip_data, mean_data, caption = ""){
 
   # Add a layer of the median amplitude delta K and S values and facet by variable
   boxplot_layer +
+    # Add a point for the mulit model mean or median distirbution delta K and S
     geom_point(data = mean_data, aes(basin, delta, shape = stat_variable,
+                                     group = factor(stat_variable, c("delta  K", "delta  S")),
+                                     color = "Multi Model Mean"),
+               position = position_dodge(width = 0.75), size = 3) +
+    geom_point(data = median_data, aes(basin, delta, shape = stat_variable,
                                      group = factor(stat_variable, c("delta  K", "delta  S")),
                                      color = "Multi Model Median"),
                position = position_dodge(width = 0.75), size = 3) ->
@@ -112,11 +126,12 @@ make_figure2 <- function(cmip_data, mean_data, caption = ""){
   # Now specify what color and legend options, facet by variable, and add labels.
   boxplot_median +
     scale_color_manual(name = "delete this label",
-                       values = c("black"),
-                       breaks=c("Multi Model Median"),
-                       labels=c("Multi Model Median")) +
+                       values = c("black", "blue"),
+                       breaks=c("Multi Model Mean", "Multi Model Median"),
+                       labels=c("Multi Model Mean", "Multi Model Median")) +
     facet_wrap("variable") +
-    theme(legend.title = element_blank()) +
+    theme(legend.title = element_blank(),
+          legend.position = "bottom") +
     labs(x = "Basin",
          y = "Change (Future - Historical)",
          title = "Change in Amplitude Distribution\nKurtosis and Skewness")
@@ -130,7 +145,8 @@ make_figure2 <- function(cmip_data, mean_data, caption = ""){
 make_figure3 <- function(data, line_size = 1.5, caption = ""){
 
   # Save variable info for label
-  vari <- unique(data$variable)
+  variable_name <- unique(data$variable)
+  basin_name  <- unique(data$basin)
 
   # Change the data frame format from wide to long.
   data  %>%
@@ -140,7 +156,7 @@ make_figure3 <- function(data, line_size = 1.5, caption = ""){
 
   # Add factor information for the order time series plots will appear in the
   # faceted figure.
-  long_data$value_type <- factor(long_data$value_type, labels = c("Annual Minimum", "Annual Maximum", "Amplitude"))
+  long_data$value_type <- factor(long_data$value_type, levels = c("Annual Minimum", "Annual Maximum", "Amplitude"), ordered = T)
 
 
   # Find the median value for the time series.
@@ -148,10 +164,10 @@ make_figure3 <- function(data, line_size = 1.5, caption = ""){
     # Because we are faceting by the value type so that amplitude, min, and max all appear as separate time
     # series group by year and value_type in order to determine the median value type time series.
     group_by(year, value_type) %>%
-    summarise(value = median(value)) %>%
+    summarise(dev = sd(value), mean = mean(value), value = mean(value)) %>%
     ungroup() %>%
-    mutate(value_label = "CMIP5 Median", model = "Multi Model Median") ->
-    data_median
+    mutate(value_label = "CMIP5 Median", model = "Multi Model Mean") ->
+    data_mean
 
 
   # Now start making the figure.
@@ -159,31 +175,99 @@ make_figure3 <- function(data, line_size = 1.5, caption = ""){
   long_data %>%
     mutate(value_label = "CMIP5 Models") %>%
     ggplot(aes(year, value, group = model)) +
-    geom_line(aes(color = "CMIP5 Models"), size = line_size)  +
+    geom_line(aes(color = "CMIP5 Models"), size = line_size - 0.5)  +
     # Use the standardized script aesthetic settings.
     AGUoceans_SETTINGS ->
     cmip_models_layer
 
-  # Add the time series median information to the plot.
+  # Add the time series median and the sd +/- mean ribbon to the plot.
   cmip_models_layer +
-    geom_line(data = data_median, aes(year, value, color = "Multi Model Median"), size = line_size) ->
-    cmip_models_median
+    geom_line(data = data_mean, aes(year, mean, color = "Multi Model Mean"), size = line_size) +
+    geom_ribbon(data = data_mean, aes(ymin = mean - dev, ymax = mean + dev, x = year, fill = "Multi Model Mean +/- sd"), alpha = 0.3) ->
+    cmip_models_mean
 
   # Manipulate the color scheme and legend.
-  cmip_models_median +
+  cmip_models_mean +
     scale_color_manual(name = "model",
                        values = c("grey", "black"),
-                       breaks=c("CMIP5 Models", "Multi Model Median"),
-                       labels=c("CMIP5 Models", "Multi Model Median")) +
+                       breaks=c("CMIP5 Models", "Multi Model Mean"),
+                       labels=c("CMIP5 Models", "Multi Model Mean")) +
     theme(legend.title = element_blank(),
           legend.position = "bottom") +
-    facet_wrap("value_type", scales = "free") +
-    labs(y = vari)
+    facet_wrap("value_type", scales = "free", ncol = 1) +
+    labs(y = variable_name,
+         title = basin_name)
 
 }
 
+# make_figre4: is a function that makes the CMIP vs multi model mean annual cycle.
+make_figure4 <- function(data, line_size = 1){
+
+  # Save the basin name to use in the plot title
+  basin_name <- unique(data$basin)
+
+  # Make the CMIP annual cycle plot first.
+  data %>%
+    mutate(variable = paste0(variable, "  ", units)) %>%
+    # Use Intercation to group by both model and experiment so that each
+    # CMIP model and experiment is an individual line.
+    ggplot(aes(month, value, group = interaction(model, experiment))) +
+    geom_line(aes(linetype = experiment, color = model), size = line_size) +
+    facet_grid(variable ~ basin, switch = "y", scales = "free") +
+    # Athestics
+    AGUoceans_SETTINGS +
+    ggplot2::theme(text = ggplot2::element_text(size = 24)) +
+    # Labels and legends
+    scale_x_discrete(limits = data$month, labels = data$month_name) +
+    labs(y = NULL, x = NULL) +
+    guides(color = "none") +
+    theme(legend.title = element_blank(), legend.position = "none") ->
+    CMIP_pannel
+
+
+  # Make the multi model mean annual cycle
+
+  # Start by creating a data frame of the multi model mean annual cycle and related stats.
+  # This data frame will be used to make the ribbon on the multi model mean plot.
+  data %>%
+    group_by(experiment, variable, basin, month, month_name, units) %>%
+    summarise(dev = sd(value), mean = mean(value)) %>%
+    ungroup %>%
+    mutate(model = "Multi Model Mean") ->
+    mean_annual_cycle
+
+  # Plot the multi model mean line graph with a variability cloud.
+  mean_annual_cycle %>%
+    mutate(variable = paste0(variable, "  ", units)) %>%
+    ggplot(aes(month, mean, group = experiment)) +
+    geom_line(aes(linetype = experiment, color = experiment), size = line_size) +
+    geom_ribbon(aes(ymin = mean - dev, ymax = mean + dev, x = month, fill = experiment), alpha = 0.3) +
+    facet_grid(variable ~ basin, switch = "y", scales = "free") +
+    # Athestics
+    AGUoceans_SETTINGS +
+    ggplot2::theme(text = ggplot2::element_text(size = 24)) +
+    # Labels and legends
+    scale_x_discrete(limits = mean_annual_cycle$month, labels = mean_annual_cycle$month_name) +
+    labs(y = NULL, x = NULL) +
+    # In order to combine the line and the ribbon plot together mannually reset the
+    # legend.
+    scale_color_manual(values = c("grey", "blue"),
+                       breaks = c("historical", "rcp85"),
+                       labels = c("historical", "rcp85")) +
+    scale_fill_manual(values = c("grey", "blue"),
+                      breaks = c("historical", "rcp85"),
+                      labels = c("historical", "rcp85")) +
+    theme(legend.title = element_blank(),
+          legend.position = "none") ->
+    mean_pannel
+
+  # Combine the plots for now, the figures output from this function will be
+  # stored in a mulit pannel figure using gridExtra
+  list(CMIP = CMIP_pannel, mean = mean_pannel)
+}
+
 # Figure 1 ------------------------------------------------------------------------------
-# Detreneded time series line plots.
+# Detreneded time series line plots -- I think that these figures may be tossed.
 
 # Import the detrended data
 detrened_path <- list.files(INPUT_DIR, "detrended_data.rda", full.names = T)
@@ -195,18 +279,13 @@ detrened_data %>%
   do(fig_1 = make_figure1(.)) ->
   figures
 
-# I do not know if this figure will be all that clear so here I make a zoomed in one
-# show this to CH to see if she likes it better.
-figures$fig_1[[1]] + coord_cartesian(xlim=as.Date(c("1861-01-01", "1863-01-01"))) +
-  scale_x_date(date_breaks = '1 years') ->
-  fig1_close_up_example
-
 
 # Figure 2 ------------------------------------------------------------------------------
 # The change in Kurtosis and Skewness box plots. The individual model delta K and S
 # values have been calculated as part of the "driver" but we want to add the change
 # in K and S for the multi model median or mean ?? distribution. This delta K and S
-# value will have to be calculated now.
+# value will have to be calculated now. --- we are trying to decide if we want to go
+# with mean or median, when we make that decision then this section will change.
 
 # Load the delta K and S tibble now.
 KS_path <- list.files(INPUT_DIR, "Kurtosis_Skewness.rda", full.names = T)
@@ -226,25 +305,142 @@ amplitude_data %>%
   # will calculate K and S and the deltas happy.
   mutate(model = "Multi Model Median") %>%
   get.K_S(.) ->
-  multi_model_KS
+  median_model_KS_list
 
-multi_delta_KS <- multi_model_KS$delta_K_S
+
+amplitude_data %>%
+  group_by(ensemble, experiment, variable, units, basin, year) %>%
+  summarise(amplitude = mean(amplitude)) %>%
+  ungroup %>%
+  # Add a model to describe the value, also to make the function that
+  # will calculate K and S and the deltas happy.
+  mutate(model = "Multi Model Median") %>%
+  get.K_S(.) ->
+  mean_model_KS_list
+
+median_model_KS <- median_model_KS_list$delta_K_S
+mean_model_KS <- mean_model_KS_list$delta_K_S
 
 
 # Make the figure.
-fig_2 <- make_figure2(cmip_delta_KS, multi_delta_KS)
+fig_2 <- make_figure2(cmip_data = cmip_delta_KS, median_data = median_model_KS, mean_data = mean_model_KS)
 
 
 # Figure 3 ------------------------------------------------------------------------------
-
-# Make figure 3 using the amplitude_data tibble. Make a figure for each basin / variable
-# combination and join it to the figures tibble.
+# Make figure 3 using the amplitude_data tibble, amplitude, min, and max time series for
+# every basin / variable combination. Plot the CMIP5 models individually and also a
+# mulit model mean +/- uncertaintiy.
 
 amplitude_data %>%
   group_by(basin, variable) %>%
   do(fig_3 = make_figure3(.)) %>%
   left_join(figures, by = c("basin", "variable")) ->
   figures
+
+
+# Figure 4 ------------------------------------------------------------------------------
+# Make the figures similar to Zhao and Zeng of the mean annual cycle from the 30 year
+# periods. NOTE --- I do not know how to create the common legend yet. But there is an
+# example on https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html?utm_content=buffercef33&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
+
+# Import the summary stat data frame that contains monthly mean values from the
+# 30 year period.
+path <- list.files(file.path(INPUT_DIR), "summary_stats", full.names = T)
+summary_data <- get(load(path))
+
+# Use the MEAN VALUES to make the indivual pannels.
+summary_data %>%
+  filter(value_type == "mean") %>%
+  group_by(basin) %>%
+  do(fig_4 = make_figure4(.)) ->
+  figure_4_no_names
+
+# Set names for figure 4
+figure_4 <- setNames(object = figure_4_no_names$fig_4, nm = figure_4_no_names$basin)
+
+# Arrange the individual annual cycles into the multi pannel figure.
+flat_fig_list <- purrr::flatten(figure_4)
+
+gridExtra::grid.arrange(grobs = list(figure_4$`N Atlantic`$CMIP, figure_4$`N Atlantic`$mean,
+                        figure_4$`S Atlantic`$CMIP, figure_4$`S Atlantic`$mean,
+                        figure_4$`N Pacific`$CMIP, figure_4$`N Pacific`$mean,
+                        figure_4$`S Pacific`$CMIP, figure_4$`S Pacific`$mean),
+                        ncol = 4)
+
+
+
+# Table 1 ------------------------------------------------------------------------------
+# This is the first table from https://github.com/JGCRI/OA_variability/issues/19
+# it is the precent change in the mean seasonal amp, annual min, or annual max.
+
+# Start by finding the cut off years that will match the summary dat frame to determine
+# the years to use in percent change calculation.
+summary_data %>%
+  select(experiment, start_year, end_year) %>%
+  distinct ->
+  thirty_yr_info
+
+
+# Save each experiment's start and stop year info seperatly.
+historical_period <- filter(thirty_yr_info, grepl("[H|h]istorical", experiment))
+future_period <- filter(thirty_yr_info, grepl("rcp", experiment))
+
+# Subset the amplitude data set so that it only contains amplitude for the years wihtin each experimenets
+# time span.
+amplitude_data %>%
+  filter(c(experiment == historical_period$experiment & year >= historical_period$start_year &year <= historical_period$end_year) |
+         c(experiment == future_period$experiment & year >= future_period$start_year &year <= future_period$end_year)) ->
+  amplitude_data_30yrs
+
+
+# Now determine each model's mean seasonal satistic. Latter on we will use this data frame
+# in to get the percent chagne for each model.
+amplitude_data_30yrs %>%
+  select(experiment, variable, basin, model, year, amplitude, min, max) %>%
+  group_by(experiment, variable, basin, model) %>%
+  summarise(mean_amplitude = mean(amplitude), mean_min = mean(min), mean_max = mean(max)) %>%
+  ungroup ->
+  mean_all_stats
+
+
+# Get the Multi Model Mean average seasonal statistic to use in the table, the multi model
+# values will be added to the mean_all_stats data frame.
+amplitude_data_30yrs %>%
+  select(experiment, variable, basin, year, amplitude, min, max) %>%
+  group_by(experiment, variable, basin) %>%
+  summarise(mean_amplitude = mean(amplitude), mean_min = mean(min), mean_max = mean(max)) %>%
+  ungroup %>%
+  mutate(model = "Multi-Model Mean") ->
+  multi_model_mean_df
+
+# Combine the mean CMIP models and multi model mean dataframes into a single data frame.
+mean_all_stats %>%
+  bind_rows(multi_model_mean_df) ->
+  amplitude_data_30yrs_complete
+
+
+# Now calculate the percent change in the average seasonal statisitc for every
+# variable / basin / model.
+amplitude_data_30yrs_complete %>%
+  tidyr::gather(stat_type, value, mean_amplitude, mean_min, mean_max) %>%
+  spread(experiment, value) %>%
+  mutate(dif = rcp85 - historical) %>%
+  mutate(percent_dif = 100 * dif / abs(historical)) %>%
+  select(variable, basin, model, stat_type, percent_dif) %>%
+  spread(stat_type, percent_dif) ->
+  percent_change_df
+
+# Arrange the perecent change data frame and store in a kable.
+percent_change_df %>%
+  arrange(model) %>%
+  group_by(variable) %>%
+  do(kable = knitr::kable(., digits = 3, format = "html", caption = "Percent Change in Mean") %>%
+       kableExtra::kable_styling("striped", full_width = T)) ->
+  table_1_no_names
+
+table_1 <- setNames(object = table_1_no_names$kable, nm = table_1_no_names$variable)
+tables[["table_1"]] <- table_1
+
 
 
 # Format Output ------------------------------------------------------------------------
@@ -283,6 +479,9 @@ format_output_helper <- function(tibble, column_name, output){
 output <- format_output_helper(figures, "fig_1", output)
 output <- format_output_helper(figures, "fig_3", output)
 output[["fig_2"]] <- fig_2
+output[["fig_4"]] <- figure_4
+output[["tables"]] <- tables
+
 
 # Add attributes and save as an rda file
 attributes(output)$script_name <- script_name
@@ -312,7 +511,7 @@ png_output <- function(tibble, column_name, output_dir){
     basin <- gsub(" ", "", basin)
     png_name <- file.path(output_dir, paste0(column_name, "_", basin, "_", vari, ".png"))
 
-    if(column_name == "fig_1"){
+    if(column_name == "fig_28"){
       ggsave(filename = png_name, plot = fig)
     } else {
       ggsave(filename = png_name, plot = fig, width = 11)
@@ -338,4 +537,22 @@ ggsave(filename = file.path(CH_output_dir, "fig_2.png"), plot = fig_2)
 # Save all of the figure 3
 png_output(figures, "fig_3", CH_output_dir)
 
-# End -----
+# Save all of the figure 4
+
+for(grid in 1:length(figure_4)){
+
+  grid_name   <- paste0("fig_4_", names(figure_4)[grid],".png")
+  output_name <- file.path(CH_output_dir, grid_name)
+
+  png(filename = output_name, width = 960)
+  gridExtra::grid.arrange(figure_4[[grid]])
+  dev.off()
+
+
+
+}
+
+
+
+
+# End ----
