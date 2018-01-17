@@ -18,6 +18,9 @@ library(oceanpH)
 # Determine script / module name.
 script_name <- find_scriptName()
 
+# Save for pngs for CH
+save_CH <- F
+
 # Define Directories -- these may need to change
 BASE <- getwd()
 INPUT_DIR  <- file.path(BASE, "output", "cmip", "AGUoceans")
@@ -361,7 +364,7 @@ figure_4 <- setNames(object = figure_4_no_names$fig_4, nm = figure_4_no_names$ba
 # Arrange the individual annual cycles into the multi pannel figure.
 flat_fig_list <- purrr::flatten(figure_4)
 
-gridExtra::grid.arrange(grobs = list(figure_4$`N Atlantic`$CMIP, figure_4$`N Atlantic`$mean,
+figure_4 <- gridExtra::grid.arrange(grobs = list(figure_4$`N Atlantic`$CMIP, figure_4$`N Atlantic`$mean,
                         figure_4$`S Atlantic`$CMIP, figure_4$`S Atlantic`$mean,
                         figure_4$`N Pacific`$CMIP, figure_4$`N Pacific`$mean,
                         figure_4$`S Pacific`$CMIP, figure_4$`S Pacific`$mean),
@@ -425,6 +428,7 @@ amplitude_data_30yrs_complete %>%
   tidyr::gather(stat_type, value, mean_amplitude, mean_min, mean_max) %>%
   spread(experiment, value) %>%
   mutate(dif = rcp85 - historical) %>%
+ # mutate(percent_dif = 100 * dif / abs(historical)) %>%
   mutate(percent_dif = 100 * dif / abs(historical)) %>%
   select(variable, basin, model, stat_type, percent_dif) %>%
   spread(stat_type, percent_dif) ->
@@ -447,21 +451,31 @@ table_1 <- setNames(object = table_1_no_names$kable, nm = table_1_no_names$varia
 # Use the percent_change_df that was calculated above. Save the multi model mean
 multi_model_mean <- filter(percent_change_df, model == "Multi-Model Mean")
 
-# Now save the min of each variable / basin
+# Now detremine the magnitude of each percent change.
 percent_change_df %>%
-  group_by(variable, basin)  %>%
-  summarise(mean_amplitude = min(mean_amplitude), mean_max = min(mean_max), mean_min = min(mean_min)) %>%
-  mutate(model = "Smallest observed CMIP5") %>%
-  ungroup ->
+  gather(stat_type, value, mean_amplitude, mean_max, mean_min) %>%
+  mutate(abs_value = abs(value)) ->
+  abs_stat_df
+
+# Use the absolute value of the stat to dermine which value is the largest or smallest
+# percent change for each basin / variable / seasonal stat.
+abs_stat_df %>%
+  group_by(basin, variable, stat_type) %>%
+  filter(abs_value == min(abs_value)) %>%
+  select(-abs_value, -model) %>%
+  spread(stat_type, value) %>%
+  mutate(model = "Smallest observed CMIP5") ->
   smallest_percent_change
 
-# Now save the max of each variable / basin
-percent_change_df %>%
-  group_by(variable, basin)  %>%
-  summarise(mean_amplitude = max(mean_amplitude), mean_max = max(mean_max), mean_min = max(mean_min)) %>%
-  mutate(model = "Largest observed CMIP5") %>%
-  ungroup ->
+# Do the same for the largeset percent change.
+abs_stat_df %>%
+  group_by(basin, variable, stat_type) %>%
+  filter(abs_value == max(abs_value)) %>%
+  select(-abs_value, -model) %>%
+  spread(stat_type, value) %>%
+  mutate(model = "Largest observed CMIP5") ->
   largest_percent_change
+
 
 # Combine all of the percent change infromation data frames together
 summary_percent_change <- bind_rows(multi_model_mean, smallest_percent_change, largest_percent_change)
@@ -567,32 +581,34 @@ png_output <- function(tibble, column_name, output_dir){
 
 }
 
-# Define CH's png output directory
-CH_output_dir <- file.path(OUTPUT_DIR, "CH_pngs"); dir.create(CH_output_dir, F)
+if(save_CH){
 
-# Save all of the fig 1
-png_output(figures, "fig_1", CH_output_dir)
+  # Define CH's png output directory
+  CH_output_dir <- file.path(OUTPUT_DIR, "CH_pngs"); dir.create(CH_output_dir, F)
 
-# Save the close up of fig 1 and the figure 2. Do not use the png_output function
-# because these are already flat lists.
-ggsave(filename = file.path(CH_output_dir, "fig_1_close_up.png"), plot = fig1_close_up_example)
-ggsave(filename = file.path(CH_output_dir, "fig_2.png"), plot = fig_2)
+  # Save all of the fig 1
+  png_output(figures, "fig_1", CH_output_dir)
 
-# Save all of the figure 3
-png_output(figures, "fig_3", CH_output_dir)
+  # Save the close up of fig 1 and the figure 2. Do not use the png_output function
+  # because these are already flat lists.
+  ggsave(filename = file.path(CH_output_dir, "fig_1_close_up.png"), plot = fig1_close_up_example)
+  ggsave(filename = file.path(CH_output_dir, "fig_2.png"), plot = fig_2)
 
-# Save all of the figure 4
+  # Save all of the figure 3
+  png_output(figures, "fig_3", CH_output_dir)
 
-for(grid in 1:length(figure_4)){
+  # Save all of the figure 4
 
-  grid_name   <- paste0("fig_4_", names(figure_4)[grid],".png")
-  output_name <- file.path(CH_output_dir, grid_name)
+  for(grid in 1:length(figure_4)){
 
-  png(filename = output_name, width = 960)
-  gridExtra::grid.arrange(figure_4[[grid]])
-  dev.off()
+    grid_name   <- paste0("fig_4_", names(figure_4)[grid],".png")
+    output_name <- file.path(CH_output_dir, grid_name)
 
+    png(filename = output_name, width = 960)
+    gridExtra::grid.arrange(figure_4[[grid]])
+    dev.off()
 
+  }
 
 }
 
