@@ -434,12 +434,54 @@ amplitude_data_30yrs_complete %>%
 percent_change_df %>%
   arrange(model) %>%
   group_by(variable) %>%
-  do(kable = knitr::kable(., digits = 3, format = "html", caption = "Percent Change in Mean") %>%
+  do(kable = knitr::kable(., digits = 1, format = "html", caption = "Percent Change in Mean") %>%
        kableExtra::kable_styling("striped", full_width = T)) ->
   table_1_no_names
 
 table_1 <- setNames(object = table_1_no_names$kable, nm = table_1_no_names$variable)
-tables[["table_1"]] <- table_1
+
+
+# Table 2 ------------------------------------------------------------------------------
+# This is the second table or consolidated version of table 1.
+
+# Use the percent_change_df that was calculated above. Save the multi model mean
+multi_model_mean <- filter(percent_change_df, model == "Multi-Model Mean")
+
+# Now save the min of each variable / basin
+percent_change_df %>%
+  group_by(variable, basin)  %>%
+  summarise(mean_amplitude = min(mean_amplitude), mean_max = min(mean_max), mean_min = min(mean_min)) %>%
+  mutate(model = "Smallest observed CMIP5") %>%
+  ungroup ->
+  smallest_percent_change
+
+# Now save the max of each variable / basin
+percent_change_df %>%
+  group_by(variable, basin)  %>%
+  summarise(mean_amplitude = max(mean_amplitude), mean_max = max(mean_max), mean_min = max(mean_min)) %>%
+  mutate(model = "Largest observed CMIP5") %>%
+  ungroup ->
+  largest_percent_change
+
+# Combine all of the percent change infromation data frames together
+summary_percent_change <- bind_rows(multi_model_mean, smallest_percent_change, largest_percent_change)
+
+summary_percent_change$model <- factor(summary_percent_change$model,
+                                       levels = c("Smallest observed CMIP5", "Largest observed CMIP5", "Multi-Model Mean"),
+                                       ordered = T)
+
+summary_percent_change %>%
+  arrange(basin, model) %>%
+  group_by(variable) %>%
+  do(kable = knitr::kable(., digits = 1, format = "html", caption = "Consolidated Percent Change Table") %>%
+       kableExtra::kable_styling(full_width = T) %>%
+       kableExtra::collapse_rows(columns = 1:2) %>%
+       kableExtra::row_spec(c(3, 6, 9, 12), bold = T)) ->
+  table_2_no_names
+
+table_2 <- setNames(object = table_2_no_names$kable, nm = table_2_no_names$variable)
+
+
 
 
 
@@ -480,7 +522,9 @@ output <- format_output_helper(figures, "fig_1", output)
 output <- format_output_helper(figures, "fig_3", output)
 output[["fig_2"]] <- fig_2
 output[["fig_4"]] <- figure_4
-output[["tables"]] <- tables
+output[["table_1"]] <- table_1
+output[["table_2"]] <- table_2
+
 
 
 # Add attributes and save as an rda file
