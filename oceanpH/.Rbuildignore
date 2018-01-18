@@ -9,8 +9,11 @@ exec/*
 figs/*
 old/*
 data/*
+output/*
 
 # Ignore the html file from the lab notebook
 ^.*\.html$
 labnotebook.Rmd
+^.*\.pdf$
+^.*\.Rmd$
 
