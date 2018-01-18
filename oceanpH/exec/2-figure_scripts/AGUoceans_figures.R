@@ -6,7 +6,7 @@
 # Modified:   xxx
 #
 # Notes: Figures made by this script have not been finalized yet. there are several notes to search for
-# functionalize the make table 1? also write code for a second table that is more consolidated. Smallest CMIP percent change
+# fractionalize the make table 1? also write code for a second table that is more consolidated. Smallest CMIP percent change
 # Also what about the t test results? where does that fit in?
 #
 # Setup Environment ------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ make_figure1 <- function(data, line_size = 1, caption = ""){
 
   # Manipulate the color scheme and legend.
   cmip_models_median +
-    # Manually set the desired colo characteristics and labels.
+    # Manually set the desired color characteristics and labels.
     scale_color_manual(name = "model",
                        values = c("grey", "black"),
                        breaks=c("CMIP5 Models", "Multi Model Median"),
@@ -115,7 +115,7 @@ make_figure2 <- function(cmip_data, median_data, mean_data, caption = ""){
 
   # Add a layer of the median amplitude delta K and S values and facet by variable
   boxplot_layer +
-    # Add a point for the mulit model mean or median distirbution delta K and S
+    # Add a point for the multi model mean or median distribution delta K and S
     geom_point(data = mean_data, aes(basin, delta, shape = stat_variable,
                                      group = factor(stat_variable, c("delta  K", "delta  S")),
                                      color = "Multi Model Mean"),
@@ -203,7 +203,7 @@ make_figure3 <- function(data, line_size = 1.5, caption = ""){
 
 }
 
-# make_figre4: is a function that makes the CMIP vs multi model mean annual cycle.
+# make_figure4: is a function that makes the CMIP vs multi model mean annual cycle.
 make_figure4 <- function(data, line_size = 1){
 
   # Save the basin name to use in the plot title
@@ -212,12 +212,12 @@ make_figure4 <- function(data, line_size = 1){
   # Make the CMIP annual cycle plot first.
   data %>%
     mutate(variable = paste0(variable, "  ", units)) %>%
-    # Use Intercation to group by both model and experiment so that each
+    # Use Interaction to group by both model and experiment so that each
     # CMIP model and experiment is an individual line.
     ggplot(aes(month, value, group = interaction(model, experiment))) +
     geom_line(aes(linetype = experiment, color = model), size = line_size) +
     facet_grid(variable ~ basin, switch = "y", scales = "free") +
-    # Athestics
+    # Aesthetics
     AGUoceans_SETTINGS +
     ggplot2::theme(text = ggplot2::element_text(size = 24)) +
     # Labels and legends
@@ -225,7 +225,7 @@ make_figure4 <- function(data, line_size = 1){
     labs(y = NULL, x = NULL) +
     guides(color = "none") +
     theme(legend.title = element_blank(), legend.position = "none") ->
-    CMIP_pannel
+    CMIP_panel
 
 
   # Make the multi model mean annual cycle
@@ -246,13 +246,13 @@ make_figure4 <- function(data, line_size = 1){
     geom_line(aes(linetype = experiment, color = experiment), size = line_size) +
     geom_ribbon(aes(ymin = mean - dev, ymax = mean + dev, x = month, fill = experiment), alpha = 0.3) +
     facet_grid(variable ~ basin, switch = "y", scales = "free") +
-    # Athestics
+    # Aesthetics
     AGUoceans_SETTINGS +
     ggplot2::theme(text = ggplot2::element_text(size = 24)) +
     # Labels and legends
     scale_x_discrete(limits = mean_annual_cycle$month, labels = mean_annual_cycle$month_name) +
     labs(y = NULL, x = NULL) +
-    # In order to combine the line and the ribbon plot together mannually reset the
+    # In order to combine the line and the ribbon plot together manually reset the
     # legend.
     scale_color_manual(values = c("grey", "blue"),
                        breaks = c("historical", "rcp85"),
@@ -262,11 +262,113 @@ make_figure4 <- function(data, line_size = 1){
                       labels = c("historical", "rcp85")) +
     theme(legend.title = element_blank(),
           legend.position = "none") ->
-    mean_pannel
+    mean_panel
 
   # Combine the plots for now, the figures output from this function will be
-  # stored in a mulit pannel figure using gridExtra
-  list(CMIP = CMIP_pannel, mean = mean_pannel)
+  # stored in a multi panel figure using gridExtra
+  list(CMIP = CMIP_panel, mean = mean_panel)
+}
+
+# make_figure5: is a function that uses the long format of a percent change data frame and
+# to create a boxplot that illustrates the spread of the individual model percent change and
+# compares it with the percent change in the multi model mean. THis is meant to be an alternative
+# to the percent change tables.
+make_figure5 <- function(percent_change_long, subtitle = NULL){
+
+  cmip_percent_change <- filter(percent_change_long, model != "Multi-Model Mean")
+  multi_model_percent_change <- filter(percent_change_long, model == "Multi-Model Mean")
+
+
+  if(nrow(cmip_percent_change) <= 1){stop("No CMIP data found")}
+  if(nrow(multi_model_percent_change) <= 1){stop("No multi model mean found")}
+
+
+  # Create the cmip percent change boxplot layer.
+  cmip_percent_change %>%
+    ggplot(aes(basin, value, fill = stat_type)) +
+    geom_boxplot(outlier.shape = 1) ->
+    boxplot_layer
+
+  # Add the multi model mean percent change points on top.
+  boxplot_layer +
+    # Use position to manually set the points on top of the correct stat type boxplot.
+    geom_point(data = multi_model_percent_change, aes(basin, value, shape = stat_type, group = stat_type),
+               size = 3, position = position_dodge(width = 0.75)) +
+    facet_wrap("variable", scales = "free") ->
+    boxplot_points
+
+  # Adjust figure aesthetics.
+  boxplot_points +
+    AGUoceans_SETTINGS +
+    labs(y = "% Change",
+         x = NULL,
+         title = "Seasonal Stat Percent Change",
+         caption = "empty points are the outliers\nthe filled in points represent the multi-model mean",
+         subtitle = subtitle) +
+    theme(legend.title = element_blank())
+
+}
+
+
+# format_output_helper: is a function that unfortunately uses a for loop, I really need
+# to better figure out how to use purr, anyways the function uses a tibble, a column
+# name string, and then a list. The function saves object from the tibble stored in
+# the column that matches the column_name string and stores them in the output list.
+format_output_helper <- function(tibble, column_name, output){
+
+  # Check to make sure that the column name is in the tibble.
+  if(!column_name %in% names(tibble)){stop(column_name, "  is not found.")}
+
+  # Parse out basin / variable / figure information into a flat list.
+  for(row in 1:nrow(tibble)){
+
+    # Save the basin and variable name.
+    basin <- tibble[["basin"]][[row]]
+    vari  <- tibble[["variable"]][[row]]
+
+    # Stor the
+    fig   <- tibble[[paste0(column_name)]][[row]]
+
+    output[[paste0(basin)]][[paste0(vari)]][[paste0(column_name)]] <- fig
+
+  }
+
+  # Return output.
+  return(output)
+
+}
+
+# png_output: a function that can be used to save the output as individual png files
+# as per CH's request.
+png_output <- function(tibble, column_name, output_dir){
+
+  # Check to make sure that the column name is in the tibble.
+  if(!column_name %in% names(tibble)){stop(column_name, "  is not found.")}
+
+  # Parse out basin / variable / figure information into a flat list.
+  for(row in 1:nrow(tibble)){
+
+    # Save the basin and variable name.
+    basin <- tibble[["basin"]][[row]]
+    vari  <- tibble[["variable"]][[row]]
+
+    # Store the figure
+    fig   <- tibble[[paste0(column_name)]][[row]]
+
+    # Determine name
+    basin <- gsub(" ", "", basin)
+    png_name <- file.path(output_dir, paste0(column_name, "_", basin, "_", vari, ".png"))
+
+    if(column_name == "fig_28"){
+      ggsave(filename = png_name, plot = fig)
+    } else {
+      ggsave(filename = png_name, plot = fig, width = 11)
+
+    }
+
+
+  }
+
 }
 
 # Figure 1 ------------------------------------------------------------------------------
@@ -332,7 +434,7 @@ fig_2 <- make_figure2(cmip_data = cmip_delta_KS, median_data = median_model_KS, 
 # Figure 3 ------------------------------------------------------------------------------
 # Make figure 3 using the amplitude_data tibble, amplitude, min, and max time series for
 # every basin / variable combination. Plot the CMIP5 models individually and also a
-# mulit model mean +/- uncertaintiy.
+# multi model mean +/- uncertainty.
 
 amplitude_data %>%
   group_by(basin, variable) %>%
@@ -351,7 +453,7 @@ amplitude_data %>%
 path <- list.files(file.path(INPUT_DIR), "summary_stats", full.names = T)
 summary_data <- get(load(path))
 
-# Use the MEAN VALUES to make the indivual pannels.
+# Use the MEAN VALUES to make the individual panels.
 summary_data %>%
   filter(value_type == "mean") %>%
   group_by(basin) %>%
@@ -361,7 +463,7 @@ summary_data %>%
 # Set names for figure 4
 figure_4 <- setNames(object = figure_4_no_names$fig_4, nm = figure_4_no_names$basin)
 
-# Arrange the individual annual cycles into the multi pannel figure.
+# Arrange the individual annual cycles into the multi panel figure.
 flat_fig_list <- purrr::flatten(figure_4)
 
 figure_4 <- gridExtra::grid.arrange(grobs = list(figure_4$`N Atlantic`$CMIP, figure_4$`N Atlantic`$mean,
@@ -376,7 +478,7 @@ figure_4 <- gridExtra::grid.arrange(grobs = list(figure_4$`N Atlantic`$CMIP, fig
 # This is the first table from https://github.com/JGCRI/OA_variability/issues/19
 # it is the precent change in the mean seasonal amp, annual min, or annual max.
 
-# Start by finding the cut off years that will match the summary dat frame to determine
+# Start by finding the cut off years that will match the summary data frame to determine
 # the years to use in percent change calculation.
 summary_data %>%
   select(experiment, start_year, end_year) %>%
@@ -384,11 +486,11 @@ summary_data %>%
   thirty_yr_info
 
 
-# Save each experiment's start and stop year info seperatly.
+# Save each experiment's start and stop year info separately.
 historical_period <- filter(thirty_yr_info, grepl("[H|h]istorical", experiment))
 future_period <- filter(thirty_yr_info, grepl("rcp", experiment))
 
-# Subset the amplitude data set so that it only contains amplitude for the years wihtin each experimenets
+# Subset the amplitude data set so that it only contains amplitude for the years within each experiments
 # time span.
 amplitude_data %>%
   filter(c(experiment == historical_period$experiment & year >= historical_period$start_year &year <= historical_period$end_year) |
@@ -396,8 +498,8 @@ amplitude_data %>%
   amplitude_data_30yrs
 
 
-# Now determine each model's mean seasonal satistic. Latter on we will use this data frame
-# in to get the percent chagne for each model.
+# Now determine each model's mean seasonal statistic. Latter on we will use this data frame
+# in to get the percent change for each model.
 amplitude_data_30yrs %>%
   select(experiment, variable, basin, model, year, amplitude, min, max) %>%
   group_by(experiment, variable, basin, model) %>%
@@ -416,25 +518,25 @@ amplitude_data_30yrs %>%
   mutate(model = "Multi-Model Mean") ->
   multi_model_mean_df
 
-# Combine the mean CMIP models and multi model mean dataframes into a single data frame.
+# Combine the mean CMIP models and multi model mean data frames into a single data frame.
 mean_all_stats %>%
   bind_rows(multi_model_mean_df) ->
   amplitude_data_30yrs_complete
 
 
-# Now calculate the percent change in the average seasonal statisitc for every
+# Now calculate the percent change in the average seasonal statistic for every
 # variable / basin / model.
 amplitude_data_30yrs_complete %>%
   tidyr::gather(stat_type, value, mean_amplitude, mean_min, mean_max) %>%
-  spread(experiment, value) %>%
+  tidyr::spread(experiment, value) %>%
   mutate(dif = rcp85 - historical) %>%
  # mutate(percent_dif = 100 * dif / abs(historical)) %>%
   mutate(percent_dif = 100 * dif / abs(historical)) %>%
   select(variable, basin, model, stat_type, percent_dif) %>%
-  spread(stat_type, percent_dif) ->
+  tidyr::spread(stat_type, percent_dif) ->
   percent_change_df
 
-# Arrange the perecent change data frame and store in a kable.
+# Arrange the percent change data frame and store in a kable.
 percent_change_df %>%
   arrange(model) %>%
   group_by(variable) %>%
@@ -451,33 +553,33 @@ table_1 <- setNames(object = table_1_no_names$kable, nm = table_1_no_names$varia
 # Use the percent_change_df that was calculated above. Save the multi model mean
 multi_model_mean <- filter(percent_change_df, model == "Multi-Model Mean")
 
-# Now detremine the magnitude of each percent change.
+# Now determine the magnitude of each percent change.
 percent_change_df %>%
-  gather(stat_type, value, mean_amplitude, mean_max, mean_min) %>%
+  tidyr::gather(stat_type, value, mean_amplitude, mean_max, mean_min) %>%
   mutate(abs_value = abs(value)) ->
   abs_stat_df
 
-# Use the absolute value of the stat to dermine which value is the largest or smallest
+# Use the absolute value of the stat to determine which value is the largest or smallest
 # percent change for each basin / variable / seasonal stat.
 abs_stat_df %>%
   group_by(basin, variable, stat_type) %>%
   filter(abs_value == min(abs_value)) %>%
   select(-abs_value, -model) %>%
-  spread(stat_type, value) %>%
+  tidyr::spread(stat_type, value) %>%
   mutate(model = "Smallest observed CMIP5") ->
   smallest_percent_change
 
-# Do the same for the largeset percent change.
+# Do the same for the largest percent change.
 abs_stat_df %>%
   group_by(basin, variable, stat_type) %>%
   filter(abs_value == max(abs_value)) %>%
   select(-abs_value, -model) %>%
-  spread(stat_type, value) %>%
+  tidyr::spread(stat_type, value) %>%
   mutate(model = "Largest observed CMIP5") ->
   largest_percent_change
 
 
-# Combine all of the percent change infromation data frames together
+# Combine all of the percent change information data frames together
 summary_percent_change <- bind_rows(multi_model_mean, smallest_percent_change, largest_percent_change)
 
 summary_percent_change$model <- factor(summary_percent_change$model,
@@ -496,40 +598,23 @@ summary_percent_change %>%
 table_2 <- setNames(object = table_2_no_names$kable, nm = table_2_no_names$variable)
 
 
+# Figure 5  ----------------------------------------------------------------------------
+
+# The tables are limited in the amount of information they can communicate. Use a boxplot to plot the
+# change in seasonal stat for all of the CMIP models superimposed with points for the multi model mean
+# percent change. The hope is that this figure can capture the spread in magnitude and direction of the percent
+# change.
+
+# Create two data frames of the multi model mean and cmip percent change in the long format.
+percent_change_long <- tidyr::gather(data = percent_change_df, stat_type, value, mean_amplitude, mean_max, mean_min)
+
+figure_5 <- make_figure5(percent_change_long)
 
 
 
 # Format Output ------------------------------------------------------------------------
 # Create an empty list to store the output int
 output = list()
-
-# formate_output_helper: is a function that unfortunately uses a for loop, I really need
-# to better figure out how to use purr, anyways the function uses a tibble, a column
-# name string, and then a list. The function saves object from the tibble stored in
-# the column that matches the column_name string and stores them in the output list.
-format_output_helper <- function(tibble, column_name, output){
-
-  # Check to make sure that the column name is in the tibble.
-  if(!column_name %in% names(tibble)){stop(column_name, "  is not found.")}
-
-  # Parse out basin / variable / figure information into a flat list.
-  for(row in 1:nrow(tibble)){
-
-    # Save the basin and variable name.
-    basin <- tibble[["basin"]][[row]]
-    vari  <- tibble[["variable"]][[row]]
-
-    # Stor the
-    fig   <- tibble[[paste0(column_name)]][[row]]
-
-    output[[paste0(basin)]][[paste0(vari)]][[paste0(column_name)]] <- fig
-
-  }
-
-  # Return output.
-  return(output)
-
-}
 
 # Save in a flat list
 output <- format_output_helper(figures, "fig_1", output)
@@ -538,7 +623,7 @@ output[["fig_2"]] <- fig_2
 output[["fig_4"]] <- figure_4
 output[["table_1"]] <- table_1
 output[["table_2"]] <- table_2
-
+output[["fig_5"]] <- figure_5
 
 
 # Add attributes and save as an rda file
@@ -548,39 +633,6 @@ save(output, file = file.path(OUTPUT_DIR, output_name))
 
 
 # Save as PNG
-# png_output: a function that can be used to save the output as individual png files
-# as per CH's request.
-png_output <- function(tibble, column_name, output_dir){
-
-  # Check to make sure that the column name is in the tibble.
-  if(!column_name %in% names(tibble)){stop(column_name, "  is not found.")}
-
-  # Parse out basin / variable / figure information into a flat list.
-  for(row in 1:nrow(tibble)){
-
-    # Save the basin and variable name.
-    basin <- tibble[["basin"]][[row]]
-    vari  <- tibble[["variable"]][[row]]
-
-    # Store the figure
-    fig   <- tibble[[paste0(column_name)]][[row]]
-
-    # Determine name
-    basin <- gsub(" ", "", basin)
-    png_name <- file.path(output_dir, paste0(column_name, "_", basin, "_", vari, ".png"))
-
-    if(column_name == "fig_28"){
-      ggsave(filename = png_name, plot = fig)
-    } else {
-      ggsave(filename = png_name, plot = fig, width = 11)
-
-    }
-
-
-  }
-
-}
-
 if(save_CH){
 
   # Define CH's png output directory
@@ -611,8 +663,5 @@ if(save_CH){
   }
 
 }
-
-
-
 
 # End ----
