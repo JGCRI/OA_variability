@@ -198,6 +198,19 @@ basin_mean_month_name %>%
 
 basin_mean$basin <- factor(basin_mean$basin, levels = c("N Atlantic", "S Atlantic", "N Pacific", "S Pacific"), ordered = T)
 
+
+# Translate pH to protons --------------------------------------------------------------------
+
+basin_mean %>%
+  filter(variable == "ph") %>%
+  mutate(value = -log(value), variable = "proton", units = "[H+]") ->
+  proton_tibble
+
+basin_mean %>%
+  bind_rows(proton_tibble) ->
+  basin_mean
+
+
 # Visual Check --------------------------------------------------------------------
 if(vis_check){
 
