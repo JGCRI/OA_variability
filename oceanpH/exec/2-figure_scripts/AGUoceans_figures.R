@@ -9,11 +9,15 @@
 # fractionalize the make table 1? also write code for a second table that is more consolidated. Smallest CMIP percent change
 # Also what about the t test results? where does that fit in?
 #
+# CH wants the global arrangemetn for figure 3 also wnats to include H+ in the anlaysis, we are
+# removing figures 1 and 3 from the project, need to decide what I want to do with the code. idk if I want to
+# delet it or make it non functinoal any more... things I need to think about and decide.
+#
 # Setup Environment ------------------------------------------------------------------------------
 # Libraries
 library(ggplot2)
 library(dplyr)
-library(oceanpH)
+devtools::load_all()
 
 # Determine script / module name.
 script_name <- find_scriptName()
@@ -378,11 +382,11 @@ png_output <- function(tibble, column_name, output_dir){
 detrened_path <- list.files(INPUT_DIR, "detrended_data.rda", full.names = T)
 detrened_data <- get(load(detrened_path))
 
-# Make figure one for each variable / basin.
-detrened_data %>%
-  group_by(variable, basin) %>%
-  do(fig_1 = make_figure1(.)) ->
-  figures
+# # Make figure one for each variable / basin.
+# detrened_data %>%
+#   group_by(variable, basin) %>%
+#   do(fig_1 = make_figure1(.)) ->
+#   figures
 
 
 # Figure 2 ------------------------------------------------------------------------------
@@ -438,9 +442,8 @@ fig_2 <- make_figure2(cmip_data = cmip_delta_KS, median_data = median_model_KS, 
 
 amplitude_data %>%
   group_by(basin, variable) %>%
-  do(fig_3 = make_figure3(.)) %>%
-  left_join(figures, by = c("basin", "variable")) ->
-  figures
+  do(fig_3 = make_figure3(.)) ->
+  figure3
 
 
 # Figure 4 ------------------------------------------------------------------------------
@@ -463,14 +466,11 @@ summary_data %>%
 # Set names for figure 4
 figure_4 <- setNames(object = figure_4_no_names$fig_4, nm = figure_4_no_names$basin)
 
-# Arrange the individual annual cycles into the multi panel figure.
-flat_fig_list <- purrr::flatten(figure_4)
+ordered_list_fig4 <- list(figure_4$`N Pacific`$CMIP, figure_4$`N Pacific`$mean,
+                     figure_4$`N Atlantic`$CMIP, figure_4$`N Atlantic`$mean,
+                     figure_4$`S Pacific`$CMIP, figure_4$`S Pacific`$mean,
+                     figure_4$`S Atlantic`$CMIP, figure_4$`S Atlantic`$mean)
 
-figure_4 <- gridExtra::grid.arrange(grobs = list(figure_4$`N Atlantic`$CMIP, figure_4$`N Atlantic`$mean,
-                        figure_4$`S Atlantic`$CMIP, figure_4$`S Atlantic`$mean,
-                        figure_4$`N Pacific`$CMIP, figure_4$`N Pacific`$mean,
-                        figure_4$`S Pacific`$CMIP, figure_4$`S Pacific`$mean),
-                        ncol = 4)
 
 
 
@@ -540,7 +540,7 @@ amplitude_data_30yrs_complete %>%
 percent_change_df %>%
   arrange(model) %>%
   group_by(variable) %>%
-  do(kable = knitr::kable(., digits = 1, format = "html", caption = "Percent Change in Mean") %>%
+  do(kable = knitr::kable(., digits = 1, format = "latex", caption = "Percent Change in Mean") %>%
        kableExtra::kable_styling("striped", full_width = T)) ->
   table_1_no_names
 
@@ -589,10 +589,9 @@ summary_percent_change$model <- factor(summary_percent_change$model,
 summary_percent_change %>%
   arrange(basin, model) %>%
   group_by(variable) %>%
-  do(kable = knitr::kable(., digits = 1, format = "html", caption = "Consolidated Percent Change Table") %>%
+  do(kable = knitr::kable(., digits = 1, format = "latex", caption = "Consolidated Percent Change Table") %>%
        kableExtra::kable_styling(full_width = T) %>%
-       kableExtra::collapse_rows(columns = 1:2) %>%
-       kableExtra::row_spec(c(3, 6, 9, 12), bold = T)) ->
+       kableExtra::collapse_rows(columns = 1:2)) ->
   table_2_no_names
 
 table_2 <- setNames(object = table_2_no_names$kable, nm = table_2_no_names$variable)
@@ -617,10 +616,10 @@ figure_5 <- make_figure5(percent_change_long)
 output = list()
 
 # Save in a flat list
-output <- format_output_helper(figures, "fig_1", output)
-output <- format_output_helper(figures, "fig_3", output)
+#output <- format_output_helper(figures, "fig_1", output)
+#output <- format_output_helper(figures, "fig_3", output)
 output[["fig_2"]] <- fig_2
-output[["fig_4"]] <- figure_4
+output[["fig_4"]] <- ordered_list_fig4
 output[["table_1"]] <- table_1
 output[["table_2"]] <- table_2
 output[["fig_5"]] <- figure_5
