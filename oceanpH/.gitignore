@@ -76,3 +76,6 @@ man/
 exec/processing/figure_scripts/old
 exec/old_labnotebooks
 *.Rmd
+*.md
+*html
+*.docx
