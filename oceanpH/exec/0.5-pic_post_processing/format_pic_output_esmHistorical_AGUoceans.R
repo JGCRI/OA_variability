@@ -122,7 +122,7 @@ data_month$basin <- factor(data_month $basin, levels = basin_order, ordered = TR
 
 data_month %>%
   filter(variable == "ph") %>%
-  mutate(value = -log(value), variable = "proton", units = "[H+]") ->
+  mutate(value = -log10(value), variable = "proton", units = "[H+]") ->
   proton_tibble
 
 data_month %>%

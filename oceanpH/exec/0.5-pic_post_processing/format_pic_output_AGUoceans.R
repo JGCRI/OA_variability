@@ -203,7 +203,7 @@ basin_mean$basin <- factor(basin_mean$basin, levels = c("N Atlantic", "S Atlanti
 
 basin_mean %>%
   filter(variable == "ph") %>%
-  mutate(value = -log(value), variable = "proton", units = "[H+]") ->
+  mutate(value = -log10(value), variable = "proton", units = "[H+]") ->
   proton_tibble
 
 basin_mean %>%
