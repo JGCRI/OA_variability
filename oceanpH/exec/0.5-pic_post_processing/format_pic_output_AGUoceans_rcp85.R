@@ -27,8 +27,8 @@ devtools::load_all()
 
 # Define the directories
 BASE <- getwd()
-INPUT_DIR  <- file.path(BASE, "raw-data", "cmip", "AGUoceans")
-OUTPUT_DIR <- file.path(BASE, "inst", "extdata", "cmip", "AGUoceans")
+INPUT_DIR  <- file.path(BASE, "raw-data", "cmip", "AGUoceans_rcp85")
+OUTPUT_DIR <- file.path(BASE, "inst", "extdata", "cmip", "AGUoceans_rcp85")
 
 # Import the basin means from pic output
 data_paths <- list.files(INPUT_DIR, "L1_basin_fldmean", full.names = T)

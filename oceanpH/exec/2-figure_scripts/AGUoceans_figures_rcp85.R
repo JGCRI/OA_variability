@@ -27,8 +27,8 @@ save_CH <- F
 
 # Define Directories -- these may need to change
 BASE <- getwd()
-INPUT_DIR  <- file.path(BASE, "output", "cmip", "AGUoceans")
-OUTPUT_DIR <- file.path(BASE, "output", "cmip", "AGUoceans_figs"); dir.create(OUTPUT_DIR, F)
+INPUT_DIR  <- file.path(BASE, "output", "cmip", "AGUoceans_rcp85")
+OUTPUT_DIR <- file.path(BASE, "output", "cmip", "AGUoceans_figs_rcp85"); dir.create(OUTPUT_DIR, F)
 
 
 # Specific script visual settings

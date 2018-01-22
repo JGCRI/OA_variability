@@ -21,8 +21,8 @@ devtools::load_all()
 
 # Define the input and output directories for this script
 BASE <- getwd()
-INPUT_DIR  <- file.path(BASE, "inst", "extdata", "cmip", "AGUoceans")
-OUTPUT_DIR <- file.path(BASE, "output", "cmip", "AGUoceans")
+INPUT_DIR  <- file.path(BASE, "inst", "extdata", "cmip", "AGUoceans_rcp85")
+OUTPUT_DIR <- file.path(BASE, "output", "cmip", "AGUoceans_rcp85")
 
 # If the output direcotry does not exists then create it
 if(!file.exists(OUTPUT_DIR)){dir.create(path = OUTPUT_DIR, recursive = TRUE)}
