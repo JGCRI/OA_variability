@@ -80,3 +80,5 @@ exec/old_labnotebooks
 *html
 *.docx
 *.bib
+
+*/old/*
