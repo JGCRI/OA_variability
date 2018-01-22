@@ -4,7 +4,9 @@
 # Created on: Jan 4
 # Modified:   xxx
 #
-# Notes: This script is similar to the other 0.5 post processing scripts but does not remove as many model
+# Notes: We now want to include a global basin in one of the AGU figures so
+#
+# This script is similar to the other 0.5 post processing scripts but does not remove as many model
 # observations seeing as how there is no longer the CO3 data requirement. The boundaries for these
 # basins include the Arctic and Southern Ocean (defining basin csv can be found in the raw-data dir)
 #
@@ -13,11 +15,6 @@
 # a descriptive label. Always uses relative pathways based off of the project pathway.
 #
 # Setup Environment ------------------------------------------------------------------------------
-# Define the script name
-script_name <- "format_pic_output_AGUoceans.R"
-
-# Visual checks a logic statement to control the if statements that will make figures as sanity checks.
-vis_check <- T
 
 # Load libs
 library(dplyr)
@@ -25,13 +22,20 @@ library(ggplot2)
 library(tidyr)
 devtools::load_all()
 
+# Define the script name
+script_name <- find_scriptName()
+
+# Visual checks a logic statement to control the if statements that will make figures as sanity checks.
+vis_check <- T
+
+
 # Define the directories
 BASE <- getwd()
 INPUT_DIR  <- file.path(BASE, "raw-data", "cmip", "AGUoceans_rcp85")
 OUTPUT_DIR <- file.path(BASE, "inst", "extdata", "cmip", "AGUoceans_rcp85")
 
 # Import the basin means from pic output
-data_paths <- list.files(INPUT_DIR, "L1_basin_fldmean", full.names = T)
+data_paths <- list.files(INPUT_DIR, "basinmean_rcp_spco2_ph_AGUbasins", full.names = T)
 lapply(data_paths, function(x){readr::read_csv(x)}) %>%
   # Because pH netcdfs have units = 1 mutate the units to be the same data
   # type before concatenating the list.
@@ -196,7 +200,7 @@ basin_mean_month_name %>%
   mutate(basin = if_else(basin == "SH Pacific", "S Pacific", basin)) ->
   basin_mean
 
-basin_mean$basin <- factor(basin_mean$basin, levels = c("N Atlantic", "S Atlantic", "N Pacific", "S Pacific"), ordered = T)
+basin_mean$basin <- factor(basin_mean$basin, levels = c("Global", "N Atlantic", "S Atlantic", "N Pacific", "S Pacific"), ordered = T)
 
 
 # Translate pH to protons --------------------------------------------------------------------
