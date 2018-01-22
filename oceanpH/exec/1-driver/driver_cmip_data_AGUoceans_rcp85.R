@@ -12,12 +12,13 @@
 #
 # Set Up Environment  -------------------------------------------------------------------------
 
-script_name <- "driver_cmip_data_AGUoceans.R"
-
 # Load the required libraries
 library(dplyr)
 library(tidyr)
 devtools::load_all()
+
+# Save a copy of the script name
+script_name <- find_scriptName()
 
 # Define the input and output directories for this script
 BASE <- getwd()
