@@ -1,18 +1,11 @@
 # Purpose: This is the level 0.5 post pic processing script for the AGU oceans poster analysis / figures
+# for the esm experiments
 #
 # Created by: Dorheim, Kalyn
-# Created on: Jan 4
+# Created on: Jan 24
 # Modified:   xxx
 #
-# Notes: We now want to include a global basin in one of the AGU figures so
-#
-# This script is similar to the other 0.5 post processing scripts but does not remove as many model
-# observations seeing as how there is no longer the CO3 data requirement. The boundaries for these
-# basins include the Arctic and Southern Ocean (defining basin csv can be found in the raw-data dir)
-#
-# Each section or functional unit of code should be separated with the following
-# line breaks, sections may or may not be numbered but they should always have
-# a descriptive label. Always uses relative pathways based off of the project pathway.
+# Notes: May want to turn into a function or something one day
 #
 # Setup Environment ------------------------------------------------------------------------------
 
@@ -31,45 +24,82 @@ vis_check <- T
 
 # Define the directories
 BASE <- getwd()
-INPUT_DIR  <- file.path(BASE, "raw-data", "cmip", "AGUoceans_rcp85")
-OUTPUT_DIR <- file.path(BASE, "inst", "extdata", "cmip", "AGUoceans_rcp85")
+INPUT_DIR  <- file.path(BASE, "raw-data", "cmip", "AGUoceans_esm")
+OUTPUT_DIR <- file.path(BASE, "inst", "extdata", "cmip", "AGUoceans_esm")
 
-# Import the basin means from pic output
-data_paths <- list.files(INPUT_DIR, "basinmean_rcp_spco2_ph_AGUbasins", full.names = T)
+# Find basin mean paths
+csv_paths  <- list.files(INPUT_DIR, ".csv", full.names = T)
+data_paths <- csv_paths[which(grepl("defined", csv_paths) == F)]
+
+# Read in csv files
+# Because pH netcdfs have units = 1 mutate the units to be the same data
+# type before concatenating the list.
 lapply(data_paths, function(x){readr::read_csv(x)}) %>%
-  # Because pH netcdfs have units = 1 mutate the units to be the same data
-  # type before concatenating the list.
   lapply(., function(x){mutate(x, units = as.character(units))}) %>%
   bind_rows ->
   pic_tibble
 
 
+# Import the post pic processd rcp85 AGU data frame, this will contain the models we want to include in this
+# analysis.
+AGUrcp_path <- list.files(file.path(BASE, "inst/extdata", "cmip", "AGUoceans_rcp85"), "basin_mean.rda", full.names = T)
+AGUrcp_data <- get(load(AGUrcp_path))
+
+
 # Convert Units ---------------------------------------------------------------------------
 pic_tibble_units <- mutate(pic_tibble, units = ifelse(variable == "ph", "", units))
 
-# Data Quality: Remove Models ----------------------------------------------------------------
+# Quality Control: Remove Models ----------------------------------------------------------------
 
-# Variable Count
+# Consisitent with rcp
 #
-# Start by counting the number of variables for each model, if a model variable count is
-# less than two then discard models and add to the models removed data frame.
-pic_tibble_units %>%
+# Keep only the models that are included in the rcp analysis. Discard the models that
+# are not in the rcp analysis and which ones are missing from the esm data.
+expected_models <- unique(AGUrcp_data$model)
+
+# What models are in the rcp data frame but not in the esm data frame
+missing_models <- tibble::tibble(model = expected_models[which(!expected_models %in% pic_tibble_units$model == TRUE)])
+missing_models$reason <- "missing esm data"
+
+# Discard the models not in the rcp data
+models_removed <- tibble::tibble(model = unique(pic_tibble_units$model)[which(!expected_models %in% pic_tibble_units$model == TRUE)])
+models_removed$reason <- "no rcp data"
+
+pic_tibble_models <- filter(pic_tibble_units, model %in% expected_models)
+
+
+# Ensure complete variable count for each model
+#
+# start by determining if / which variables are missing for each model. There is probably
+# a better way of doing this, idk.
+
+expected_variables_list <- unique(pic_tibble_models$variable)
+
+# Figure out which models do not meet the variable requirement.
+pic_tibble_models %>%
   select(model, variable) %>%
   distinct %>%
   group_by(model) %>%
-  summarise(variable_count = n()) %>%
+  summarise(count = n()) %>%
   ungroup %>%
-  filter(variable_count < 2) ->
-  insufficient_variable_count
+  filter(count < 2) ->
+  insufficent_variable_count
 
-insufficient_variable_count %>%
-  select(-variable_count) %>%
-  mutate(reason = "insufficient number of variables") ->
-  models_removed
+# Determine which variable is missing and add to the missing model list.
+pic_tibble_models %>%
+  filter(model %in% insufficent_variable_count$model) %>%
+  select(model, variable) %>%
+  distinct %>%
+  mutate(missing = expected_variables_list[expected_variables_list != variable]) %>%
+  mutate(reason = paste0("missing ", missing)) %>%
+  select(model, reason) %>%
+  bind_rows(missing_models) ->
+  missing_models
+
 
 # Subset the tibble of pic output with the correct number of units so that it only
 # includes model NOT in the insufficient_variable_count tibble.
-pic_tibble_units_variables <- filter(pic_tibble_units, !model %in% insufficient_variable_count$model)
+pic_tibble_units_variables <- filter(pic_tibble_models, !model %in% insufficent_variable_count$model)
 
 
 # Complete time series
@@ -113,7 +143,7 @@ pic_tibble_units_variables %>%
   # Count the number of experiments for all of the unique model / variable combinations.
   select(model, variable, experiment) %>%
   distinct %>%
-  group_by(model, variable) %>%
+  group_by(model, variable) %>% arrange(model, variable, experiment) %>%  filter(variable == "spco2")
   summarise(experiment_count = n()) %>%
   ungroup %>%
   # SUbset to find the models that are missing an experiment.
@@ -130,7 +160,7 @@ pic_tibble_units_variables %>%
 pic_tibble_complete_tseries <- filter(pic_tibble_units_variables, !model %in% models_removed$model)
 
 
-# Data Quality: Remove Bad Data ----------------------------------------------------------------
+# Quality Control: Remove Bad Data ----------------------------------------------------------------
 
 # When we first did our analysis we saw that that some models had unrealistic pH values remove these models now.
 ph_cut_off <- 6
@@ -147,21 +177,7 @@ pic_tibble_filtered_data <- filter(pic_tibble_complete_tseries, !model %in% mode
 
 # Now subset the data frame so that the all of the time series start at the same time.
 max_year <- 2100 # CH says so
-
-# Determine the min year by figuring out the startdate all of the models / variables have
-# in common.
-pic_tibble_filtered_data %>%
-  # Figure out the start year for each model / variable time series
-  select(model, variable, year) %>%
-  group_by(model, variable) %>%
-  summarise(start_year = min(year)) %>%
-  ungroup %>%
-  # Determine the most common start year (max start year)
-  filter(start_year == max(start_year)) %>%
-  select(start_year) %>%
-  distinct %>%
-  pull(start_year) ->
-  min_year
+min_year <- min(AGUrcp_data$year)
 
 pic_tibble_filtered_data %>%
   filter(year >= min_year & year <= max_year) ->
@@ -200,7 +216,7 @@ basin_mean_month_name %>%
   mutate(basin = if_else(basin == "SH Pacific", "S Pacific", basin)) ->
   basin_mean
 
-basin_mean$basin <- factor(basin_mean$basin, levels = c("Global", "N Atlantic", "S Atlantic", "N Pacific", "S Pacific"), ordered = T)
+basin_mean$basin <- factor(basin_mean$basin, levels = c("N Atlantic", "S Atlantic", "N Pacific", "S Pacific", "Global"), ordered = T)
 
 
 # Translate pH to protons --------------------------------------------------------------------
