@@ -35,7 +35,7 @@ path <- "/pic/projects/GCAM/Dorheim/WGET/rcp"
 variables <- c("spco2", "ph", "tos", "dissic")
 experiments <- c("rcp85", "historical")
 
-cmip.find_me(path = path_esm, variable = variables, domain = "Omon", experiment = experiments, ensemble = "r1i1p1") %>%
+cmip.find_me(path = path, variable = variables, domain = "Omon", experiment = experiments, ensemble = "r1i1p1") %>%
   cmip.file_info %>%
   # Sometimes the ph variable name is messed up so rename pH to prevent errors from phx
   mutate(variable = ifelse(grepl("ph", variable), "ph", variable))->
