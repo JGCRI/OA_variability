@@ -3,7 +3,7 @@
 #
 
 # Start by defining the package directroy on pic
-setwd("pic/projects/GCAM/Dorheim/OA_variability/oceanpH")
+setwd("/pic/projects/GCAM/Dorheim/OA_variability/oceanpH")
 
 # Load the required libs
 library(devtools)
