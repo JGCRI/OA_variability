@@ -18,10 +18,10 @@ BASE_NAME  <- "/pic/projects/GCAM/Dorheim/OA_variability/oceanpH"
 OUTPUT_DIR <- file.path(BASE_NAME, "raw-data", "cmip", "AGUoceans_rcp85")
 
 # Call the package
-source(file.path(BASE_NAME,"exec", "0-pic", "build_package.R"))
+source(file.path(BASE_NAME,"exec", "0.A.pic", "build_package.R"))
 
 # Import the AGU basins.
-AGU_basins <- read.csv2(file.path(BASE_NAME,"exec", "0-pic", "AGUoceans_defined_basins.csv"), sep = ",")
+AGU_basins <- read.csv2(file.path(BASE_NAME,"exec", "0.A.pic", "AGUoceans_defined_basins.csv"), sep = ",")
 
 
 # tos cmip.nc ----------------------------------------------------------------------------------
