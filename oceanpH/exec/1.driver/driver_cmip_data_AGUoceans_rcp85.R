@@ -75,6 +75,16 @@ save(summary_stats, file = file.path(OUTPUT_DIR, "summary_stats.rda"))
 save(KS_data, file = file.path(OUTPUT_DIR, "Kurtosis_Skewness.rda"))
 
 
+# Copy over output info
+output_info_dir <- file.path(OUTPUT_DIR, "info"); dir.create(output_info_dir, F)
+
+processd_info <- list.files(INPUT_DIR, "processed_observations_kable", full.names = T)
+file.copy(processd_info, file.path(output_info_dir, "processed_observations_kable.rda"), overwrite = T)
+
+removed_obs <- list.files(INPUT_DIR, "removed_observations", full.names = T)
+file.copy(removed_obs, file.path(output_info_dir, "removed_observations.rda"), overwrite = T)
+
+
 message("Script complete. Output saved at ", OUTPUT_DIR)
 
 # End ----
