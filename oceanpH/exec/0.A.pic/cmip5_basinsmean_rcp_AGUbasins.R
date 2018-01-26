@@ -16,7 +16,7 @@
 
 # Define script directories.
 BASE_NAME  <- "/pic/projects/GCAM/Dorheim/OA_variability/oceanpH"
-OUTPUT_DIR <- file.path(BASE_NAME, "raw-data", "cmip", "rcp85_AGU")
+OUTPUT_DIR <- file.path(BASE_NAME, "raw-data", "cmip", "AGUoceans_rcp85")
 
 # Call the package
 source(file.path(BASE_NAME,"exec", "0.A.pic", "build_package.R"))
