@@ -32,8 +32,10 @@ AGU_basins <- read.csv2(file.path(BASE_NAME,"exec", "0.A.pic", "AGUoceans_define
 path_esm  <- "/pic/projects/GCAM/CMIP5-CHartin"
 variables <- "tos"
 experiments <- c("rcp85", "historical")
-models <- c("CanESM2", "CESM1-BGC", "CMCC-CESM", "GFDL-ESM2G", "HadGEM2-CC",
-            "HadGEM2-ES", "MPI-ESM-LR", "MPI-ESM-MR")
+models <- c("bcc-csm1-1", "bcc-csm1-1-m", "BNU-ESM", "CanESM2", "CESM1-BGC", "CMCC-CESM",
+            "GFDL-ESM2G", "GFDL-ESM2M", "GISS-E2-H-CC", "GISS-E2-R-CC", "HadGEM2-CC", "HadGEM2-ES",
+            "inmcm4", "IPSL-CM5A-MR", "IPSL-CM5B-LR", "MIROC-ESM", "MIROC-ESM-CHEM", "MPI-ESM-LR",
+            "MPI-ESM-MR", "MRI-ESM1", "NorESM1-ME", "IPSL-CM5A-LR")
 
 cmip.find_me(path = path_esm, variable = variables, domain = "Omon", experiment = experiments,
              model = models, ensemble = "r1i1p1") %>%
@@ -49,28 +51,28 @@ write.csv(final_output,file.path(OUTPUT_DIR,"basinmean_rcp_tos_AGUbasins.csv"), 
 
 
 
-# dissic cmip.nc ----------------------------------------------------------------------------------
-# Process the pH and spco2 CMIP5 netcdfs for the rcp85 and the historical experiments. There will
-# not be as many dissc cmip.nc files so do not limit the number of models processed.
-
-# Find the files to process
-path_esm  <- "/pic/projects/GCAM/CMIP5-CHartin"
-variables <- "dissic"
-experiments <- c("rcp85", "historical")
-
-
-cmip.find_me(path = path_esm, variable = variables, domain = "Omon", experiment = experiments,
-             ensemble = "r1i1p1") %>%
-  cmip.file_info ->
-  files_to_process
-
-# Process the netcdfs with the cdo operator.
-output <- cdo.sellonlat(cdo_operator = "fldmean", data_input = files_to_process, defined_basins = AGU_basins)
-
-# Format final output and save
-final_output <- mutate(output, year = substr(time, 1, 4), month = substr(time, 5, 6))
-write.csv(final_output,file.path(OUTPUT_DIR,"basinmean_rcp_dissic_AGUbasins.csv"), row.names = FALSE)
-
+# # dissic cmip.nc ----------------------------------------------------------------------------------
+# # Process the pH and spco2 CMIP5 netcdfs for the rcp85 and the historical experiments. There will
+# # not be as many dissc cmip.nc files so do not limit the number of models processed.
+#
+# # Find the files to process
+# path_esm  <- "/pic/projects/GCAM/CMIP5-CHartin"
+# variables <- "dissic"
+# experiments <- c("rcp85", "historical")
+#
+#
+# cmip.find_me(path = path_esm, variable = variables, domain = "Omon", experiment = experiments,
+#              ensemble = "r1i1p1") %>%
+#   cmip.file_info ->
+#   files_to_process
+#
+# # Process the netcdfs with the cdo operator.
+# output <- cdo.sellonlat(cdo_operator = "fldmean", data_input = files_to_process, defined_basins = AGU_basins)
+#
+# # Format final output and save
+# final_output <- mutate(output, year = substr(time, 1, 4), month = substr(time, 5, 6))
+# write.csv(final_output,file.path(OUTPUT_DIR,"basinmean_rcp_dissic_AGUbasins.csv"), row.names = FALSE)
+#
 
 # End -----
 
