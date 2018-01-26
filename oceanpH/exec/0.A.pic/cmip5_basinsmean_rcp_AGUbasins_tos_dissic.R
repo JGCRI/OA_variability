@@ -51,28 +51,28 @@ write.csv(final_output,file.path(OUTPUT_DIR,"basinmean_rcp_tos_AGUbasins.csv"), 
 
 
 
-# # dissic cmip.nc ----------------------------------------------------------------------------------
-# # Process the pH and spco2 CMIP5 netcdfs for the rcp85 and the historical experiments. There will
-# # not be as many dissc cmip.nc files so do not limit the number of models processed.
-#
-# # Find the files to process
-# path_esm  <- "/pic/projects/GCAM/CMIP5-CHartin"
-# variables <- "dissic"
-# experiments <- c("rcp85", "historical")
-#
-#
-# cmip.find_me(path = path_esm, variable = variables, domain = "Omon", experiment = experiments,
-#              ensemble = "r1i1p1") %>%
-#   cmip.file_info ->
-#   files_to_process
-#
-# # Process the netcdfs with the cdo operator.
-# output <- cdo.sellonlat(cdo_operator = "fldmean", data_input = files_to_process, defined_basins = AGU_basins)
-#
-# # Format final output and save
-# final_output <- mutate(output, year = substr(time, 1, 4), month = substr(time, 5, 6))
-# write.csv(final_output,file.path(OUTPUT_DIR,"basinmean_rcp_dissic_AGUbasins.csv"), row.names = FALSE)
-#
+# dissic cmip.nc ----------------------------------------------------------------------------------
+# Process the pH and spco2 CMIP5 netcdfs for the rcp85 and the historical experiments. There will
+# not be as many dissc cmip.nc files so do not limit the number of models processed.
+
+# Find the files to process
+path_esm  <- "/pic/projects/GCAM/CMIP5-CHartin"
+variables <- "dissic"
+experiments <- c("rcp85", "historical")
+
+
+cmip.find_me(path = path_esm, variable = variables, domain = "Omon", experiment = experiments,
+             ensemble = "r1i1p1") %>%
+  cmip.file_info ->
+  files_to_process
+
+# Process the netcdfs with the cdo operator.
+output <- cdo.sellonlat(cdo_operator = "fldmean", data_input = files_to_process, defined_basins = AGU_basins)
+
+# Format final output and save
+final_output <- mutate(output, year = substr(time, 1, 4), month = substr(time, 5, 6))
+write.csv(final_output,file.path(OUTPUT_DIR,"basinmean_rcp_dissic_AGUbasins.csv"), row.names = FALSE)
+
 
 # End -----
 
