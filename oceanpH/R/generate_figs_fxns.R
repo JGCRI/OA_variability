@@ -363,8 +363,8 @@ generate.figs_models_individually <- function(INPUT_DIR, OUTPUT_DIR, output_name
     left_join(FIGURES, by = "model") ->
     FIGURES
 
-  save(FIGURES, file = file.path(OUTPUT_DIR, output_name))
-  message("output saved at ", file.path(OUTPUT_DIR, output_name))
+  return(FIGURES)
+
 
   # # Print pdfs--------------------------------------------------------------------------------------
   # # There is probably a better way to do this but it is low on my priority list.
