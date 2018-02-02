@@ -165,7 +165,7 @@ single_percentChange <- purrr::safely(function(cmip_df, cdo_path, experiment_yea
 
   if(nrow(model_vari_en) > 1){stop("single_percentChange: attempting to combine ", model_vari_en)}
 
-  experiment_list <- (cmip_df$experiment)
+  experiment_list <- (unique(cmip_df$experiment))
   if(length(experiment_list) != 2){stop("single_percentChange: problem with number of experiments, attempting to process ", experiment_list)}
 
   missing_experiments <- !experiment_list %in% experiment_years$experiment
