@@ -56,12 +56,14 @@ cdo.concatenate_map <- function(df, cdo_path, ofile1, showMessages = F){
 #' @param cdo_path the path to the cdo to use, the default is set to the cdo installed on pic
 #' @param years a vector of the years to select to include in the period average, important the cdo does NOT
 #'  use a range but instead will select values for each year specified in this vector.
+#' @param seasonalStat can be "min", "max", or "amplitude", it is a string that will determine which seasonal stat the cdo
+#' will calcualte and then compare.
 #' @param nc_dir the directory location to save all of the intermediate ncs at.
 #' @param cleanUp default set to T to remove all of the intermediate ncs, if set to F then the .nc will be saved at the nc_dir
 #' @param showMessages default is set to F but when set to T then all of the messages will be printed out
 #' @return the average seasonal amplitude .nc will be saved at the nc_dir, this function will return a string of the filepath
 
-cdo.period_mean_amplitude <- function(df, cdo_path, years, nc_dir, cleanUp = T, showMessages = F){
+cdo.period_mean_stat <- function(df, cdo_path, years, seasonalStat, nc_dir, cleanUp = T, showMessages = F){
 
   # Check if inputs exists
   dir.exists(nc_dir)
@@ -77,26 +79,47 @@ cdo.period_mean_amplitude <- function(df, cdo_path, years, nc_dir, cleanUp = T, 
 
   # Define the specific nc files
   concatenated_nc <- file.path(nc_dir, paste0("concatenated_", nc_baseName))
-  amplitude_nc <- file.path(nc_dir, paste0("amplitude_", nc_baseName))
-  avgAmplitude_nc <- file.path(nc_dir, paste0("avgAmplitude_", nc_baseName))
+  stat_nc <- file.path(nc_dir, paste0(seasonalStat, "_", nc_baseName))
+  avgStat_nc <- file.path(nc_dir, paste0("avg", seasonalStat, "_", nc_baseName))
 
 
   # Concatenate the cmip information data frame
   cdo.concatenate_map(df, cdo_path, concatenated_nc, showMessages)
 
-  # Calculate amplitude the annual absolute range of value
-  if(showMessages){message("Annual amplitude saved at ", nc_baseName)}
-  system2(cdo_path, args = c("abs", "-sub", "-yearmax", concatenated_nc, "-yearmin", concatenated_nc, amplitude_nc), stdout = TRUE, stderr = TRUE)
+  if(seasonalStat == "amplitude") {
+
+    # Calculate amplitude the annual absolute range of value
+    if(showMessages){message("Annual amplitude saved at ", stat_nc)}
+    system2(cdo_path, args = c("abs", "-sub", "-yearmax", concatenated_nc, "-yearmin", concatenated_nc, stat_nc), stdout = TRUE, stderr = TRUE)
+
+    } else if (seasonalStat == "min") {
+
+      # Calculate the annual seasonal min
+      if(showMessages){message("Annual min saved at ", stat_nc)}
+      system2(cdo_path, args = c("-yearmin", concatenated_nc, stat_nc), stdout = TRUE, stderr = TRUE)
+
+    } else if (seasonalStat == "max") {
+
+      # Calculate the annual seasonal max
+      if(showMessages){message("Annual max saved at ", stat_nc)}
+      system2(cdo_path, args = c("-yearmax", concatenated_nc, stat_nc), stdout = TRUE, stderr = TRUE)
+
+    } else {
+
+      stop(seasonalStat, " not recognized")
+
+      }
+
 
   # Generate the selectYears_operator
   selectYears_operator <- paste0("-select,year=",paste(years, collapse = ","))
-  if(showMessages){message("Average over ", paste(years, collapse = " ,"), " saved at ", nc_baseName)}
-  system2(cdo_path, args = c("timavg", selectYears_operator, amplitude_nc, avgAmplitude_nc), stdout = TRUE, stderr = TRUE)
+  if(showMessages){message("Average over ", paste(years, collapse = " ,"), " saved at ", avgStat_nc)}
+  system2(cdo_path, args = c("timavg", selectYears_operator, stat_nc, avgStat_nc), stdout = TRUE, stderr = TRUE)
 
   # Clean up
-  if(cleanUp){file.remove(concatenated_nc, amplitude_nc)}
+  if(cleanUp){file.remove(concatenated_nc, stat_nc)}
 
-  return(avgAmplitude_nc)
+  return(avgStat_nc)
 
 }
 
@@ -122,7 +145,7 @@ cdo.percent_change_nc <- function(cdo_path, nc0, nc1, nc_dir, cleanUp = T, showM
   if(!any(file.exists(nc0), file.exists(nc1))){stop("cdo.percent_change_nc: one or more of the input nc files does not exists")}
 
   # Create the percent change file name
-  percentChange_name <- gsub("avgAmplitude_", "percentChange", basename(nc0))
+  percentChange_name <- gsub("avg", "percentChange_", basename(nc0))
   percentChange_nc <- file.path(nc_dir, percentChange_name)
 
   # Calculate the percent change
@@ -147,6 +170,7 @@ cdo.percent_change_nc <- function(cdo_path, nc0, nc1, nc_dir, cleanUp = T, showM
 #' @param cdo_path the path to the cdo to use, the default is set to the cdo installed on pic.
 #' @param experiment_years the data frame of the experiment, start year and end year to be used to subset the amplitude ncs. The order of the
 #' experiments in this data frame will determine nc0 and nc1 used in cdo.percent_change_nc
+#' @param seasonalStat is the string used to determine which seasonal stat to calualte, options are amplitude, min and max.
 #' @param nc_dir the directory location where to store the intermediate nc files
 #' @param output_dir the directory location where to save the final nc at
 #' @param cleanUp default set to T to remove all of the intermediate ncs, if set to F then the .nc will be saved at the nc_dir
@@ -154,7 +178,7 @@ cdo.percent_change_nc <- function(cdo_path, nc0, nc1, nc_dir, cleanUp = T, showM
 #' @return a list of results the location of the nc file if the function was successful and a list of the error messages if an error occurred
 #' at any point in time.
 
-single_percentChange <- purrr::safely(function(cmip_df, cdo_path, experiment_years, nc_dir, output_dir, showMessages = F, cleanUp = T){
+single_percentChange <- purrr::safely(function(cmip_df, cdo_path, experiment_years, seasonalStat, nc_dir, output_dir, showMessages = F, cleanUp = T){
 
   # Check to make sure that the cmip data frame to process only contains one model / variable / ensemble but contains
   # information for the two experiments from the experiment years data frames.
@@ -176,15 +200,15 @@ single_percentChange <- purrr::safely(function(cmip_df, cdo_path, experiment_yea
   experiment0 <- experiment_years[1, ]
   years0 <- experiment0$start_year:experiment0$end_year
   experiment0_cmip <- cmip_df[cmip_df$experiment == experiment0$experiment, ]
-  nc0 <- cdo.period_mean_amplitude(experiment0_cmip, cdo_path, years0, nc_dir, cleanUp, showMessages)
+  nc0 <- cdo.period_mean_stat(experiment0_cmip, cdo_path, years0, seasonalStat, nc_dir, cleanUp, showMessages)
 
 
-  # Now calculate average seasonal amplitude for the first experiment aka nc0 in the experiment_years
+  # Now calculate average seasonal amplitude for the second experiment aka nc1 in the experiment_years
   experiment1 <- experiment_years[2, ]
   years1 <- experiment1$start_year:experiment1$end_year
   experiment1_cmip <- cmip_df[cmip_df$experiment == experiment1$experiment, ]
 
-  nc1 <- cdo.period_mean_amplitude(experiment1_cmip, cdo_path, years1, nc_dir, cleanUp, showMessages)
+  nc1 <- cdo.period_mean_stat(experiment1_cmip, cdo_path, years1, seasonalStat, nc_dir, cleanUp, showMessages)
 
   # Now make the percent change nc and return the file name for the final nc product
   final_nc <- cdo.percent_change_nc(cdo_path, nc0, nc1, output_dir, cleanUp, showMessages)
@@ -209,11 +233,20 @@ single_percentChange <- purrr::safely(function(cmip_df, cdo_path, experiment_yea
 #' @return a list of results the location of the nc file if the function was successful and a list of the error messages if an error occurred
 #' at any point in time.
 
-batch_percentChange <- function(cmip_df, cdo_path, experiment_years, nc_dir, output_dir, showMessages = F, cleanUp = T){
+batch_percentChange <- function(cmip_df, cdo_path, experiment_years, seasonalStat, nc_dir, output_dir, showMessages = F, cleanUp = T){
 
   to_process <- split(cmip_df, interaction(cmip_df$model, cmip_df$variable, cmip_df$ensemble, sep = "_"), drop = F)
-  map_output <- purrr::map(to_process, function(.) {single_percentChange(., cdo_path, experiment_years, nc_dir, output_dir, showMessages, cleanUp)} )
+  map_output <- purrr::map(to_process, function(.) {single_percentChange(cmip_df = ., cdo_path = cdo_path,
+                                                                         experiment_years = experiment_years,
+                                                                         seasonalStat = seasonalStat,
+                                                                         nc_dir = nc_dir,
+                                                                         output_dir = output_dir,
+                                                                         showMessages = showMessages,
+                                                                         cleanUp = cleanUp)} )
 
-  purrr::flatten(map_output)
+  map_output
 
 }
+
+
+
