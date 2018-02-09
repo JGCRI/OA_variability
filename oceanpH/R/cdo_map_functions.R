@@ -28,7 +28,7 @@ cdo.concatenate_map <- function(df, cdo_path, ofile1, showMessages = F){
 
   if(nrow(unique_df) > 1){
     stop("Problem with cdo.concatenate call, about concatenate multiple models/ variable / ensembles together")
-    }
+  }
 
   # This function depends on CDO (https://code.zmaw.de/projects/cdo) being installed.
   # Check to make sure that it is installed at the location defined as the parameter.
@@ -79,30 +79,35 @@ cdo.period_mean_stat <- function(df, cdo_path, years, seasonalStat, nc_dir, clea
 
   # Define the specific nc files
   concatenated_nc <- file.path(nc_dir, paste0("concatenated_", nc_baseName))
-  stat_nc <- file.path(nc_dir, paste0(seasonalStat, "_", nc_baseName))
+  yrs_nc <- file.path(nc_dir, paste0("subsetYears_", nc_baseName))
   avgStat_nc <- file.path(nc_dir, paste0("avg", seasonalStat, "_", nc_baseName))
 
 
   # Concatenate the cmip information data frame
   cdo.concatenate_map(df, cdo_path, concatenated_nc, showMessages)
 
+  # Generate the selectYears_operator
+  selectYears_operator <- paste0("select,year=",paste(years, collapse = ","))
+  if(showMessages){message("Subsetted for ", paste(years, collapse = " ,"), " saved at ", yrs_nc)}
+  system2(cdo_path, args = c(selectYears_operator, concatenated_nc, yrs_nc), stdout = TRUE, stderr = TRUE)
+
   if(seasonalStat == "amplitude") {
 
     # Calculate amplitude the annual absolute range of value
-    if(showMessages){message("Annual amplitude saved at ", stat_nc)}
-    system2(cdo_path, args = c("abs", "-sub", "-yearmax", concatenated_nc, "-yearmin", concatenated_nc, stat_nc), stdout = TRUE, stderr = TRUE)
+    if(showMessages){message("Annual amplitude saved at ", avgStat_nc)}
+    system2(cdo_path, args = c("timavg", "-abs", "-sub", "-yearmax", yrs_nc, "-yearmin", yrs_nc, avgStat_nc), stdout = TRUE, stderr = TRUE)
 
     } else if (seasonalStat == "min") {
 
       # Calculate the annual seasonal min
-      if(showMessages){message("Annual min saved at ", stat_nc)}
-      system2(cdo_path, args = c("-yearmin", concatenated_nc, stat_nc), stdout = TRUE, stderr = TRUE)
+      if(showMessages){message("Annual min saved at ", avgStat_nc)}
+      system2(cdo_path, args = c("timavg", "-yearmin", yrs_nc, avgStat_nc), stdout = TRUE, stderr = TRUE)
 
     } else if (seasonalStat == "max") {
 
       # Calculate the annual seasonal max
-      if(showMessages){message("Annual max saved at ", stat_nc)}
-      system2(cdo_path, args = c("-yearmax", concatenated_nc, stat_nc), stdout = TRUE, stderr = TRUE)
+      if(showMessages){message("Annual max saved at ", avgStat_nc)}
+      system2(cdo_path, args = c("timavg", "-yearmax", yrs_nc, avgStat_nc), stdout = TRUE, stderr = TRUE)
 
     } else {
 
@@ -111,13 +116,8 @@ cdo.period_mean_stat <- function(df, cdo_path, years, seasonalStat, nc_dir, clea
       }
 
 
-  # Generate the selectYears_operator
-  selectYears_operator <- paste0("-select,year=",paste(years, collapse = ","))
-  if(showMessages){message("Average over ", paste(years, collapse = " ,"), " saved at ", avgStat_nc)}
-  system2(cdo_path, args = c("timavg", selectYears_operator, stat_nc, avgStat_nc), stdout = TRUE, stderr = TRUE)
-
   # Clean up
-  if(cleanUp){file.remove(concatenated_nc, stat_nc)}
+  if(cleanUp){file.remove(concatenated_nc, yrs_nc)}
 
   return(avgStat_nc)
 
@@ -212,7 +212,10 @@ single_percentChange <- purrr::safely(function(cmip_df, cdo_path, experiment_yea
 
   # Now make the percent change nc and return the file name for the final nc product
   final_nc <- cdo.percent_change_nc(cdo_path, nc0, nc1, output_dir, cleanUp, showMessages)
+  if(showMessages){message("Saving ", final_nc)}
+
   return(final_nc)
+
 })
 
 
